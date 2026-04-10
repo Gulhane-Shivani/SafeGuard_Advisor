@@ -35,66 +35,67 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
 
   return (
     <div className={cn(
-      "relative group p-8 rounded-3xl transition-all duration-500 border overflow-hidden",
+      "relative group p-6 rounded-[2rem] transition-all duration-500 border overflow-hidden",
       recommended
         ? "bg-slate-900 border-slate-800 shadow-2xl scale-105 z-10 text-white"
         : "bg-white border-slate-100 shadow-xl hover:shadow-2xl hover:-translate-y-1"
     )}>
       {recommended && (
         <>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-teal-600/20 rounded-full blur-3xl -mr-16 -mt-16" />
-          <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-[0.2em] shadow-lg shadow-teal-600/30">
-            Top Recommendation
+          <div className="absolute top-0 right-0 w-32 h-32 bg-teal-600/10 rounded-full blur-3xl -mr-16 -mt-16" />
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-teal-600 text-white text-[9px] font-black px-4 py-1.5 rounded-b-xl uppercase tracking-[0.2em] shadow-lg shadow-teal-600/20">
+            Top Pick
           </div>
         </>
       )}
 
-      <div className="flex items-start justify-between mb-8">
-        <div className={cn("p-4 rounded-2xl transition-transform group-hover:scale-110 duration-500", getThemeColor())}>
+      <div className="flex items-start justify-between mb-6 pt-2">
+        <div className={cn("p-3 rounded-xl transition-transform group-hover:scale-110 duration-500", getThemeColor())}>
           {getIcon()}
         </div>
         <div className="text-right">
-          <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-1", recommended ? "text-slate-400" : "text-slate-400")}>Monthly</p>
-          <p className={cn("text-3xl font-bold", recommended ? "text-white" : "text-slate-900")}>
+          <p className={cn("text-[9px] font-bold uppercase tracking-widest mb-0.5", recommended ? "text-slate-500" : "text-slate-400")}>Monthly</p>
+          <p className={cn("text-2xl font-black", recommended ? "text-white" : "text-slate-900")}>
             &#8377;{price}
           </p>
         </div>
       </div>
 
-      <div className="mb-6">
-        <h3 className={cn("text-xl font-bold mb-1", recommended ? "text-white" : "text-slate-900")}>{title}</h3>
-        <p className={cn("text-xs font-semibold uppercase tracking-wider", recommended ? "text-teal-400" : "text-teal-600")}>
+      <div className="mb-4">
+        <h3 className={cn("text-lg font-bold mb-0.5", recommended ? "text-white" : "text-slate-900")}>{title}</h3>
+        <p className={cn("text-[10px] font-extrabold uppercase tracking-widest", recommended ? "text-teal-400" : "text-teal-600")}>
           {provider}
         </p>
       </div>
 
-      <p className={cn("text-sm leading-relaxed mb-8", recommended ? "text-slate-400" : "text-slate-500")}>
-        Industry leading coverage specifically designed for your {type} protection needs in India.
+      <p className={cn("text-xs leading-relaxed mb-6", recommended ? "text-slate-400" : "text-slate-400")}>
+        Verified {type} protection plan with comprehensive Indian network coverage.
       </p>
 
-      <div className="space-y-4 mb-10">
+      <div className="space-y-3 mb-8">
         {features.map((feature, idx) => (
-          <div key={idx} className="flex items-center gap-3">
+          <div key={idx} className="flex items-center gap-2.5">
             <div className={cn(
-              "flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-colors",
+              "flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center transition-colors",
               recommended ? "bg-teal-500/20 text-teal-400" : "bg-teal-50 text-teal-600"
             )}>
-              <Check className="w-3 h-3" />
+              <Check className="w-2.5 h-2.5" />
             </div>
-            <span className={cn("text-sm font-medium", recommended ? "text-slate-300" : "text-slate-600")}>{feature}</span>
+            <span className={cn("text-xs font-semibold", recommended ? "text-slate-300" : "text-slate-600")}>{feature}</span>
           </div>
         ))}
       </div>
 
       <button className={cn(
-        "w-full py-4 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all group-hover:gap-3",
+        "w-full py-3.5 rounded-xl text-sm font-black flex items-center justify-center gap-2 transition-all group-hover:gap-3",
         recommended
-          ? "bg-teal-600 text-white shadow-lg shadow-teal-600/25 hover:bg-teal-500 hover:shadow-teal-500/40"
+          ? "bg-teal-600 text-white shadow-lg shadow-teal-600/25 hover:bg-teal-500"
           : "bg-slate-900 text-white hover:bg-slate-800"
       )}>
-        View Plan Details <ArrowRight className="w-4 h-4" />
+        View Plan <ArrowRight className="w-4 h-4" />
       </button>
     </div>
+
   );
 };
 

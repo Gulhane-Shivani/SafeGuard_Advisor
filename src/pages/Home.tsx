@@ -1,11 +1,12 @@
 import React from 'react';
 import {
   Sparkles, ArrowRight, Zap, Target, LayoutDashboard,
-  Shield, Star, Users, Briefcase, HeartPulse, Car, TrendingUp, CheckCircle
+  Shield, Star, Users, Briefcase, HeartPulse, Car, TrendingUp, CheckCircle, Plus, Minus
 } from 'lucide-react';
 import PlanCard from '../components/insurance/PlanCard';
 import { Link } from 'react-router-dom';
 import { cn } from '../utils/helpers';
+
 
 
 const MOCK_REVIEWS = [
@@ -53,7 +54,31 @@ const MOCK_REVIEWS = [
   }
 ];
 
+const MOCK_FAQS = [
+  {
+    q: "How does the AI Advisor make recommendations?",
+    a: "Our AI analysis tool evaluates your age, income, family profile, and risk appetite against 1,000+ data points from IRDAI-approved insurers to isolate the most cost-effective plans with the best claim ratios."
+  },
+  {
+    q: "Do you charge any commission or fees?",
+    a: "No. SafeGuard is a zero-commission platform. Our advice is 100% free, and we do not charge any additional fees over the premium set by the insurance company."
+  },
+  {
+    q: "How do I claim tax benefits under Section 80D?",
+    a: "After purchasing a health insurance policy, you will receive a tax certificate in your dashboard. You can use this to claim deductions up to ₹25,000 (standard) or ₹50,000 (senior citizens) on your annual income tax."
+  },
+  {
+    q: "Can I manage policies from different insurers in one place?",
+    a: "Yes! The SafeGuard Dashboard allows you to track and manage policies from LIC, HDFC, Star Health, Bajaj Allianz, and many more, all under one unified profile."
+  },
+  {
+    q: "What happens if my claim is rejected?",
+    a: "We provide dedicated claims assistance. If your claim is valid but rejected by an insurer, our experts will help you with the appeal process and interface with the insurer to resolve the issue."
+  }
+];
+
 export const Home: React.FC = () => {
+
   return (
     <div className="pt-20">
 
@@ -274,6 +299,33 @@ export const Home: React.FC = () => {
               </div>
             </button>
           </div>
+
+          {/* FAQ Section */}
+          <div className="mt-32 max-w-4xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
+              <p className="text-slate-500 text-lg">Everything you need to know about SafeGuard policies and advice.</p>
+            </div>
+            
+            <div className="space-y-4">
+              {MOCK_FAQS.map((faq, i) => (
+                <div key={i} className="group bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden hover:bg-white hover:shadow-xl transition-all">
+                  <div className="p-6 md:p-8 flex items-center justify-between cursor-pointer">
+                    <h3 className="text-lg font-bold text-slate-900">{faq.q}</h3>
+                    <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center text-teal-600 shadow-sm transition-transform group-hover:rotate-90">
+                      <Plus className="w-5 h-5" />
+                    </div>
+                  </div>
+                  <div className="px-6 md:px-8 pb-8">
+                    <p className="text-slate-500 leading-relaxed text-sm">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
 
 
           {/* Quick Selling Points */}

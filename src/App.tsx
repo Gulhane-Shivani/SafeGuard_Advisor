@@ -8,11 +8,15 @@ import { Dashboard } from './pages/Dashboard';
 import { Auth } from './pages/Auth';
 import './styles/globals.css';
 
+import { AppProvider } from './store';
+
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-slate-50 flex flex-col">
-        <Navbar />
+    <AppProvider>
+      <Router>
+        <div className="min-h-screen bg-slate-50 flex flex-col">
+          <Navbar />
+
 
         <main className="flex-grow">
           <Routes>
@@ -44,8 +48,10 @@ function App() {
         </footer>
       </div>
     </Router>
+    </AppProvider>
   );
 }
+
 
 import { Shield } from 'lucide-react';
 
