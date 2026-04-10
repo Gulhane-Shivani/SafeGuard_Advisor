@@ -1,9 +1,8 @@
-﻿import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import { Home } from './pages/Home';
-import { Recommendation } from './pages/Recommendation';
-import { Compare } from './pages/Compare';
 import { Advisor } from './pages/Advisor';
+import { Compare } from './pages/Compare';
 import { Claims } from './pages/Claims';
 import { Dashboard } from './pages/Dashboard';
 import { Auth } from './pages/Auth';
@@ -14,18 +13,18 @@ function App() {
     <Router>
       <div className="min-h-screen bg-slate-50 flex flex-col">
         <Navbar />
-        
+
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/recommendation" element={<Recommendation />} />
-            <Route path="/compare" element={<Compare />} />
             <Route path="/advisor" element={<Advisor />} />
+            <Route path="/compare" element={<Compare />} />
             <Route path="/claims" element={<Claims />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/auth" element={<Auth />} />
           </Routes>
         </main>
+
 
         <footer className="bg-slate-900 text-white py-12">
           <div className="container mx-auto px-6 text-center">

@@ -1,28 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X, Bell, User } from 'lucide-react';
+import { Shield, Menu, X, Bell, User, LogOut } from 'lucide-react';
 import { cn } from '../../utils/helpers';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
+    
+    // Check login status
+    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    navigate('/');
+  };
+
   const navLinks = [
-    { name: 'Find Plan', href: '/recommendation' },
-    { name: 'Compare Plans', href: '/compare' },
-    { name: 'AI Advisor', href: '/advisor' },
+    { name: 'Insurance Plans', href: '/compare' },
+    { name: 'Advisor', href: '/advisor' },
     { name: 'Claims', href: '/claims' },
-    { name: 'Dashboard', href: '/dashboard' },
+    // Only show Dashboard if logged in
+    ...(isLoggedIn ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
   ];
+
 
   return (
     <nav
@@ -40,7 +54,10 @@ const Navbar: React.FC = () => {
             <div className="bg-teal-600 p-2 rounded-xl">
               <Shield className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-700">
+            <span className={cn(
+              "text-xl font-bold transition-colors",
+              isScrolled ? "text-slate-900" : "text-white md:text-slate-900"
+            )}>
               SafeGuard AI
             </span>
           </Link>
@@ -53,9 +70,9 @@ const Navbar: React.FC = () => {
                 to={link.href}
                 className={cn(
                   "text-sm font-medium transition-colors",
-                  location.pathname === link.href 
-                    ? "text-teal-600 font-bold" 
-                    : "text-slate-600 hover:text-teal-600"
+                  location.pathname === link.href
+                    ? "text-teal-600 font-bold"
+                    : isScrolled ? "text-slate-600 hover:text-teal-600" : "text-slate-600 md:text-slate-600 hover:text-teal-600"
                 )}
               >
                 {link.name}
@@ -69,12 +86,31 @@ const Navbar: React.FC = () => {
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
-            <Link to="/auth" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors">
-              <div className="bg-white p-1 rounded-full shadow-sm">
-                <User className="w-4 h-4 text-slate-600" />
+            
+            {isLoggedIn ? (
+              <div className="flex items-center gap-3">
+                <Link to="/dashboard" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 hover:bg-teal-100 rounded-full transition-colors border border-teal-100">
+                  <div className="bg-white p-1 rounded-full shadow-sm">
+                    <User className="w-4 h-4 text-teal-600" />
+                  </div>
+                  <span className="text-sm font-semibold text-teal-700">My Profile</span>
+                </Link>
+                <button 
+                  onClick={handleLogout}
+                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                  title="Sign Out"
+                >
+                  <LogOut className="w-5 h-5" />
+                </button>
               </div>
-              <span className="text-sm font-semibold text-slate-700">Account</span>
-            </Link>
+            ) : (
+              <Link to="/auth" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors">
+                <div className="bg-white p-1 rounded-full shadow-sm">
+                  <User className="w-4 h-4 text-slate-600" />
+                </div>
+                <span className="text-sm font-semibold text-slate-700">Sign In</span>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -97,8 +133,8 @@ const Navbar: React.FC = () => {
                 to={link.href}
                 className={cn(
                   "text-base font-medium py-2 transition-colors",
-                  location.pathname === link.href 
-                    ? "text-teal-600 font-bold" 
+                  location.pathname === link.href
+                    ? "text-teal-600 font-bold"
                     : "text-slate-600"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
@@ -107,13 +143,24 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             <hr className="border-slate-100" />
-            <div className="flex items-center justify-between py-2">
-              <span className="text-sm font-medium text-slate-600">Notifications</span>
-              <Bell className="w-5 h-5 text-slate-600" />
-            </div>
-            <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)} className="w-full py-3 bg-teal-600 text-white rounded-xl font-bold shadow-lg shadow-teal-600/20 text-center">
-              View Profile
-            </Link>
+            
+            {isLoggedIn ? (
+              <>
+                <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="w-full py-3 bg-teal-600 text-white rounded-xl font-bold shadow-lg shadow-teal-600/20 text-center">
+                  Go to Dashboard
+                </Link>
+                <button 
+                  onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
+                  className="w-full py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-center flex items-center justify-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" /> Sign Out
+                </button>
+              </>
+            ) : (
+              <Link to="/auth" onClick={() => setIsMobileMenuOpen(false)} className="w-full py-3 bg-teal-600 text-white rounded-xl font-bold shadow-lg shadow-teal-600/20 text-center">
+                Sign In / Sign Up
+              </Link>
+            )}
           </div>
         </div>
       )}
@@ -122,4 +169,5 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
 

@@ -1,11 +1,22 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 
 export const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [usePhone, setUsePhone] = useState(false);
+  const navigate = useNavigate();
+
+  const handleAuth = () => {
+    // Mock login/signup logic
+    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('user', JSON.stringify({ name: 'User', email: 'user@example.com' }));
+    navigate('/dashboard');
+    window.location.reload(); // Force navbar refresh
+  };
+
 
   return (
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-20 relative overflow-hidden">
@@ -113,10 +124,14 @@ export const Auth: React.FC = () => {
               </div>
             )}
 
-            <button className="w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2">
+            <button 
+              onClick={handleAuth}
+              className="w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2"
+            >
               {usePhone ? 'Send OTP' : isLogin ? 'Sign In' : 'Create Account'}
               <ArrowRight className="w-5 h-5" />
             </button>
+
 
             <div className="relative flex items-center gap-4">
               <div className="flex-grow h-px bg-white/10" />
