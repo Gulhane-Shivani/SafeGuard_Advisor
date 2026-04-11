@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Filter, Search, Check, Info } from 'lucide-react';
 import PlanCard from '../components/insurance/PlanCard';
 import { cn } from '../utils/helpers';
+import { useSearchParams } from 'react-router-dom';
 
 const ALL_PLANS = [
   { id: 1,  title: 'Star Comprehensive',       type: 'health',     price: '799',   coverage: '5 Lakh',  rating: 4.5, claimRatio: '92%', insurer: 'Star Health Insurance', features: ['Cashless at 14,000+ Hospitals', 'No Room Rent Limit', 'AYUSH Cover Included'] },
@@ -15,9 +16,19 @@ const ALL_PLANS = [
 ];
 
 export const Compare: React.FC = () => {
-  const [filterType, setFilterType] = useState('all');
+  const [searchParams] = useSearchParams();
+  const initialCategory = searchParams.get('category') || 'all';
+  const [filterType, setFilterType] = useState(initialCategory);
   const [sortBy, setSortBy] = useState('price-low');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Update filter type if URL params change
+  useEffect(() => {
+    const cat = searchParams.get('category');
+    if (cat) {
+      setFilterType(cat);
+    }
+  }, [searchParams]);
 
   const filteredPlans = ALL_PLANS.filter(plan => {
     const matchesType = filterType === 'all' || plan.type === filterType;

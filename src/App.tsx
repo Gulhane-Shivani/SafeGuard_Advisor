@@ -9,6 +9,10 @@ import { Auth } from './pages/Auth';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import { ContactUs } from './pages/ContactUs';
+import HealthInsurance from './pages/insurance/HealthInsurance';
+import LifeInsurance from './pages/insurance/LifeInsurance';
+import MotorInsurance from './pages/insurance/MotorInsurance';
+import InvestmentInsurance from './pages/insurance/InvestmentInsurance';
 import './styles/globals.css';
 
 import { AppProvider } from './store';
@@ -34,6 +38,10 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/insurance/health" element={<HealthInsurance />} />
+            <Route path="/insurance/life" element={<LifeInsurance />} />
+            <Route path="/insurance/motor" element={<MotorInsurance />} />
+            <Route path="/insurance/investment" element={<InvestmentInsurance />} />
           </Routes>
         </main>
 

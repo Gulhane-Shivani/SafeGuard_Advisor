@@ -133,10 +133,10 @@ export const Home: React.FC = () => {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-4xl mx-auto">
               {[
-                { title: 'Health',     Icon: HeartPulse,  desc: 'Star Health, Niva Bupa, Care', iconBg: 'bg-blue-100 text-blue-600',   href: '/compare?category=health' },
-                { title: 'Life / Term',Icon: Shield,      desc: 'LIC, HDFC Life, Max Life',     iconBg: 'bg-purple-100 text-purple-600',href: '/compare?category=life' },
-                { title: 'Motor',      Icon: Car,         desc: 'ICICI Lombard, Bajaj Allianz', iconBg: 'bg-orange-100 text-orange-600',href: '/compare?category=car' },
-                { title: 'Investment', Icon: TrendingUp,  desc: 'ULIP, SIP + Insurance',        iconBg: 'bg-teal-100 text-teal-600',    href: '/compare?category=investment' },
+                { title: 'Health',     Icon: HeartPulse,  desc: 'Star Health, Niva Bupa, Care', iconBg: 'bg-blue-100 text-blue-600',   href: '/insurance/health' },
+                { title: 'Life / Term',Icon: Shield,      desc: 'LIC, HDFC Life, Max Life',     iconBg: 'bg-purple-100 text-purple-600',href: '/insurance/life' },
+                { title: 'Motor',      Icon: Car,         desc: 'ICICI Lombard, Bajaj Allianz', iconBg: 'bg-orange-100 text-orange-600',href: '/insurance/motor' },
+                { title: 'Investment', Icon: TrendingUp,  desc: 'ULIP, SIP + Insurance',        iconBg: 'bg-teal-100 text-teal-600',    href: '/insurance/investment' },
               ].map(({ title, Icon, desc, iconBg, href }) => (
                 <Link
                   key={title}

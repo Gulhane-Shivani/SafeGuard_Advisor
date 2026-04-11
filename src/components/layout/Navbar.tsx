@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X, Bell, User, LogOut } from 'lucide-react';
+import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Sparkles, Scale } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -30,11 +32,18 @@ const Navbar: React.FC = () => {
   };
 
   const navLinks = [
-    { name: 'Insurance Plans', href: '/compare' },
     { name: 'Advisor', href: '/advisor' },
     { name: 'Claims', href: '/claims' },
     // Only show Dashboard if logged in
     ...(isLoggedIn ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
+  ];
+
+  const insuranceCategories = [
+    { name: 'Health Insurance', href: '/insurance/health', Icon: HeartPulse, desc: 'Star, Niva Bupa, Care' },
+    { name: 'Life / Term', href: '/insurance/life', Icon: Shield, desc: 'LIC, HDFC Life, Max Life' },
+    { name: 'Motor Insurance', href: '/insurance/motor', Icon: Car, desc: 'ICICI, Bajaj Allianz' },
+    { name: 'Investment Plans', href: '/insurance/investment', Icon: TrendingUp, desc: 'ULIP, SIP + Insurance' },
+    { name: 'Compare All Plans', href: '/compare', Icon: Scale, desc: 'Side-by-side comparison', highlight: true },
   ];
 
 
@@ -64,6 +73,57 @@ const Navbar: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
+            {/* Insurance Plans Dropdown */}
+            <div 
+              className="relative group"
+              onMouseEnter={() => setIsDropdownOpen(true)}
+              onMouseLeave={() => setIsDropdownOpen(false)}
+            >
+              <button 
+                className={cn(
+                  "flex items-center gap-1 text-sm font-medium transition-colors py-2",
+                  location.pathname === '/compare' || isDropdownOpen
+                    ? "text-teal-600 font-bold"
+                    : isScrolled ? "text-slate-600 hover:text-teal-600" : "text-slate-600 hover:text-teal-600"
+                )}
+              >
+                Insurance Plans
+                <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 p-4 mt-2 animate-in fade-in zoom-in duration-200">
+                  <div className="grid gap-2">
+                    {insuranceCategories.map((cat) => (
+                      <Link
+                        key={cat.name}
+                        to={cat.href}
+                        className={cn(
+                          "flex items-center gap-4 p-3 rounded-2xl transition-all group/item",
+                          cat.highlight ? "bg-teal-50 hover:bg-teal-100" : "hover:bg-slate-50"
+                        )}
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        <div className={cn(
+                          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110",
+                          cat.highlight ? "bg-teal-600 text-white" : "bg-slate-100 text-slate-600 group-hover/item:text-teal-600 group-hover/item:bg-teal-50"
+                        )}>
+                          <cat.Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <div className={cn("text-sm font-bold", cat.highlight ? "text-teal-900" : "text-slate-900 group-hover/item:text-teal-600")}>
+                            {cat.name}
+                          </div>
+                          <div className="text-[11px] text-slate-400 font-medium">{cat.desc}</div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -72,7 +132,7 @@ const Navbar: React.FC = () => {
                   "text-sm font-medium transition-colors",
                   location.pathname === link.href
                     ? "text-teal-600 font-bold"
-                    : isScrolled ? "text-slate-600 hover:text-teal-600" : "text-slate-600 md:text-slate-600 hover:text-teal-600"
+                    : isScrolled ? "text-slate-600 hover:text-teal-600" : "text-slate-600 hover:text-teal-600"
                 )}
               >
                 {link.name}
@@ -127,15 +187,45 @@ const Navbar: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 absolute top-full left-0 right-0 py-4 px-6 shadow-xl animate-in slide-in-from-top duration-300">
           <div className="flex flex-col gap-4">
+            {/* Mobile Dropdown */}
+            <div className="flex flex-col">
+              <button 
+                onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
+                className={cn(
+                  "flex items-center justify-between text-base font-bold py-2 transition-colors",
+                  isMobileDropdownOpen ? "text-teal-600" : "text-slate-900"
+                )}
+              >
+                Insurance Plans
+                <ChevronDown className={cn("w-5 h-5 transition-transform", isMobileDropdownOpen && "rotate-180")} />
+              </button>
+              
+              {isMobileDropdownOpen && (
+                <div className="pl-4 mt-2 space-y-4 animate-in slide-in-from-left duration-200">
+                  {insuranceCategories.map((cat) => (
+                    <Link
+                      key={cat.name}
+                      to={cat.href}
+                      className="flex items-center gap-3 py-1"
+                      onClick={() => { setIsMobileMenuOpen(false); setIsMobileDropdownOpen(false); }}
+                    >
+                      <cat.Icon className={cn("w-5 h-5", cat.highlight ? "text-teal-600" : "text-slate-400")} />
+                      <span className={cn("text-sm font-medium", cat.highlight ? "text-teal-700 font-bold" : "text-slate-600")}>{cat.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.href}
                 className={cn(
-                  "text-base font-medium py-2 transition-colors",
+                  "text-base font-bold py-2 transition-colors",
                   location.pathname === link.href
-                    ? "text-teal-600 font-bold"
-                    : "text-slate-600"
+                    ? "text-teal-600"
+                    : "text-slate-900"
                 )}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
