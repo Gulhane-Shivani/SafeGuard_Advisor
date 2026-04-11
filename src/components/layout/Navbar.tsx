@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
               "text-xl font-bold transition-colors",
               isScrolled ? "text-slate-900" : "text-white md:text-slate-900"
             )}>
-              SafeGuard AI
+              SafeGuard Advisor
             </span>
           </Link>
 
