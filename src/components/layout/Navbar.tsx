@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Sparkles, Scale } from 'lucide-react';
+import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Coins, Receipt } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -43,7 +43,13 @@ const Navbar: React.FC = () => {
     { name: 'Life / Term', href: '/insurance/life', Icon: Shield, desc: 'LIC, HDFC Life, Max Life' },
     { name: 'Motor Insurance', href: '/insurance/motor', Icon: Car, desc: 'ICICI, Bajaj Allianz' },
     { name: 'Investment Plans', href: '/insurance/investment', Icon: TrendingUp, desc: 'ULIP, SIP + Insurance' },
-    { name: 'Compare All Plans', href: '/compare', Icon: Scale, desc: 'Side-by-side comparison', highlight: true },
+  ];
+
+  const calculatorLinks = [
+    { name: 'Premium Calculator', href: '/advisor', Icon: Calculator, desc: 'Estimate your monthly premium' },
+    { name: 'Tax Saving Calc', href: '/insurance/health', Icon: Receipt, desc: '80D & 80C deductions' },
+    { name: 'SIP Calculator', href: '/insurance/investment', Icon: PieChart, desc: 'Wealth compounding tool' },
+    { name: 'Health Score', href: '/advisor', Icon: HeartPulse, desc: 'Check your health index' },
   ];
 
 
@@ -91,34 +97,80 @@ const Navbar: React.FC = () => {
                 <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
               </button>
 
-              {/* Dropdown Menu */}
+              {/* Dropdown Menu - Mega Menu Style */}
               {isDropdownOpen && (
-                <div className="absolute top-full left-0 w-80 bg-white rounded-3xl shadow-2xl border border-slate-100 p-4 mt-2 animate-in fade-in zoom-in duration-200">
-                  <div className="grid gap-2">
-                    {insuranceCategories.map((cat) => (
-                      <Link
-                        key={cat.name}
-                        to={cat.href}
-                        className={cn(
-                          "flex items-center gap-4 p-3 rounded-2xl transition-all group/item",
-                          cat.highlight ? "bg-teal-50 hover:bg-teal-100" : "hover:bg-slate-50"
-                        )}
-                        onClick={() => setIsDropdownOpen(false)}
-                      >
-                        <div className={cn(
-                          "w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110",
-                          cat.highlight ? "bg-teal-600 text-white" : "bg-slate-100 text-slate-600 group-hover/item:text-teal-600 group-hover/item:bg-teal-50"
-                        )}>
-                          <cat.Icon className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <div className={cn("text-sm font-bold", cat.highlight ? "text-teal-900" : "text-slate-900 group-hover/item:text-teal-600")}>
-                            {cat.name}
-                          </div>
-                          <div className="text-[11px] text-slate-400 font-medium">{cat.desc}</div>
-                        </div>
-                      </Link>
-                    ))}
+                <div className="absolute top-full -left-20 w-[640px] bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-8 mt-2 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
+                  <div className="grid grid-cols-2 gap-10">
+                    {/* Column 1: Insurance Plans */}
+                    <div>
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
+                        Insurance Plans
+                      </div>
+                      <div className="grid gap-2">
+                        {insuranceCategories.map((cat) => (
+                          <Link
+                            key={cat.name}
+                            to={cat.href}
+                            className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
+                              <cat.Icon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
+                                {cat.name}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-medium">{cat.desc}</div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Column 2: Calculators & Tools */}
+                    <div>
+                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
+                        Tools & Calculators
+                      </div>
+                      <div className="grid gap-2">
+                        {calculatorLinks.map((calc) => (
+                          <Link
+                            key={calc.name}
+                            to={calc.href}
+                            className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
+                              <calc.Icon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
+                                {calc.name}
+                              </div>
+                              <div className="text-[11px] text-slate-400 font-medium">{calc.desc}</div>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Action */}
+                  <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-teal-50 px-3 py-1 rounded-full text-[10px] font-bold text-teal-600 uppercase">
+                        Featured
+                      </div>
+                      <span className="text-xs text-slate-500 font-medium">Compare plans side-by-side for best value</span>
+                    </div>
+                    <Link
+                      to="/compare"
+                      className="flex items-center gap-2 text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors"
+                      onClick={() => setIsDropdownOpen(false)}
+                    >
+                      Compare All Plans <Scale className="w-4 h-4" />
+                    </Link>
                   </div>
                 </div>
               )}
@@ -202,6 +254,7 @@ const Navbar: React.FC = () => {
               
               {isMobileDropdownOpen && (
                 <div className="pl-4 mt-2 space-y-4 animate-in slide-in-from-left duration-200">
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Insurance Plans</div>
                   {insuranceCategories.map((cat) => (
                     <Link
                       key={cat.name}
@@ -209,10 +262,32 @@ const Navbar: React.FC = () => {
                       className="flex items-center gap-3 py-1"
                       onClick={() => { setIsMobileMenuOpen(false); setIsMobileDropdownOpen(false); }}
                     >
-                      <cat.Icon className={cn("w-5 h-5", cat.highlight ? "text-teal-600" : "text-slate-400")} />
-                      <span className={cn("text-sm font-medium", cat.highlight ? "text-teal-700 font-bold" : "text-slate-600")}>{cat.name}</span>
+                      <cat.Icon className="w-5 h-5 text-slate-400" />
+                      <span className="text-sm font-medium text-slate-600">{cat.name}</span>
                     </Link>
                   ))}
+                  
+                  <div className="pt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Calculators</div>
+                  {calculatorLinks.map((calc) => (
+                    <Link
+                      key={calc.name}
+                      to={calc.href}
+                      className="flex items-center gap-3 py-1"
+                      onClick={() => { setIsMobileMenuOpen(false); setIsMobileDropdownOpen(false); }}
+                    >
+                      <calc.Icon className="w-5 h-5 text-slate-400" />
+                      <span className="text-sm font-medium text-slate-600">{calc.name}</span>
+                    </Link>
+                  ))}
+
+                  <Link
+                    to="/compare"
+                    className="flex items-center gap-3 py-2 text-teal-600 font-bold"
+                    onClick={() => { setIsMobileMenuOpen(false); setIsMobileDropdownOpen(false); }}
+                  >
+                    <Scale className="w-5 h-5" />
+                    <span className="text-sm">Compare All Plans</span>
+                  </Link>
                 </div>
               )}
             </div>

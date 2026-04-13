@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   Sparkles, ArrowRight, Zap, Target, LayoutDashboard,
-  Shield, Star, Users, Briefcase, HeartPulse, Car, TrendingUp, CheckCircle, Plus, Minus
+  Shield, Star, Users, Briefcase, HeartPulse, Car, TrendingUp, CheckCircle, Plus
 } from 'lucide-react';
 import PlanCard from '../components/insurance/PlanCard';
 import { Link } from 'react-router-dom';
@@ -224,7 +224,6 @@ export const Home: React.FC = () => {
             <PlanCard
               title="LIC Tech Term"
               type="life"
-              recommended={true}
               price="1,199"
               provider="LIC of India"
               features={['1 Crore Sum Assured', '80C Tax Benefit', 'Critical Illness Rider', 'Return of Premium Option']}

@@ -21,7 +21,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     isLoading: false,
   });
 
-  const login = async (credentials: any) => {
+  const login = async (_credentials: any) => {
     // Implement login logic
   };
 

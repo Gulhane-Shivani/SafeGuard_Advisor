@@ -173,7 +173,6 @@ export const Compare: React.FC = () => {
                       title={plan.title}
                       type={plan.type as any}
                       price={plan.price}
-                      recommended={(plan as any).recommended}
                       provider={plan.insurer}
                       features={plan.features}
                     />
