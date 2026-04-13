@@ -52,7 +52,7 @@ function App() {
               <div className="bg-teal-600 p-2 rounded-xl text-white">
                 <Shield className="w-6 h-6" />
               </div>
-              <span className="text-xl font-bold">SafeGuard AI</span>
+              <span className="text-xl font-bold">SafeGuard Advisor</span>
             </div>
             <p className="text-slate-400 text-sm mb-8">Â© 2024 SafeGuard Advisor. All rights reserved.</p>
             <div className="flex justify-center gap-6 text-slate-400 text-sm">

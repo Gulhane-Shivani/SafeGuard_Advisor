@@ -27,6 +27,12 @@
 
   --animate-bounce-delay-150: bounce 1s infinite 150ms;
   --animate-bounce-delay-300: bounce 1s infinite 300ms;
+
+  --animate-slider: slider 30s linear infinite;
+  @keyframes slider {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 }
 
 @layer base {

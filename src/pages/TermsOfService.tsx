@@ -12,7 +12,7 @@ export const TermsOfService: React.FC = () => {
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6">Terms of Service</h1>
           <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-            Please read these terms carefully before using the SafeGuard AI platform.
+            Please read these terms carefully before using the SafeGuard Advisor platform.
           </p>
         </div>
 

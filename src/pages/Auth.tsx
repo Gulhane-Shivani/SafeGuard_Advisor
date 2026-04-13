@@ -28,7 +28,7 @@ export const Auth: React.FC = () => {
           <div className="bg-teal-600 p-2.5 rounded-2xl shadow-lg shadow-teal-600/30">
             <Shield className="w-7 h-7 text-white" />
           </div>
-          <span className="text-2xl font-bold text-white">SafeGuard AI</span>
+          <span className="text-2xl font-bold text-white">SafeGuard Advisor</span>
         </Link>
 
         <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">

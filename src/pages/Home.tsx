@@ -77,6 +77,49 @@ const MOCK_FAQS = [
   }
 ];
 
+const PARTNERS = [
+  { name: 'LIC of India', short: 'LIC', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/LIC_logo.png/200px-LIC_logo.png', bg: '#1e3a8a', color: '#fbbf24' },
+  { name: 'HDFC Life', short: 'HDFC', url: 'https://logo.clearbit.com/hdfclife.com', bg: '#dc2626', color: '#ffffff' },
+  { name: 'Star Health', short: '★ Star', url: 'https://logo.clearbit.com/starhealth.in', bg: '#1d4ed8', color: '#ffffff' },
+  { name: 'ICICI Lombard', short: 'ICICI', url: 'https://logo.clearbit.com/icicilombard.com', bg: '#ea580c', color: '#ffffff' },
+  { name: 'Bajaj Allianz', short: 'Bajaj', url: 'https://logo.clearbit.com/bajajallianz.com', bg: '#1e40af', color: '#ffffff' },
+  { name: 'Max Life', short: 'Max', url: 'https://logo.clearbit.com/maxlifeinsurance.com', bg: '#0f172a', color: '#38bdf8' },
+  { name: 'Niva Bupa', short: 'Niva', url: 'https://logo.clearbit.com/nivabupa.com', bg: '#0284c7', color: '#ffffff' },
+  { name: 'TATA AIG', short: 'TATA', url: 'https://logo.clearbit.com/tataaig.com', bg: '#1e3a8a', color: '#ef4444' },
+  { name: 'HDFC ERGO', short: 'ERGO', url: 'https://logo.clearbit.com/hdfcergo.com', bg: '#7c3aed', color: '#ffffff' },
+];
+
+const SliderCard: React.FC<{ partner: typeof PARTNERS[0] }> = ({ partner }) => {
+  const [failed, setFailed] = React.useState(false);
+  return (
+    <div className="flex-shrink-0 flex items-center justify-center w-36 h-20 mx-3 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-0.5 cursor-pointer overflow-hidden group">
+      {!failed ? (
+        <img
+          src={partner.url}
+          alt={partner.name}
+          className="max-w-[90px] max-h-[46px] w-auto h-auto object-contain group-hover:scale-105 transition-transform duration-300"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <div
+          className="flex flex-col items-center justify-center w-full h-full px-3 transition-transform duration-300 group-hover:scale-105"
+          style={{ backgroundColor: partner.bg }}
+        >
+          <span
+            className="font-black text-base tracking-tight leading-none"
+            style={{ color: partner.color }}
+          >
+            {partner.short}
+          </span>
+          <span className="text-[8px] font-semibold mt-0.5 opacity-70" style={{ color: partner.color }}>
+            Insurance
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const Home: React.FC = () => {
 
   return (
@@ -84,7 +127,7 @@ export const Home: React.FC = () => {
 
 
       {/* Hero */}
-      <section className="pt-20 pb-20 px-6 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+      <section className="pt-10 pb-20 px-6 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
 
@@ -123,6 +166,21 @@ export const Home: React.FC = () => {
             </div>
           </div>
 
+          {/* Trust Indicators — slim bar */}
+          <div className="flex flex-wrap justify-center items-center gap-4 md:gap-8 px-6 py-3 mb-10 max-w-3xl mx-auto">
+            {[
+              { Icon: Star, label: '4.9 / 5 Rating', sub: '2 Lakh+ Reviews' },
+              { Icon: Users, label: '50 Lakh+ Users', sub: 'Across India' },
+              { Icon: Briefcase, label: '50+ Insurers', sub: 'LIC, HDFC & more' },
+            ].map(({ Icon, label, sub }, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <Icon className="w-4 h-4 text-teal-600 flex-shrink-0" />
+                <span className="font-bold text-slate-700 text-xs">{label}</span>
+                <span className="text-slate-400 text-[11px] hidden sm:inline">· {sub}</span>
+              </div>
+            ))}
+          </div>
+
           {/* Category Cards */}
           <div className="mb-20">
             <h2 className="text-center text-2xl font-bold text-slate-800 mb-2">
@@ -133,10 +191,10 @@ export const Home: React.FC = () => {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-4xl mx-auto">
               {[
-                { title: 'Health',     Icon: HeartPulse,  desc: 'Star Health, Niva Bupa, Care', iconBg: 'bg-blue-100 text-blue-600',   href: '/insurance/health' },
-                { title: 'Life / Term',Icon: Shield,      desc: 'LIC, HDFC Life, Max Life',     iconBg: 'bg-purple-100 text-purple-600',href: '/insurance/life' },
-                { title: 'Motor',      Icon: Car,         desc: 'ICICI Lombard, Bajaj Allianz', iconBg: 'bg-orange-100 text-orange-600',href: '/insurance/motor' },
-                { title: 'Investment', Icon: TrendingUp,  desc: 'ULIP, SIP + Insurance',        iconBg: 'bg-teal-100 text-teal-600',    href: '/insurance/investment' },
+                { title: 'Health', Icon: HeartPulse, desc: 'Star Health, Niva Bupa, Care', iconBg: 'bg-blue-100 text-blue-600', href: '/insurance/health' },
+                { title: 'Life / Term', Icon: Shield, desc: 'LIC, HDFC Life, Max Life', iconBg: 'bg-purple-100 text-purple-600', href: '/insurance/life' },
+                { title: 'Motor', Icon: Car, desc: 'ICICI Lombard, Bajaj Allianz', iconBg: 'bg-orange-100 text-orange-600', href: '/insurance/motor' },
+                { title: 'Investment', Icon: TrendingUp, desc: 'ULIP, SIP + Insurance', iconBg: 'bg-teal-100 text-teal-600', href: '/insurance/investment' },
               ].map(({ title, Icon, desc, iconBg, href }) => (
                 <Link
                   key={title}
@@ -152,21 +210,22 @@ export const Home: React.FC = () => {
               ))}
             </div>
           </div>
+        </div>
 
-          {/* Trust Indicators */}
-          <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 py-10 border-y border-slate-100">
-            {[
-              { Icon: Shield,    label: 'IRDAI Regulated',  sub: 'Fully Compliant' },
-              { Icon: Star,      label: '4.9 / 5 Rating',   sub: '2 Lakh+ Reviews' },
-              { Icon: Users,     label: '50 Lakh+ Users',   sub: 'Across India' },
-              { Icon: Briefcase, label: '50+ Insurers',     sub: 'LIC, HDFC, Star & more' },
-            ].map(({ Icon, label, sub }, i) => (
-              <div key={i} className="flex flex-col items-center gap-1 text-center">
-                <Icon className="w-6 h-6 text-teal-600 mb-1" />
-                <span className="font-bold text-slate-800 text-sm">{label}</span>
-                <span className="text-slate-400 text-xs">{sub}</span>
-              </div>
-            ))}
+        {/* Partners Slider */}
+        <div className="mt-20 border-t border-slate-100 bg-white/50 py-10 overflow-hidden relative">
+          <p className="text-center text-[11px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-12">TRUSTED BY 50+ GLOBAL INSURANCE CARRIERS</p>
+
+          <div className="flex relative w-full overflow-hidden items-center py-4">
+            {/* Gradient overlays for smooth fading edges */}
+            <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-slate-50 to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-slate-50 to-transparent z-10 pointer-events-none"></div>
+
+            <div className="flex w-max animate-slider hover:[animation-play-state:paused] items-center">
+              {[...PARTNERS, ...PARTNERS].map((partner, i) => (
+                <SliderCard key={i} partner={partner} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -182,8 +241,8 @@ export const Home: React.FC = () => {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
             {[
-              { Icon: Zap,           title: 'Instant Quotes',      desc: 'No agents, no spam calls. Real-time quotes from 50+ IRDAI-approved insurers in seconds.' },
-              { Icon: Target,        title: 'AI Personalisation',  desc: 'Our AI considers your age, income, family size and health to recommend the perfect plan.' },
+              { Icon: Zap, title: 'Instant Quotes', desc: 'No agents, no spam calls. Real-time quotes from 50+ IRDAI-approved insurers in seconds.' },
+              { Icon: Target, title: 'AI Personalisation', desc: 'Our AI considers your age, income, family size and health to recommend the perfect plan.' },
               { Icon: LayoutDashboard, title: 'One Place, All Plans', desc: 'LIC, HDFC Life, Star Health, Bajaj Allianz — manage all policies from one dashboard.' },
             ].map(({ Icon, title, desc }, i) => (
               <div key={i} className="group p-10 bg-slate-50 rounded-[2.5rem] border border-slate-100 hover:bg-white hover:shadow-2xl hover:-translate-y-2 transition-all duration-500">
@@ -205,7 +264,7 @@ export const Home: React.FC = () => {
             <h2 className="text-4xl font-bold text-slate-900 mb-4">Most Popular Insurance Plans</h2>
             <p className="text-slate-500 mb-8">Top-rated plans from IRDAI-approved Indian insurers selected by thousands of users this month.</p>
             <Link to="/compare" className="group inline-flex items-center gap-3 text-teal-600 font-bold hover:text-teal-700 transition-all">
-              View All Plans 
+              View All Plans
               <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all">
                 <ArrowRight className="w-5 h-5" />
               </div>
@@ -256,7 +315,7 @@ export const Home: React.FC = () => {
               to="/advisor"
               className="shrink-0 relative z-10 px-10 py-5 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-xl shadow-teal-600/30 flex items-center gap-3 group"
             >
-              Check My Savings 
+              Check My Savings
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
@@ -306,7 +365,7 @@ export const Home: React.FC = () => {
               <h2 className="text-4xl font-bold text-slate-900 mb-4">Frequently Asked Questions</h2>
               <p className="text-slate-500 text-lg">Everything you need to know about SafeGuard policies and advice.</p>
             </div>
-            
+
             <div className="space-y-4">
               {MOCK_FAQS.map((faq, i) => (
                 <div key={i} className="group bg-slate-50 border border-slate-100 rounded-3xl overflow-hidden hover:bg-white hover:shadow-xl transition-all">
