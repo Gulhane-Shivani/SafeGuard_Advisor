@@ -227,6 +227,7 @@ export const Home: React.FC = () => {
               price="1,199"
               provider="LIC of India"
               features={['1 Crore Sum Assured', '80C Tax Benefit', 'Critical Illness Rider', 'Return of Premium Option']}
+              recommended={true}
             />
             <PlanCard
               title="Bajaj Allianz Motor"

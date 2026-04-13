@@ -11,7 +11,7 @@ interface PlanCardProps {
   recommended?: boolean;
 }
 
-const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, features }) => {
+const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, features, recommended }) => {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -34,6 +34,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
   };
 
   const getThemeColor = () => {
+    if (recommended) return 'bg-teal-500 text-white';
     switch (type) {
       case 'health': return 'bg-blue-50 text-blue-600';
       case 'car': return 'bg-orange-50 text-orange-600';
@@ -46,49 +47,66 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
   return (
     <>
       <div className={cn(
-        "relative group p-5 rounded-[1.5rem] transition-all duration-300 border bg-white border-slate-100 shadow-lg hover:shadow-xl hover:-translate-y-1",
-        showModal ? "z-[99] !transform-none !transition-none" : "z-10"
+        "relative group p-6 rounded-[2rem] transition-all duration-500 border shadow-lg hover:shadow-2xl",
+        recommended 
+          ? "bg-slate-900 border-slate-800 md:scale-110 z-20 shadow-slate-900/20" 
+          : "bg-white border-slate-100 hover:-translate-y-1 z-10",
+        showModal ? "!transform-none !transition-none" : ""
       )}>
-        <div className="flex items-start justify-between mb-3 px-1">
-          <div className={cn("p-2 rounded-lg transition-transform group-hover:scale-110", getThemeColor())}>
+        {recommended && (
+          <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-teal-600 text-white px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg z-30">
+            Popular Choice
+          </div>
+        )}
+
+        <div className="flex items-start justify-between mb-6 px-1">
+          <div className={cn("p-2.5 rounded-xl transition-transform group-hover:scale-110 shadow-sm", getThemeColor())}>
             {getIcon()}
           </div>
           <div className="text-right">
-            <p className="text-[7px] font-bold uppercase tracking-widest text-slate-400">Monthly</p>
-            <p className="text-lg font-black text-slate-900">
+            <p className={cn("text-[8px] font-bold uppercase tracking-widest mb-1", recommended ? "text-slate-400" : "text-slate-400")}>Monthly</p>
+            <p className={cn("text-xl font-black", recommended ? "text-white" : "text-slate-900")}>
               &#8377;{price}
             </p>
           </div>
         </div>
 
-        <div className="mb-2 px-1">
-          <h3 className="text-sm font-bold text-slate-900 leading-tight truncate">{title}</h3>
-          <p className="text-[8px] font-extrabold uppercase tracking-widest text-teal-600">
+        <div className="mb-4 px-1">
+          <h3 className={cn("text-base font-bold leading-tight truncate mb-1", recommended ? "text-white" : "text-slate-900")}>{title}</h3>
+          <p className="text-[9px] font-black uppercase tracking-widest text-teal-500">
             {provider}
           </p>
         </div>
 
-        <p className="text-[10px] leading-snug mb-4 text-slate-400 px-1 line-clamp-2">
+        <p className={cn("text-[11px] leading-relaxed mb-6 px-1 line-clamp-2", recommended ? "text-slate-400" : "text-slate-400")}>
           Verified {type} protection plan with comprehensive Indian network coverage.
         </p>
 
-        <div className="space-y-2 mb-5 px-1">
+        <div className="space-y-3 mb-8 px-1">
           {features.slice(0, 3).map((feature, idx) => (
-            <div key={idx} className="flex items-center gap-2">
-              <div className="flex-shrink-0 w-3 h-3 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center">
-                <Check className="w-1.5 h-1.5" />
+            <div key={idx} className="flex items-center gap-3">
+              <div className={cn(
+                "flex-shrink-0 w-4 h-4 rounded-full flex items-center justify-center",
+                recommended ? "bg-teal-900/50 text-teal-400" : "bg-teal-50 text-teal-600"
+              )}>
+                <Check className="w-2 h-2" />
               </div>
-              <span className="text-[10px] font-semibold text-slate-600 tracking-tight">{feature}</span>
+              <span className={cn("text-[11px] font-bold tracking-tight", recommended ? "text-slate-300" : "text-slate-600")}>{feature}</span>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center">
           <button 
             onClick={() => setShowModal(true)}
-            className="w-fit px-4 py-2 rounded-lg text-[9px] font-black bg-slate-900 text-white hover:bg-slate-800 flex items-center justify-center gap-1.5 transition-all active:scale-95 whitespace-nowrap"
+            className={cn(
+              "w-full py-4 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap uppercase tracking-widest shadow-lg",
+              recommended 
+                ? "bg-teal-600 text-white hover:bg-teal-500 shadow-teal-900/20" 
+                : "bg-slate-900 text-white hover:bg-slate-800"
+            )}
           >
-            View Plan <ArrowRight className="w-2.5 h-2.5" />
+            View Plan <ArrowRight className="w-3 h-3" />
           </button>
         </div>
       </div>
