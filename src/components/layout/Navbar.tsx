@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Coins, Receipt } from 'lucide-react';
+import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Receipt } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 

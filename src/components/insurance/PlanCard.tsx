@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, ArrowRight, ShieldCheck, HeartPulse, Car, Home, X, Info, Shield, Zap } from 'lucide-react';
+import { Check, ArrowRight, ShieldCheck, HeartPulse, Car, Home, X, Shield } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 
 interface PlanCardProps {
@@ -112,7 +112,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
                 type === 'car' ? "bg-orange-600 text-white" : 
                 "bg-teal-600 text-white"
               )}>
-                {React.cloneElement(getIcon() as React.ReactElement, { className: 'w-10 h-10' })}
+                {React.cloneElement(getIcon() as React.ReactElement<{ className?: string }>, { className: 'w-10 h-10' })}
               </div>
             </div>
 
