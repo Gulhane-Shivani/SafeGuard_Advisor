@@ -2,7 +2,6 @@ import React from 'react';
 import { HeartPulse, ShieldCheck, Zap, HelpCircle, CheckCircle2, ArrowRight, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PlanCard from '../../components/insurance/PlanCard';
-import { cn } from '../../utils/helpers';
 
 const HealthInsurance: React.FC = () => {
   const steps = [
