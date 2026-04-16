@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000";
+const BASE_URL = "https://safeguard-advisor-backend.onrender.com/";
 
 // Lightweight fetch-based API client (no axios dependency)
 const API = {
