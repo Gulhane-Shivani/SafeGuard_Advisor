@@ -2,6 +2,8 @@ import React from 'react';
 import { LayoutDashboard, Shield, Clock, Download, ChevronRight, AlertTriangle, CreditCard, PieChart } from 'lucide-react';
 import { cn } from '../utils/helpers';
 import { useAppStore } from '../store';
+
+const POLICIES = [
   {
     id: 'POL-LIC-2023001',
     title: 'LIC Tech Term Plan',
