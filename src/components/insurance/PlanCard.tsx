@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Check, ArrowRight, ShieldCheck, HeartPulse, Car, Home, X, Shield } from 'lucide-react';
 import { cn } from '../../utils/helpers';
+import { AuthModal } from '../layout/AuthModal';
 
 interface PlanCardProps {
   title: string;
@@ -13,6 +14,17 @@ interface PlanCardProps {
 
 const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, features, recommended }) => {
   const [showModal, setShowModal] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handlePurchaseClick = () => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    // Proceed with purchase logic (not yet implemented)
+    alert('Proceeding to purchase ' + title);
+  };
 
   useEffect(() => {
     if (showModal) {
@@ -174,13 +186,21 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
                 </div>
               </div>
 
-              <button className="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-black hover:bg-teal-600 transition-all shadow-xl shadow-slate-900/10 uppercase tracking-widest text-xs flex items-center justify-center gap-3 group">
+              <button 
+                onClick={handlePurchaseClick}
+                className="w-full py-5 bg-slate-900 text-white rounded-[1.5rem] font-black hover:bg-teal-600 transition-all shadow-xl shadow-slate-900/10 uppercase tracking-widest text-xs flex items-center justify-center gap-3 group"
+              >
                 Purchase Policy Now <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
         </div>
       )}
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onSuccess={() => setIsAuthModalOpen(false)} 
+      />
     </>
   );
 };

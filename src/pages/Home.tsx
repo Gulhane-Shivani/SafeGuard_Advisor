@@ -121,6 +121,16 @@ const SliderCard: React.FC<{ partner: typeof PARTNERS[0] }> = ({ partner }) => {
 };
 
 export const Home: React.FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [userName, setUserName] = React.useState('');
+
+  React.useEffect(() => {
+    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+      setUserName(user.name);
+    }
+  }, []);
 
   return (
     <div className="pt-20">
@@ -135,6 +145,12 @@ export const Home: React.FC = () => {
               <Sparkles className="w-4 h-4" />
               IRDAI Approved &middot; AI-Powered Insurance Advisor
             </div>
+
+            {isLoggedIn && (
+              <h2 className="text-2xl font-bold text-teal-600 mb-4 animate-in fade-in slide-in-from-bottom duration-500">
+                Welcome back, {userName}!
+              </h2>
+            )}
 
             <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-6">
               The Right Insurance.{' '}

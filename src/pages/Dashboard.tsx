@@ -36,6 +36,15 @@ const POLICIES = [
 ];
 
 export const Dashboard: React.FC = () => {
+  const [userName, setUserName] = React.useState('User');
+
+  React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user.name) {
+      setUserName(user.name);
+    }
+  }, []);
+
   return (
     <div className="pt-32 pb-20 px-6 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-7xl">
@@ -43,7 +52,7 @@ export const Dashboard: React.FC = () => {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
           <div>
-            <h1 className="text-4xl font-bold text-slate-900 mb-1">Hello, Arjun!</h1>
+            <h1 className="text-4xl font-bold text-slate-900 mb-1">Hello, {userName}!</h1>
             <p className="text-slate-500 font-medium">
               You have <b className="text-slate-900">3 active policies</b> and <b className="text-orange-600">1 renewal due</b> soon.
             </p>

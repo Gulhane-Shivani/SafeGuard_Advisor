@@ -13,6 +13,7 @@ import HealthInsurance from './pages/insurance/HealthInsurance';
 import LifeInsurance from './pages/insurance/LifeInsurance';
 import MotorInsurance from './pages/insurance/MotorInsurance';
 import InvestmentInsurance from './pages/insurance/InvestmentInsurance';
+import { Profile } from './pages/Profile';
 import './styles/globals.css';
 
 import { AppProvider } from './store';
@@ -34,6 +35,7 @@ function App() {
             <Route path="/compare" element={<Compare />} />
             <Route path="/claims" element={<Claims />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />

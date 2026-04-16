@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FileText, Upload, CheckCircle2, AlertCircle, Clock, ExternalLink } from 'lucide-react';
 import { cn } from '../utils/helpers';
+import { AuthModal } from '../components/layout/AuthModal';
 
 const CLAIMS = [
   { id: 'CLM-20241024', type: 'Health',  status: 'In Review', date: '24 Oct 2024', amount: '28,500',  provider: 'Apollo Hospitals, Mumbai',       insurer: 'Star Health Insurance' },
@@ -17,6 +18,17 @@ const STATUS_STEPS = [
 
 export const Claims: React.FC = () => {
   const [activeTab, setActiveTab] = useState('active');
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const handleServiceClick = (e?: React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="pt-32 pb-20 px-6 bg-slate-50 min-h-screen">
@@ -28,7 +40,10 @@ export const Claims: React.FC = () => {
             <h1 className="text-4xl font-bold text-slate-900 mb-2">Claims Support</h1>
             <p className="text-slate-500">Track your active claims and upload necessary documents</p>
           </div>
-          <button className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all text-sm">
+          <button 
+            onClick={handleServiceClick}
+            className="flex items-center gap-2 px-6 py-3 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 transition-all text-sm"
+          >
             <Upload className="w-5 h-5" /> File New Claim
           </button>
         </div>
@@ -101,7 +116,10 @@ export const Claims: React.FC = () => {
             </div>
 
             {/* Upload Area */}
-            <div className="bg-teal-50 rounded-3xl border-2 border-dashed border-teal-200 p-10 text-center group hover:border-teal-400 transition-all cursor-pointer">
+            <div 
+              onClick={handleServiceClick}
+              className="bg-teal-50 rounded-3xl border-2 border-dashed border-teal-200 p-10 text-center group hover:border-teal-400 transition-all cursor-pointer"
+            >
               <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
                 <Upload className="w-8 h-8 text-teal-600" />
               </div>
@@ -172,6 +190,11 @@ export const Claims: React.FC = () => {
           </div>
         </div>
       </div>
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onSuccess={() => setIsAuthModalOpen(false)} 
+      />
     </div>
   );
 };

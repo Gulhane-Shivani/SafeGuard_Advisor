@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Target, Shield, HeartPulse, Car, TrendingUp } from 'lucide-react';
 import { cn } from '../utils/helpers';
+import { AuthModal } from '../components/layout/AuthModal';
 
 export const Advisor: React.FC = () => {
   const [step, setStep] = useState(1);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     category: '',
     age: '',
@@ -16,6 +18,13 @@ export const Advisor: React.FC = () => {
   const prevStep = () => setStep(s => Math.max(s - 1, 1));
 
   const handleSelect = (field: string, value: string) => {
+    // GATEKEEPING: Check if logged in before proceeding
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (!isLoggedIn) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     setFormData({ ...formData, [field]: value });
     if (field === 'category') nextStep();
   };
@@ -272,6 +281,11 @@ export const Advisor: React.FC = () => {
         )}
         {renderStep()}
       </div>
+      <AuthModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onSuccess={() => setIsAuthModalOpen(false)} 
+      />
     </div>
   );
 };

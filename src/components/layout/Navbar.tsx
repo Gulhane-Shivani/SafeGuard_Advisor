@@ -34,8 +34,6 @@ const Navbar: React.FC = () => {
   const navLinks = [
     { name: 'Advisor', href: '/advisor' },
     { name: 'Claims', href: '/claims' },
-    // Only show Dashboard if logged in
-    ...(isLoggedIn ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
   ];
 
   const insuranceCategories = [
@@ -201,11 +199,13 @@ const Navbar: React.FC = () => {
             
             {isLoggedIn ? (
               <div className="flex items-center gap-3">
-                <Link to="/dashboard" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 hover:bg-teal-100 rounded-full transition-colors border border-teal-100">
-                  <div className="bg-white p-1 rounded-full shadow-sm">
-                    <User className="w-4 h-4 text-teal-600" />
+                <Link to="/profile" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 rounded-full border border-teal-100 hover:bg-teal-100 transition-colors group">
+                  <div className="bg-white p-1 rounded-full shadow-sm text-teal-600 group-hover:scale-110 transition-transform">
+                    <User className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-semibold text-teal-700">My Profile</span>
+                  <span className="text-sm font-semibold text-teal-700">
+                    {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'}
+                  </span>
                 </Link>
                 <button 
                   onClick={handleLogout}
@@ -311,9 +311,9 @@ const Navbar: React.FC = () => {
             
             {isLoggedIn ? (
               <>
-                <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)} className="w-full py-3 bg-teal-600 text-white rounded-xl font-bold shadow-lg shadow-teal-600/20 text-center">
-                  Go to Dashboard
-                </Link>
+                <div className="w-full py-3 bg-teal-50 text-teal-700 rounded-xl font-bold text-center border border-teal-100">
+                  Logged in as {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'}
+                </div>
                 <button 
                   onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                   className="w-full py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-center flex items-center justify-center gap-2"

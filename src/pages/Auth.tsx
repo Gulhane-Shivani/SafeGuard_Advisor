@@ -1,20 +1,50 @@
 import React, { useState } from 'react';
 import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import API from '../api/baseurl';
 
 
 export const Auth: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [usePhone, setUsePhone] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleAuth = () => {
-    // Mock login/signup logic
-    localStorage.setItem('isLoggedIn', 'true');
-    localStorage.setItem('user', JSON.stringify({ name: 'User', email: 'user@example.com' }));
-    navigate('/dashboard');
-    window.location.reload(); // Force navbar refresh
+  const handleAuth = async () => {
+    setError('');
+    try {
+      const endpoint = isLogin ? '/login' : '/register';
+      const payload: any = {};
+      
+      if (!isLogin) {
+        if (!fullName && !usePhone) return setError('Full Name is required');
+        payload.full_name = fullName || 'User'; // handle fallback if just mobile
+      }
+      
+      if (usePhone) {
+        if (!mobile) return setError('Mobile number is required');
+        payload.mobile = mobile;
+      } else {
+        if (!email) return setError('Email is required');
+        if (!password) return setError('Password is required');
+        payload.email = email;
+        payload.password = password;
+      }
+
+      const res = await API.post(endpoint, payload);
+      
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify({ name: fullName || mobile || email.split('@')[0], email: email || mobile }));
+      navigate('/dashboard');
+      window.location.reload(); 
+    } catch (err: any) {
+      setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
+    }
   };
 
 
@@ -49,6 +79,11 @@ export const Auth: React.FC = () => {
           </div>
 
           <div className="space-y-5">
+            {error && (
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center font-medium">
+                {error}
+              </div>
+            )}
 
             {!isLogin && (
               <div className="relative group">
@@ -56,6 +91,8 @@ export const Auth: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Full Name"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   className="w-full pl-12 pr-5 py-4 bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-600/50 transition-all"
                 />
               </div>
@@ -87,6 +124,8 @@ export const Auth: React.FC = () => {
                   type="tel"
                   placeholder="10-digit Mobile Number"
                   maxLength={10}
+                  value={mobile}
+                  onChange={(e) => setMobile(e.target.value)}
                   className="w-full pl-20 pr-5 py-4 bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-600/50 transition-all"
                 />
               </div>
@@ -96,6 +135,8 @@ export const Auth: React.FC = () => {
                 <input
                   type="email"
                   placeholder="Email Address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-5 py-4 bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-600/50 transition-all"
                 />
               </div>
@@ -107,6 +148,8 @@ export const Auth: React.FC = () => {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-14 py-4 bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-600/50 transition-all"
                 />
                 <button
