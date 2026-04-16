@@ -84,7 +84,7 @@ export const Auth: React.FC = () => {
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-20 relative overflow-hidden">
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
+      <button onClick={() => navigate('/')}>Home</button>
       <div className="relative w-full max-w-md">
         <Link to="/" className="flex items-center justify-center gap-3 mb-10">
           <div className="bg-teal-600 p-2.5 rounded-2xl shadow-lg shadow-teal-600/30">
