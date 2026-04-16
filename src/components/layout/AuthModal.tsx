@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Shield, X, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone } from 'lucide-react';
 import API from '../../api/baseurl';
 import { cn } from '../../utils/helpers';
+import { useAppStore } from '../../store';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -10,6 +11,7 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const { setUser } = useAppStore();
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [usePhone, setUsePhone] = useState(false);
@@ -46,15 +48,17 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
 
       await API.post(endpoint, payload);
       
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('user', JSON.stringify({ 
+      const userData = { 
         name: fullName || mobile || email.split('@')[0], 
         email: email || mobile 
-      }));
+      };
       
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      setUser(userData);
       onSuccess();
       onClose();
-      window.location.reload();
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
     } finally {
