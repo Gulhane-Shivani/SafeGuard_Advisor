@@ -57,6 +57,11 @@ export const Auth: React.FC = () => {
       
       // Handle Login Success
       const { user: userRes } = response.data;
+      
+      if (!userRes) {
+        throw new Error('Server did not return user details. If you are developing locally, please ensure your local FastAPI backend is running and updated.');
+      }
+
       const userData = { 
         name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User', 
         email: userRes.email || userRes.mobile 

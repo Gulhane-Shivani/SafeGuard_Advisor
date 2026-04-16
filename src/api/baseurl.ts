@@ -1,4 +1,7 @@
-const BASE_URL = "https://safeguard-advisor-backend.onrender.com/";
+const BASE_URL = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
+  ? "http://127.0.0.1:8000/"
+  : "https://safeguard-advisor-backend.onrender.com/";
+
 
 interface ApiResponse<T = any> {
   data: T;
