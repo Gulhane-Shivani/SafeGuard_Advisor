@@ -38,7 +38,7 @@ export const Auth: React.FC = () => {
         payload.password = password;
       }
 
-      const res = await API.post(endpoint, payload);
+      await API.post(endpoint, payload);
       
       const userData = { name: fullName || mobile || email.split('@')[0], email: email || mobile };
       localStorage.setItem('isLoggedIn', 'true');

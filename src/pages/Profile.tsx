@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { User, Mail, Phone, Calendar, Shield, LogOut, Settings, Bell, CreditCard, ChevronRight, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../utils/helpers';
