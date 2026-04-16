@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone } from 'lucide-react';
+import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/baseurl';
 import { useAppStore } from '../store';
@@ -84,7 +84,18 @@ export const Auth: React.FC = () => {
     <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-20 relative overflow-hidden">
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-      <button onClick={() => navigate('/')}>Home</button>
+
+      {/* Back to Home Button */}
+      <button 
+        onClick={() => navigate('/')} 
+        className="absolute top-10 left-10 flex items-center gap-2 text-slate-400 hover:text-white transition-all font-bold group z-10"
+      >
+        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-teal-600 group-hover:border-teal-600 transition-all">
+          <ArrowLeft className="w-5 h-5" />
+        </div>
+        <span>Back to Home</span>
+      </button>
+
       <div className="relative w-full max-w-md">
         <Link to="/" className="flex items-center justify-center gap-3 mb-10">
           <div className="bg-teal-600 p-2.5 rounded-2xl shadow-lg shadow-teal-600/30">

@@ -96,78 +96,80 @@ const Navbar: React.FC = () => {
 
               {/* Dropdown Menu - Mega Menu Style */}
               {isDropdownOpen && (
-                <div className="absolute top-full -left-20 w-[640px] bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-8 mt-2 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
-                  <div className="grid grid-cols-2 gap-10">
-                    {/* Column 1: Insurance Plans */}
-                    <div>
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
-                        Insurance Plans
-                      </div>
-                      <div className="grid gap-2">
-                        {insuranceCategories.map((cat) => (
-                          <Link
-                            key={cat.name}
-                            to={cat.href}
-                            className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
-                              <cat.Icon className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
-                                {cat.name}
+                <div className="absolute top-full -left-20 w-[640px] pt-3 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
+                  <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-8">
+                    <div className="grid grid-cols-2 gap-10">
+                      {/* Column 1: Insurance Plans */}
+                      <div>
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
+                          Insurance Plans
+                        </div>
+                        <div className="grid gap-2">
+                          {insuranceCategories.map((cat) => (
+                            <Link
+                              key={cat.name}
+                              to={cat.href}
+                              className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
+                                <cat.Icon className="w-5 h-5" />
                               </div>
-                              <div className="text-[11px] text-slate-400 font-medium">{cat.desc}</div>
-                            </div>
-                          </Link>
-                        ))}
+                              <div>
+                                <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
+                                  {cat.name}
+                                </div>
+                                <div className="text-[11px] text-slate-400 font-medium">{cat.desc}</div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Column 2: Calculators & Tools */}
+                      <div>
+                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
+                          Tools & Calculators
+                        </div>
+                        <div className="grid gap-2">
+                          {calculatorLinks.map((calc) => (
+                            <Link
+                              key={calc.name}
+                              to={calc.href}
+                              className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
+                                <calc.Icon className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
+                                  {calc.name}
+                                </div>
+                                <div className="text-[11px] text-slate-400 font-medium">{calc.desc}</div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
-                    {/* Column 2: Calculators & Tools */}
-                    <div>
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
-                        Tools & Calculators
+                    {/* Footer Action */}
+                    <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-teal-50 px-3 py-1 rounded-full text-[10px] font-bold text-teal-600 uppercase">
+                          Featured
+                        </div>
+                        <span className="text-xs text-slate-500 font-medium">Compare plans side-by-side for best value</span>
                       </div>
-                      <div className="grid gap-2">
-                        {calculatorLinks.map((calc) => (
-                          <Link
-                            key={calc.name}
-                            to={calc.href}
-                            className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
-                            onClick={() => setIsDropdownOpen(false)}
-                          >
-                            <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
-                              <calc.Icon className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
-                                {calc.name}
-                              </div>
-                              <div className="text-[11px] text-slate-400 font-medium">{calc.desc}</div>
-                            </div>
-                          </Link>
-                        ))}
-                      </div>
+                      <Link
+                        to="/compare"
+                        className="flex items-center gap-2 text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors"
+                        onClick={() => setIsDropdownOpen(false)}
+                      >
+                        Compare All Plans <Scale className="w-4 h-4" />
+                      </Link>
                     </div>
-                  </div>
-
-                  {/* Footer Action */}
-                  <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-teal-50 px-3 py-1 rounded-full text-[10px] font-bold text-teal-600 uppercase">
-                        Featured
-                      </div>
-                      <span className="text-xs text-slate-500 font-medium">Compare plans side-by-side for best value</span>
-                    </div>
-                    <Link
-                      to="/compare"
-                      className="flex items-center gap-2 text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Compare All Plans <Scale className="w-4 h-4" />
-                    </Link>
                   </div>
                 </div>
               )}
