@@ -14,18 +14,23 @@ export const Auth: React.FC = () => {
   const [password, setPassword] = useState('');
   const [mobile, setMobile] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAppStore();
   const navigate = useNavigate();
 
   const handleAuth = async () => {
     setError('');
+    setSuccess('');
+    setIsLoading(true);
+    
     try {
       const endpoint = isLogin ? '/login' : '/register';
       const payload: any = {};
       
       if (!isLogin) {
-        if (!fullName && !usePhone) return setError('Full Name is required');
-        payload.full_name = fullName || 'User'; // handle fallback if just mobile
+        if (!fullName) return setError('Full Name is required');
+        payload.full_name = fullName;
       }
       
       if (usePhone) {
@@ -38,9 +43,25 @@ export const Auth: React.FC = () => {
         payload.password = password;
       }
 
-      await API.post(endpoint, payload);
+      const response = await API.post(endpoint, payload);
       
-      const userData = { name: fullName || mobile || email.split('@')[0], email: email || mobile };
+      if (!isLogin) {
+        // Handle Registration Success
+        setSuccess('Account created successfully! Please sign in.');
+        setIsLogin(true);
+        // Clear password for safety
+        setPassword('');
+        setIsLoading(false);
+        return;
+      }
+      
+      // Handle Login Success
+      const { user: userRes } = response.data;
+      const userData = { 
+        name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User', 
+        email: userRes.email || userRes.mobile 
+      };
+      
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('user', JSON.stringify(userData));
       
@@ -48,6 +69,8 @@ export const Auth: React.FC = () => {
       navigate('/dashboard');
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,8 +107,14 @@ export const Auth: React.FC = () => {
 
           <div className="space-y-5">
             {error && (
-              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center font-medium">
+              <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center font-medium animate-shake">
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="p-3 rounded-xl bg-teal-500/10 border border-teal-500/50 text-teal-400 text-sm text-center font-medium">
+                {success}
               </div>
             )}
 
@@ -173,10 +202,17 @@ export const Auth: React.FC = () => {
 
             <button 
               onClick={handleAuth}
-              className="w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2"
+              disabled={isLoading}
+              className={`w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {usePhone ? 'Send OTP' : isLogin ? 'Sign In' : 'Create Account'}
-              <ArrowRight className="w-5 h-5" />
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <>
+                  {usePhone ? 'Send OTP' : isLogin ? 'Sign In' : 'Create Account'}
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
 
 
