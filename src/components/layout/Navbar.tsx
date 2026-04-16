@@ -2,13 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Receipt } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAppStore } from '../../store';
 
 const Navbar: React.FC = () => {
+  const { state, logout } = useAppStore();
+  const { user } = state;
+  const isLoggedIn = !!user;
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -17,17 +21,12 @@ const Navbar: React.FC = () => {
       setIsScrolled(window.scrollY > 10);
     };
     
-    // Check login status
-    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
+    logout();
     navigate('/');
   };
 
@@ -204,7 +203,7 @@ const Navbar: React.FC = () => {
                     <User className="w-4 h-4" />
                   </div>
                   <span className="text-sm font-semibold text-teal-700">
-                    {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'}
+                    {user?.name || 'User'}
                   </span>
                 </Link>
                 <button 
@@ -312,7 +311,7 @@ const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <>
                 <div className="w-full py-3 bg-teal-50 text-teal-700 rounded-xl font-bold text-center border border-teal-100">
-                  Logged in as {JSON.parse(localStorage.getItem('user') || '{}').name || 'User'}
+                  Logged in as {user?.name || 'User'}
                 </div>
                 <button 
                   onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}

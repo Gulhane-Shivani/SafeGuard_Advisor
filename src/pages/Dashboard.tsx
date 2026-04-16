@@ -1,8 +1,7 @@
 import React from 'react';
 import { LayoutDashboard, Shield, Clock, Download, ChevronRight, AlertTriangle, CreditCard, PieChart } from 'lucide-react';
 import { cn } from '../utils/helpers';
-
-const POLICIES = [
+import { useAppStore } from '../store';
   {
     id: 'POL-LIC-2023001',
     title: 'LIC Tech Term Plan',
@@ -36,14 +35,8 @@ const POLICIES = [
 ];
 
 export const Dashboard: React.FC = () => {
-  const [userName, setUserName] = React.useState('User');
-
-  React.useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.name) {
-      setUserName(user.name);
-    }
-  }, []);
+  const { state } = useAppStore();
+  const userName = state.user?.name || 'User';
 
   return (
     <div className="pt-32 pb-20 px-6 bg-slate-50 min-h-screen">

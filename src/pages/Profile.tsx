@@ -2,27 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { User, Mail, Phone, Calendar, Shield, LogOut, Settings, Bell, CreditCard, ChevronRight, Camera } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../utils/helpers';
+import { useAppStore } from '../store';
 
 export const Profile: React.FC = () => {
-  const [userData, setUserData] = useState({ name: '', email: '' });
+  const { state, logout } = useAppStore();
+  const userData = state.user || { name: 'User', email: 'user@example.com' };
   const navigate = useNavigate();
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!localStorage.getItem('isLoggedIn')) {
+    if (!state.user) {
       navigate('/auth');
       return;
     }
-    setUserData({
-      name: user.name || 'User',
-      email: user.email || 'user@example.com'
-    });
-  }, [navigate]);
+  }, [state.user, navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('user');
-    window.location.href = '/';
+    logout();
+    navigate('/');
   };
 
   return (

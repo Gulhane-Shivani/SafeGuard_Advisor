@@ -8,29 +8,36 @@ interface AppState {
 
 interface AppContextType {
   state: AppState;
-  login: (credentials: any) => Promise<void>;
+  setUser: (user: any) => void;
   logout: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [state, setState] = useState<AppState>({
-    user: null,
-    plans: [],
-    isLoading: false,
+  const [state, setState] = useState<AppState>(() => {
+    // Initialize from localStorage if available
+    const savedUser = localStorage.getItem('user');
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    return {
+      user: isLoggedIn && savedUser ? JSON.parse(savedUser) : null,
+      plans: [],
+      isLoading: false,
+    };
   });
 
-  const login = async (_credentials: any) => {
-    // Implement login logic
+  const setUser = (user: any) => {
+    setState(prev => ({ ...prev, user }));
   };
 
   const logout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('user');
     setState(prev => ({ ...prev, user: null }));
   };
 
   return (
-    <AppContext.Provider value={{ state, login, logout }}>
+    <AppContext.Provider value={{ state, setUser, logout }}>
       {children}
     </AppContext.Provider>
   );

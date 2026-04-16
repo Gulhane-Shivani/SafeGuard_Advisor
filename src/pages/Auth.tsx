@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import API from '../api/baseurl';
+import { useAppStore } from '../store';
 
 
 export const Auth: React.FC = () => {
@@ -12,7 +13,7 @@ export const Auth: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mobile, setMobile] = useState('');
-  const [error, setError] = useState('');
+  const { setUser } = useAppStore();
   const navigate = useNavigate();
 
   const handleAuth = async () => {
@@ -38,10 +39,12 @@ export const Auth: React.FC = () => {
 
       const res = await API.post(endpoint, payload);
       
+      const userData = { name: fullName || mobile || email.split('@')[0], email: email || mobile };
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('user', JSON.stringify({ name: fullName || mobile || email.split('@')[0], email: email || mobile }));
+      localStorage.setItem('user', JSON.stringify(userData));
+      
+      setUser(userData);
       navigate('/dashboard');
-      window.location.reload(); 
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
     }
