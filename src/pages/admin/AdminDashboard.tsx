@@ -9,6 +9,7 @@ interface Contact {
   email: string;
   subject: string;
   message: string;
+  is_read: boolean;
   created_at: string;
 }
 
@@ -16,6 +17,7 @@ export const AdminDashboard: React.FC = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
 
@@ -53,6 +55,28 @@ export const AdminDashboard: React.FC = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('isAdmin');
     navigate('/auth');
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this inquiry?')) return;
+    
+    try {
+      await API.delete(`/admin/contacts/${id}`);
+      setContacts(prev => prev.filter(c => c.id !== id));
+      setSuccess('Inquiry deleted successfully');
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete inquiry');
+    }
+  };
+
+  const handleToggleRead = async (id: number) => {
+    try {
+      const response = await API.patch(`/admin/contacts/${id}`, {});
+      setContacts(prev => prev.map(c => c.id === id ? { ...c, is_read: response.data.is_read } : c));
+    } catch (err: any) {
+      setError(err.message || 'Failed to update inquiry status');
+    }
   };
 
   const filteredContacts = contacts.filter(contact => 
@@ -124,8 +148,14 @@ export const AdminDashboard: React.FC = () => {
           </header>
 
           {error && (
-            <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-medium mb-8">
+            <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-medium mb-4">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="p-4 bg-teal-50 border border-teal-100 text-teal-600 rounded-2xl text-sm font-medium mb-4">
+              {success}
             </div>
           )}
 
@@ -168,14 +198,17 @@ export const AdminDashboard: React.FC = () => {
                     </tr>
                   ) : (
                     filteredContacts.map((contact) => (
-                      <tr key={contact.id} className="hover:bg-slate-50/50 transition-colors">
+                      <tr key={contact.id} className={`hover:bg-slate-50/50 transition-colors ${!contact.is_read ? 'bg-teal-50/20' : ''}`}>
                         <td className="px-8 py-6">
                           <div className="flex items-center gap-4">
                             <div className="w-10 h-10 bg-teal-50 rounded-xl flex items-center justify-center text-teal-600 font-bold">
                               {contact.name.charAt(0)}
                             </div>
                             <div>
-                              <p className="font-bold text-slate-900 text-sm">{contact.name}</p>
+                              <p className={`font-bold text-slate-900 text-sm flex items-center gap-2`}>
+                                {contact.name}
+                                {!contact.is_read && <span className="w-2 h-2 bg-teal-500 rounded-full"></span>}
+                              </p>
                               <p className="text-slate-500 text-xs">{contact.email}</p>
                             </div>
                           </div>
@@ -200,10 +233,17 @@ export const AdminDashboard: React.FC = () => {
                         </td>
                         <td className="px-8 py-6 text-right">
                           <div className="flex items-center justify-end gap-2">
-                            <button className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all">
+                            <button 
+                              onClick={() => handleToggleRead(contact.id)}
+                              className={`p-2 rounded-lg transition-all ${contact.is_read ? 'text-teal-600 bg-teal-50' : 'text-slate-400 hover:text-teal-600 hover:bg-teal-50'}`}
+                              title={contact.is_read ? "Mark as unread" : "Mark as read"}
+                            >
                               <CheckCircle className="w-5 h-5" />
                             </button>
-                            <button className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all">
+                            <button 
+                              onClick={() => handleDelete(contact.id)}
+                              className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                            >
                               <Trash2 className="w-5 h-5" />
                             </button>
                           </div>

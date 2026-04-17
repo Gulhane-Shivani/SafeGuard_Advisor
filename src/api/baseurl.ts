@@ -65,6 +65,56 @@ const API = {
 
     return { data: json, status: res.status };
   },
+
+  async patch<T = any>(endpoint: string, data: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
+    const headers: Record<string, string> = { 
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      ...(options.headers as Record<string, string> || {})
+    };
+
+    const res = await fetch(`${BASE_URL}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`, {
+      ...options,
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(data),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      const error = new Error(json.detail || "Update failed") as ApiError;
+      error.response = { data: json, status: res.status };
+      throw error;
+    }
+
+    return { data: json, status: res.status };
+  },
+
+  async delete<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
+    const headers: Record<string, string> = {
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      ...(options.headers as Record<string, string> || {})
+    };
+
+    const res = await fetch(`${BASE_URL}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`, { 
+      ...options,
+      method: "DELETE",
+      headers 
+    });
+    
+    const json = await res.json();
+
+    if (!res.ok) {
+      const error = new Error(json.detail || "Delete failed") as ApiError;
+      error.response = { data: json, status: res.status };
+      throw error;
+    }
+
+    return { data: json, status: res.status };
+  },
 };
 
 export default API;
