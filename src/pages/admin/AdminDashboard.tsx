@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, User, BookOpen, Clock, Shield, LogOut, Search, Filter, Download, Trash2, CheckCircle } from 'lucide-react';
+import { Mail, Clock, Shield, LogOut, Search, Filter, Download, Trash2, CheckCircle } from 'lucide-react';
 import API from '../../api/baseurl';
 
 interface Contact {
