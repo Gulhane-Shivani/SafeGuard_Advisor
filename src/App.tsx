@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import { Home } from './pages/Home';
 import { Advisor } from './pages/Advisor';
@@ -19,37 +19,37 @@ import './styles/globals.css';
 
 import { AppProvider } from './store';
 import ScrollToTop from './utils/ScrollToTop';
+import { Shield } from 'lucide-react';
 
-function App() {
+const AppContent = () => {
+  const location = useLocation();
+  const isAdminPath = location.pathname.startsWith('/admin');
+
   return (
-    <AppProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen bg-slate-50 flex flex-col">
-          <Navbar />
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      {!isAdminPath && <Navbar />}
 
+      <main className="flex-grow">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/advisor" element={<Advisor />} />
+          <Route path="/compare" element={<Compare />} />
+          <Route path="/claims" element={<Claims />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/insurance/health" element={<HealthInsurance />} />
+          <Route path="/insurance/life" element={<LifeInsurance />} />
+          <Route path="/insurance/motor" element={<MotorInsurance />} />
+          <Route path="/insurance/investment" element={<InvestmentInsurance />} />
+        </Routes>
+      </main>
 
-        <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/advisor" element={<Advisor />} />
-            <Route path="/compare" element={<Compare />} />
-            <Route path="/claims" element={<Claims />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/auth" element={<Auth />} />
-            <Route path="/privacy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<TermsOfService />} />
-            <Route path="/contact" element={<ContactUs />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/insurance/health" element={<HealthInsurance />} />
-            <Route path="/insurance/life" element={<LifeInsurance />} />
-            <Route path="/insurance/motor" element={<MotorInsurance />} />
-            <Route path="/insurance/investment" element={<InvestmentInsurance />} />
-          </Routes>
-        </main>
-
-
+      {!isAdminPath && (
         <footer className="bg-slate-900 text-white py-12">
           <div className="container mx-auto px-6 text-center">
             <div className="flex items-center justify-center gap-2 mb-6">
@@ -58,7 +58,7 @@ function App() {
               </div>
               <span className="text-xl font-bold">SafeGuard Advisor</span>
             </div>
-            <p className="text-slate-400 text-sm mb-8">Â© 2024 SafeGuard Advisor. All rights reserved.</p>
+            <p className="text-slate-400 text-sm mb-8">© 2024 SafeGuard Advisor. All rights reserved.</p>
             <div className="flex justify-center gap-6 text-slate-400 text-sm">
               <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
               <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
@@ -66,14 +66,20 @@ function App() {
             </div>
           </div>
         </footer>
-      </div>
-    </Router>
+      )}
+    </div>
+  );
+};
+
+function App() {
+  return (
+    <AppProvider>
+      <Router>
+        <ScrollToTop />
+        <AppContent />
+      </Router>
     </AppProvider>
   );
 }
 
-
-import { Shield } from 'lucide-react';
-
 export default App;
-

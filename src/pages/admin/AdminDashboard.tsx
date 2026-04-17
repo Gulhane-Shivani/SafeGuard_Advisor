@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Clock, Shield, LogOut, Search, Filter, Download, Trash2, CheckCircle } from 'lucide-react';
+import { Mail, Clock, Shield, LogOut, Search, Filter, Download, Trash2, CheckCircle, Menu, X } from 'lucide-react';
 import API from '../../api/baseurl';
+import { useAppStore } from '../../store';
 
 interface Contact {
   id: number;
@@ -18,7 +19,9 @@ export const AdminDashboard: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const { state, logout } = useAppStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,8 +55,7 @@ export const AdminDashboard: React.FC = () => {
   }, [navigate]);
 
   const handleLogout = () => {
-    localStorage.removeItem('adminToken');
-    localStorage.removeItem('isAdmin');
+    logout();
     navigate('/auth');
   };
 
@@ -86,16 +88,23 @@ export const AdminDashboard: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+      <div 
+        className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        onClick={() => setIsSidebarOpen(false)}
+      />
+
       {/* Sidebar */}
-      <aside className="w-64 bg-slate-900 text-white fixed h-full hidden lg:flex flex-col">
-        <div className="p-8 border-b border-white/10">
+      <aside className={`w-64 bg-slate-900 text-white fixed h-full z-50 flex flex-col transition-transform duration-300 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
+        <div className="p-8 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="bg-teal-600 p-2 rounded-xl shadow-lg shadow-teal-600/30">
               <Shield className="w-6 h-6 text-white" />
             </div>
-            <span className="font-bold text-lg">Admin Panel</span>
+            <span className="font-bold text-lg tracking-tight">Admin Panel</span>
           </div>
+          <button className="lg:hidden text-white/50 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
+            <X className="w-6 h-6" />
+          </button>
         </div>
         
         <nav className="flex-grow p-6 space-y-2">
@@ -118,32 +127,61 @@ export const AdminDashboard: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow lg:ml-64 p-8">
-        <div className="max-w-7xl mx-auto">
-          <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">Contact Inquiries</h1>
-              <p className="text-slate-500 mt-1">Manage and respond to user messages effectively.</p>
+      <main className="flex-grow lg:ml-64 bg-slate-50 min-h-screen">
+        <div className="max-w-7xl mx-auto p-4 md:p-8">
+          <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => setIsSidebarOpen(true)}
+                className="lg:hidden p-2 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50"
+              >
+                <Menu className="w-6 h-6" />
+              </button>
+              <div>
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Contact Inquiries</h1>
+                <span className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-[10px] font-black uppercase tracking-widest">
+                  {contacts.length} Total
+                </span>
+              </div>
+              <p className="text-slate-500 font-medium tracking-wide">Manage and respond to user messages effectively.</p>
             </div>
             
-            <div className="flex items-center gap-4">
-              <div className="relative group">
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="relative group flex-grow md:flex-grow-0">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                 <input 
                   type="text" 
-                  placeholder="Search inquiries..."
+                  placeholder="Search by name, email or subject..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all w-64 text-sm"
+                  className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all w-full md:w-80 text-sm shadow-sm"
                 />
               </div>
-              <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all">
-                <Filter className="w-5 h-5" />
-              </button>
-              <button className="px-4 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all flex items-center gap-2">
-                <Download className="w-4 h-4" />
-                Export CSV
-              </button>
+              <div className="flex items-center gap-2">
+                <button className="p-3 bg-white border border-slate-200 rounded-2xl text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+                  <Filter className="w-5 h-5" />
+                </button>
+                <button className="px-5 py-3 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-slate-900/20">
+                  <Download className="w-4 h-4" />
+                  Export CSV
+                </button>
+                <button 
+                  onClick={() => navigate('/')}
+                  className="px-5 py-3 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold text-sm hover:bg-slate-50 transition-all shadow-sm"
+                >
+                  Return to Site
+                </button>
+                <div className="flex items-center gap-3 pl-4 border-l border-slate-200 ml-2">
+                  <div className="text-right hidden sm:block">
+                    <p className="text-sm font-bold text-slate-900">{state.user?.name || 'Administrator'}</p>
+                    <p className="text-[10px] text-teal-600 font-bold uppercase tracking-widest">Master Admin</p>
+                  </div>
+                  <div className="w-10 h-10 bg-slate-900 rounded-2xl flex items-center justify-center text-white">
+                    <Shield className="w-5 h-5 text-teal-400" />
+                  </div>
+                </div>
+              </div>
             </div>
           </header>
 
