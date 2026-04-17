@@ -175,6 +175,18 @@ const Navbar: React.FC = () => {
               )}
             </div>
 
+            {user?.role === 'admin' && (
+              <Link
+                to="/admin/dashboard"
+                className={cn(
+                  "text-sm font-bold transition-colors text-amber-600 hover:text-amber-700",
+                  location.pathname === '/admin/dashboard' ? "underline decoration-2" : ""
+                )}
+              >
+                Admin Dashboard
+              </Link>
+            )}
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}

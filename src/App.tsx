@@ -14,6 +14,7 @@ import LifeInsurance from './pages/insurance/LifeInsurance';
 import MotorInsurance from './pages/insurance/MotorInsurance';
 import InvestmentInsurance from './pages/insurance/InvestmentInsurance';
 import { Profile } from './pages/Profile';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
 import './styles/globals.css';
 
 import { AppProvider } from './store';
@@ -40,6 +41,7 @@ function App() {
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/insurance/health" element={<HealthInsurance />} />
             <Route path="/insurance/life" element={<LifeInsurance />} />
             <Route path="/insurance/motor" element={<MotorInsurance />} />

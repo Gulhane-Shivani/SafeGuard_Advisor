@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock } from 'lucide-react';
+import API from '../api/baseurl';
 
 export const ContactUs: React.FC = () => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   return (
     <div className="pt-32 pb-20 px-6 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-6xl">
@@ -82,12 +86,48 @@ export const ContactUs: React.FC = () => {
                 Send us a Message <Send className="w-6 h-6 text-teal-600" />
               </h2>
               
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const data = {
+                  name: formData.get('name') as string,
+                  email: formData.get('email') as string,
+                  subject: formData.get('subject') as string,
+                  message: formData.get('message') as string,
+                };
+                
+                setIsSubmitting(true);
+                setError('');
+                setSuccess('');
+
+                try {
+                  const response = await API.post('/contact', data);
+                  setSuccess(response.data.message || 'Your message has been sent successfully!');
+                  (e.target as HTMLFormElement).reset();
+                } catch (err: any) {
+                  setError(err.response?.data?.detail || 'Failed to send message. Please try again.');
+                } finally {
+                  setIsSubmitting(false);
+                }
+              }}>
+                {error && (
+                  <div className="p-4 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-sm font-medium">
+                    {error}
+                  </div>
+                )}
+                {success && (
+                  <div className="p-4 bg-teal-50 border border-teal-100 text-teal-600 rounded-2xl text-sm font-medium">
+                    {success}
+                  </div>
+                )}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
                     <input 
                       type="text" 
+                      name="name"
+                      required
                       placeholder="Enter your name"
                       className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
                     />
@@ -96,6 +136,8 @@ export const ContactUs: React.FC = () => {
                     <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
                     <input 
                       type="email" 
+                      name="email"
+                      required
                       placeholder="your@email.com"
                       className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
                     />
@@ -104,7 +146,11 @@ export const ContactUs: React.FC = () => {
 
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-700 ml-1">Subject</label>
-                  <select className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all">
+                  <select 
+                    name="subject"
+                    required
+                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
+                  >
                     <option>General Inquiry</option>
                     <option>Claims Assistance</option>
                     <option>Partnership Interest</option>
@@ -115,6 +161,8 @@ export const ContactUs: React.FC = () => {
                 <div className="space-y-2">
                   <label className="text-sm font-bold text-slate-700 ml-1">Message</label>
                   <textarea 
+                    name="message"
+                    required
                     rows={5}
                     placeholder="How can we help you?"
                     className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all resize-none"
@@ -123,10 +171,17 @@ export const ContactUs: React.FC = () => {
 
                 <button 
                   type="submit"
-                  className="w-full py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-1 transition-all flex items-center justify-center gap-3"
+                  disabled={isSubmitting}
+                  className={`w-full py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                 >
-                  Send Message
-                  <Send className="w-5 h-5" />
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="w-5 h-5" />
+                    </>
+                  )}
                 </button>
               </form>
             </div>
