@@ -175,18 +175,6 @@ const Navbar: React.FC = () => {
               )}
             </div>
 
-            {user?.role === 'admin' && (
-              <Link
-                to="/admin/dashboard"
-                className={cn(
-                  "text-sm font-bold transition-colors text-amber-600 hover:text-amber-700",
-                  location.pathname === '/admin/dashboard' ? "underline decoration-2" : ""
-                )}
-              >
-                Admin Dashboard
-              </Link>
-            )}
-
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -211,22 +199,55 @@ const Navbar: React.FC = () => {
             </button>
             
             {isLoggedIn ? (
-              <div className="flex items-center gap-3">
-                <Link to="/profile" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 rounded-full border border-teal-100 hover:bg-teal-100 transition-colors group">
+              <div className="relative group/profile">
+                <button 
+                  onMouseEnter={() => setIsDropdownOpen(true)}
+                  className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 rounded-full border border-teal-100 hover:bg-teal-100 transition-colors group"
+                >
                   <div className="bg-white p-1 rounded-full shadow-sm text-teal-600 group-hover:scale-110 transition-transform">
                     <User className="w-4 h-4" />
                   </div>
                   <span className="text-sm font-semibold text-teal-700">
-                    {user?.name || 'User'}
+                    {user?.name?.split(' ')[0] || 'User'}
                   </span>
-                </Link>
-                <button 
-                  onClick={handleLogout}
-                  className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
-                  title="Sign Out"
-                >
-                  <LogOut className="w-5 h-5" />
+                  <ChevronDown className="w-4 h-4 text-teal-600 transition-transform group-hover/profile:rotate-180" />
                 </button>
+
+                {/* Profile Dropdown */}
+                <div 
+                  className="absolute top-full right-0 mt-2 w-56 pt-2 opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200"
+                  onMouseEnter={() => setIsDropdownOpen(true)}
+                >
+                  <div className="bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 overflow-hidden pt-2">
+                    <div className="px-5 py-3 border-b border-slate-50">
+                      <p className="text-xs font-bold text-slate-400 capitalize">Account</p>
+                      <p className="text-sm font-bold text-slate-900 truncate">{user?.email}</p>
+                    </div>
+                    
+                    <div className="p-2 space-y-1">
+                      {user?.role === 'admin' && (
+                        <Link 
+                          to="/admin/dashboard" 
+                          className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-amber-600 hover:bg-amber-50 rounded-xl transition-all"
+                        >
+                          <Shield className="w-4 h-4" /> Admin Panel
+                        </Link>
+                      )}
+                      <Link 
+                        to="/profile" 
+                        className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all"
+                      >
+                        <User className="w-4 h-4" /> My Profile
+                      </Link>
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                      >
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </div>
+                  </div>
+                </div>
               </div>
             ) : (
               <Link to="/auth" className="flex items-center gap-2 pl-2 pr-4 py-2 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors">
@@ -327,6 +348,15 @@ const Navbar: React.FC = () => {
                 <div className="w-full py-3 bg-teal-50 text-teal-700 rounded-xl font-bold text-center border border-teal-100">
                   Logged in as {user?.name || 'User'}
                 </div>
+                {user?.role === 'admin' && (
+                  <Link 
+                    to="/admin/dashboard" 
+                    className="w-full py-3 bg-amber-50 text-amber-600 rounded-xl font-bold text-center border border-amber-100 flex items-center justify-center gap-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Shield className="w-4 h-4" /> Admin Panel
+                  </Link>
+                )}
                 <button 
                   onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                   className="w-full py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-center flex items-center justify-center gap-2"

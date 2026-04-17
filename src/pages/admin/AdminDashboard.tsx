@@ -88,6 +88,7 @@ export const AdminDashboard: React.FC = () => {
   );
 
   return (
+    <div className="fixed inset-0 bg-slate-50 flex z-[60] overflow-hidden">
       <div 
         className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 lg:hidden transition-opacity duration-300 ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
         onClick={() => setIsSidebarOpen(false)}
@@ -127,7 +128,7 @@ export const AdminDashboard: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow lg:ml-64 bg-slate-50 min-h-screen">
+      <main className="flex-grow lg:ml-64 bg-slate-50 min-h-screen overflow-y-auto">
         <div className="max-w-7xl mx-auto p-4 md:p-8">
           <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-6 mb-10">
             <div className="flex items-center gap-4">
