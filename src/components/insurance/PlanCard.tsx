@@ -59,7 +59,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
   return (
     <>
       <div className={cn(
-        "relative group p-6 rounded-[2rem] transition-all duration-500 border shadow-lg hover:shadow-2xl",
+        "relative group p-8 rounded-[2rem] transition-all duration-500 border shadow-lg hover:shadow-2xl",
         recommended 
           ? "bg-slate-900 border-slate-800 md:scale-110 z-20 shadow-slate-900/20" 
           : "bg-white border-slate-100 hover:-translate-y-1 z-10",
@@ -77,20 +77,20 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
           </div>
           <div className="text-right">
             <p className={cn("text-[8px] font-bold uppercase tracking-widest mb-1", recommended ? "text-slate-400" : "text-slate-400")}>Monthly</p>
-            <p className={cn("text-xl font-black", recommended ? "text-white" : "text-slate-900")}>
+            <p className={cn("text-2xl font-black", recommended ? "text-white" : "text-slate-900")}>
               &#8377;{price}
             </p>
           </div>
         </div>
 
         <div className="mb-4 px-1">
-          <h3 className={cn("text-base font-bold leading-tight truncate mb-1", recommended ? "text-white" : "text-slate-900")}>{title}</h3>
-          <p className="text-[9px] font-black uppercase tracking-widest text-teal-500">
+          <h3 className={cn("text-lg font-bold leading-tight truncate mb-1", recommended ? "text-white" : "text-slate-900")}>{title}</h3>
+          <p className="text-[10px] font-black uppercase tracking-widest text-teal-500">
             {provider}
           </p>
         </div>
 
-        <p className={cn("text-[11px] leading-relaxed mb-6 px-1 line-clamp-2", recommended ? "text-slate-400" : "text-slate-400")}>
+        <p className={cn("text-xs leading-relaxed mb-6 px-1 line-clamp-2", recommended ? "text-slate-400" : "text-slate-400")}>
           Verified {type} protection plan with comprehensive Indian network coverage.
         </p>
 
@@ -103,7 +103,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
               )}>
                 <Check className="w-2 h-2" />
               </div>
-              <span className={cn("text-[11px] font-bold tracking-tight", recommended ? "text-slate-300" : "text-slate-600")}>{feature}</span>
+              <span className={cn("text-xs font-bold tracking-tight", recommended ? "text-slate-300" : "text-slate-600")}>{feature}</span>
             </div>
           ))}
         </div>
@@ -112,13 +112,13 @@ const PlanCard: React.FC<PlanCardProps> = ({ title, type, price, provider, featu
           <button 
             onClick={() => setShowModal(true)}
             className={cn(
-              "w-full py-4 rounded-xl text-[10px] font-black flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap uppercase tracking-widest shadow-lg",
+              "w-full py-4 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-95 whitespace-nowrap uppercase tracking-widest shadow-lg",
               recommended 
                 ? "bg-teal-600 text-white hover:bg-teal-500 shadow-teal-900/20" 
                 : "bg-slate-900 text-white hover:bg-slate-800"
             )}
           >
-            View Plan <ArrowRight className="w-3 h-3" />
+            View Plan <ArrowRight className="w-4 h-4" />
           </button>
         </div>
       </div>

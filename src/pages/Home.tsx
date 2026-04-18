@@ -313,8 +313,8 @@ export const Home: React.FC = () => {
       <section className="py-24 bg-slate-50">
         <div className="container mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16 px-4">
-            <h2 className="text-4xl font-bold text-slate-900 mb-4">Most Popular Insurance Plans</h2>
-            <p className="text-slate-500 mb-8">Top-rated plans from IRDAI-approved Indian insurers selected by thousands of users this month.</p>
+            <h2 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">Top Rated Insurance Plans</h2>
+            <p className="text-slate-500 mb-8 font-medium">Selected by over 1 Million users for exceptional claim settlement and coverage benefits.</p>
             <Link to="/compare" className="group inline-flex items-center gap-3 text-teal-600 font-bold hover:text-teal-700 transition-all">
               View All Plans
               <div className="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-all">
@@ -433,11 +433,11 @@ export const Home: React.FC = () => {
           </div>
         </div>
 
-        <div className="mt-16 text-center">
+        {/* <div className="mt-16 text-center">
           <Link to="/advisor" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold shadow-xl hover:bg-slate-800 transition-all inline-flex items-center gap-2">
             Share Your Story <ArrowRight className="w-5 h-5" />
           </Link>
-        </div>
+        </div> */}
 
         <div className="container mx-auto px-6">
           {/* FAQ Section */}

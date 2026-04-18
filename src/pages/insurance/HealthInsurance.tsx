@@ -1,9 +1,24 @@
 import React from 'react';
-import { HeartPulse, ShieldCheck, Zap, HelpCircle, CheckCircle2, ArrowRight, Star } from 'lucide-react';
+import { HeartPulse, ShieldCheck, Zap, HelpCircle, CheckCircle2, ArrowRight, Star, Plus, Minus, CheckCircle, Mail, Briefcase, Users, Clock } from 'lucide-react';
+import { cn } from '../../utils/helpers';
 import { Link } from 'react-router-dom';
 import PlanCard from '../../components/insurance/PlanCard';
 
+
+const PARTNERS = [
+  { name: 'LIC of India', short: 'LIC', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/LIC_logo.png/200px-LIC_logo.png', bg: '#1e3a8a', color: '#fbbf24' },
+  { name: 'HDFC Life', short: 'HDFC', url: 'https://logo.clearbit.com/hdfclife.com', bg: '#dc2626', color: '#ffffff' },
+  { name: 'Star Health', short: '★ Star', url: 'https://logo.clearbit.com/starhealth.in', bg: '#1d4ed8', color: '#ffffff' },
+  { name: 'ICICI Lombard', short: 'ICICI', url: 'https://logo.clearbit.com/icicilombard.com', bg: '#ea580c', color: '#ffffff' },
+  { name: 'Bajaj Allianz', short: 'Bajaj', url: 'https://logo.clearbit.com/bajajallianz.com', bg: '#1e40af', color: '#ffffff' },
+  { name: 'Max Life', short: 'Max', url: 'https://logo.clearbit.com/maxlifeinsurance.com', bg: '#0f172a', color: '#38bdf8' },
+  { name: 'Niva Bupa', short: 'Niva', url: 'https://logo.clearbit.com/nivabupa.com', bg: '#0284c7', color: '#ffffff' },
+  { name: 'TATA AIG', short: 'TATA', url: 'https://logo.clearbit.com/tataaig.com', bg: '#1e3a8a', color: '#ef4444' },
+  { name: 'HDFC ERGO', short: 'ERGO', url: 'https://logo.clearbit.com/hdfcergo.com', bg: '#7c3aed', color: '#ffffff' },
+];
+
 const HealthInsurance: React.FC = () => {
+  const [openFaq, setOpenFaq] = React.useState<number | null>(null);
   const steps = [
     { title: 'Check Coverage Needs', desc: 'Determine if you need a family floater or individual plan based on your family size.' },
     { title: 'Compare Plans', desc: 'Use our AI advisor to compare cashless networks and claim settlement ratios.' },
@@ -38,15 +53,31 @@ const HealthInsurance: React.FC = () => {
   const reviews = [
     {
       name: "Amit Sharma",
+      location: "Mumbai",
       text: "The cashless process at Star Health was incredibly fast. I didn't have to pay a single penny for my surgery.",
       rating: 5,
-      role: "Policyholder since 2021"
+      image: "https://i.pravatar.cc/150?u=amit"
     },
     {
       name: "Priya Gupta",
+      location: "Delhi",
       text: "Excellent coverage for my parents. The Niva Bupa plan is worth every rupee for the peace of mind it provides.",
       rating: 5,
-      role: "Family Plan Member"
+      image: "https://i.pravatar.cc/150?u=priya"
+    },
+    {
+      name: "Rajesh Kumar",
+      location: "Bangalore",
+      text: "Safeguard Advisor helped me transition from a corporate plan to an individual one seamlessly.",
+      rating: 5,
+      image: "https://i.pravatar.cc/150?u=rajesh"
+    },
+    {
+      name: "Sneha Reddy",
+      location: "Hyderabad",
+      text: "The compare feature is a life saver. I could see the exact difference in cashless networks easily.",
+      rating: 5,
+      image: "https://i.pravatar.cc/150?u=sneha"
     }
   ];
 
@@ -102,59 +133,128 @@ const HealthInsurance: React.FC = () => {
           </div>
         </div>
 
-        {/* Customer Reviews Section */}
-        <div className="max-w-6xl mx-auto mb-24">
-          <h2 className="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {reviews.map((review, i) => (
-              <div key={i} className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-lg hover:shadow-xl transition-all">
-                <div className="flex gap-1 mb-4">
-                  {[...Array(review.rating)].map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                  ))}
-                </div>
-                <p className="text-slate-600 italic mb-6">"{review.text}"</p>
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">
-                    {review.name.charAt(0)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900">{review.name}</h4>
-                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{review.role}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+
 
         {/* Process Section */}
-        <div className="max-w-5xl mx-auto mb-24">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative">
-            <div className="hidden md:block absolute top-1/2 left-0 right-0 h-0.5 bg-slate-200 -translate-y-1/2 z-0"></div>
+        <div className="max-w-6xl mx-auto mb-24">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">How It Works</h2>
+            <p className="text-slate-500 font-medium">Get your health insurance in 4 simple steps</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+            {/* Connection Line */}
+            <div className="hidden md:block absolute top-12 left-24 right-24 h-0.5 bg-slate-100 z-0" />
+            
             {steps.map((step, i) => (
-              <div key={i} className="relative z-10 text-center">
-                <div className="w-12 h-12 bg-slate-900 text-white rounded-full flex items-center justify-center mx-auto mb-6 font-bold text-lg border-4 border-white">
-                  {i + 1}
+              <div key={i} className="relative z-10 group">
+                <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center h-full">
+                  <div className="w-16 h-16 bg-slate-900 text-white rounded-2xl flex items-center justify-center mx-auto mb-8 font-black text-xl shadow-xl shadow-slate-900/20 group-hover:scale-110 group-hover:rotate-3 transition-transform">
+                    {i + 1}
+                  </div>
+                  <h4 className="font-bold text-slate-900 mb-4 text-lg">{step.title}</h4>
+                  <p className="text-slate-500 text-sm leading-relaxed font-medium">{step.desc}</p>
                 </div>
-                <h4 className="font-bold text-slate-900 mb-2">{step.title}</h4>
-                <p className="text-slate-400 text-xs px-4">{step.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
+        {/* Customer Reviews Section - Infinite Marquee */}
+        <section className="py-24 -mx-6 bg-white overflow-hidden relative mb-24">
+          <div className="container mx-auto px-6 relative z-10 mb-16">
+            <div className="text-center max-w-3xl mx-auto">
+              <h2 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">What Our Customers Say</h2>
+              <p className="text-slate-500 text-lg">Trusted by thousands for effortless health claims and honest advice.</p>
+            </div>
+          </div>
+
+          <div className="relative group">
+            {/* Gradient masking for smooth edges */}
+            <div className="absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-40 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+
+            <div className="flex w-max animate-slider hover:[animation-play-state:paused] gap-8 px-4 py-10">
+              {[...reviews, ...reviews].map((review, i) => (
+                <div 
+                  key={i} 
+                  className="w-[420px] p-10 rounded-[3rem] bg-white border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-2xl hover:shadow-blue-600/10 hover:-translate-y-2 transition-all duration-500 group/card relative overflow-hidden text-left"
+                >
+                  <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" />
+                  
+                  <div className="relative z-10">
+                    <div className="flex gap-1 mb-8">
+                      {[...Array(5)].map((_, j) => (
+                        <Star key={j} className={cn("w-4 h-4 fill-current", j < review.rating ? "text-amber-400" : "text-slate-200")} />
+                      ))}
+                    </div>
+                    
+                    <p className="text-slate-700 font-medium leading-relaxed mb-10 italic text-lg tracking-tight">
+                      "{review.text}"
+                    </p>
+                    
+                    <div className="flex items-center gap-5">
+                      <div className="relative">
+                        <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md">
+                          <img src={review.image} alt={review.name} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full border-2 border-white flex items-center justify-center shadow-sm">
+                          <CheckCircle className="w-3 h-3 text-white" />
+                        </div>
+                      </div>
+                      <div className="text-left">
+                        <h4 className="font-bold text-slate-900 text-base">{review.name}</h4>
+                        <p className="text-xs text-blue-600 font-bold uppercase tracking-[0.15em]">{review.location}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* FAQ Section */}
-        <div className="max-w-3xl mx-auto mb-20">
-          <h2 className="text-3xl font-bold text-center mb-12 flex items-center justify-center gap-3">
-            <HelpCircle className="w-8 h-8 text-blue-600" /> FAQs
-          </h2>
+        <div className="max-w-4xl mx-auto mb-32">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">Frequently Asked Questions</h2>
+            <p className="text-slate-500 font-medium">Everything you need to know about Health Insurance and effortless claims.</p>
+          </div>
+
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
-                <h3 className="font-bold text-slate-900 mb-2">{faq.q}</h3>
-                <p className="text-slate-500 text-sm">{faq.a}</p>
+              <div 
+                key={i} 
+                className={cn(
+                  "group border transition-all duration-300 rounded-[2rem]",
+                  openFaq === i 
+                    ? "bg-white border-blue-100 shadow-xl shadow-blue-600/5" 
+                    : "bg-white border-slate-100 hover:bg-white hover:border-slate-200 shadow-sm"
+                )}
+              >
+                <button 
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                  className="w-full p-6 md:p-8 flex items-center justify-between text-left"
+                >
+                  <h3 className="text-lg font-bold text-slate-900 pr-8">{faq.q}</h3>
+                  <div className={cn(
+                    "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm",
+                    openFaq === i ? "bg-blue-600 text-white rotate-180" : "bg-white text-slate-400"
+                  )}>
+                    {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" /> }
+                  </div>
+                </button>
+                
+                <div className={cn(
+                  "grid transition-all duration-300 ease-in-out",
+                  openFaq === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                )}>
+                  <div className="overflow-hidden">
+                    <div className="px-8 pb-8 text-slate-500 leading-relaxed font-medium">
+                      {faq.a}
+                    </div>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
