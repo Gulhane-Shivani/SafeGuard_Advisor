@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { 
   User, Mail, Phone, Calendar, Shield, LogOut, Settings, 
-  Bell, CreditCard, ChevronRight, Camera, MapPin, 
+  Bell, CreditCard, Camera, MapPin, 
   FileText, Activity, Lock, Wallet, Clock
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';

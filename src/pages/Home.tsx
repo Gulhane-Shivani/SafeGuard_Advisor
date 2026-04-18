@@ -92,18 +92,9 @@ const PARTNERS = [
 
 
 export const Home: React.FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [userName, setUserName] = React.useState('');
 
   const [openFaq, setOpenFaq] = React.useState<number | null>(null);
 
-  React.useEffect(() => {
-    setIsLoggedIn(localStorage.getItem('isLoggedIn') === 'true');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.name) {
-      setUserName(user.name);
-    }
-  }, []);
 
   return (
     <div className="pt-20">

@@ -28,7 +28,7 @@ export const AdminDashboard: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeMenu, setActiveMenu] = useState('Inquiries');
-  const { state, logout } = useAppStore();
+  const { logout } = useAppStore();
   const navigate = useNavigate();
 
   useEffect(() => {
