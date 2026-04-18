@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ArrowLeft, Target, Shield, HeartPulse, Car, TrendingUp } from 'lucide-react';
 import { cn } from '../utils/helpers';
 import { AuthModal } from '../components/layout/AuthModal';
 
 export const Advisor: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState(1);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+
   const [formData, setFormData] = useState({
     category: '',
     age: '',
@@ -21,7 +26,7 @@ export const Advisor: React.FC = () => {
     // GATEKEEPING: Check if logged in before proceeding
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (!isLoggedIn) {
-      setIsAuthModalOpen(true);
+      navigate('/auth', { state: { from: '/advisor' } });
       return;
     }
 
@@ -281,11 +286,7 @@ export const Advisor: React.FC = () => {
         )}
         {renderStep()}
       </div>
-      <AuthModal 
-        isOpen={isAuthModalOpen} 
-        onClose={() => setIsAuthModalOpen(false)} 
-        onSuccess={() => setIsAuthModalOpen(false)} 
-      />
+
     </div>
   );
 };

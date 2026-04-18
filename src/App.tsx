@@ -24,10 +24,12 @@ import { Shield } from 'lucide-react';
 const AppContent = () => {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
+  const isAuthPath = location.pathname === '/auth';
+  const hideLayout = isAdminPath || isAuthPath;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {!isAdminPath && <Navbar />}
+      {!hideLayout && <Navbar />}
 
       <main className="flex-grow">
         <Routes>
@@ -49,7 +51,7 @@ const AppContent = () => {
         </Routes>
       </main>
 
-      {!isAdminPath && (
+      {!hideLayout && (
         <footer className="bg-slate-900 text-white py-12">
           <div className="container mx-auto px-6 text-center">
             <div className="flex items-center justify-center gap-2 mb-6">

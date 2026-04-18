@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Mail, Lock, User, ArrowRight, Eye, EyeOff, Phone, ArrowLeft } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import API from '../api/baseurl';
 import { useAppStore } from '../store';
 
@@ -18,18 +18,26 @@ export const Auth: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { setUser } = useAppStore();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+      navigate('/dashboard');
+    }
+  }, [navigate]);
 
   const handleAuth = async () => {
     setError('');
     setSuccess('');
     setIsLoading(true);
-    
+
     try {
       let endpoint = isLogin ? '/login' : '/register';
       const payload: any = {};
-      
+
       if (isAdmin && isLogin) {
         endpoint = '/admin/login';
         payload.username = email; // Using email field as username for admin
@@ -39,7 +47,7 @@ export const Auth: React.FC = () => {
           if (!fullName) return setError('Full Name is required');
           payload.full_name = fullName;
         }
-        
+
         if (usePhone) {
           if (!mobile) return setError('Mobile number is required');
           payload.mobile = mobile;
@@ -52,7 +60,7 @@ export const Auth: React.FC = () => {
       }
 
       const response = await API.post(endpoint, payload);
-      
+
       if (!isLogin) {
         // Handle Registration Success
         setSuccess('Account created successfully! Please sign in.');
@@ -62,37 +70,38 @@ export const Auth: React.FC = () => {
         setIsLoading(false);
         return;
       }
-      
+
       // Handle Login Success (User or Admin)
       if (isAdmin) {
         const { access_token, message } = response.data;
         localStorage.setItem('adminToken', access_token);
         localStorage.setItem('isAdmin', 'true');
         setSuccess(message || 'Admin login successful');
-        
+
         // Mock admin user data
         const adminData = { name: 'Administrator', email: 'admin@safeguard.in', role: 'admin' };
         localStorage.setItem('user', JSON.stringify(adminData));
         setUser(adminData);
-        
+
         navigate('/admin/dashboard');
       } else {
         const { user: userRes } = response.data;
-        
+
         if (!userRes) {
           throw new Error('Server did not return user details.');
         }
 
-        const userData = { 
-          name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User', 
-          email: userRes.email || userRes.mobile 
+        const userData = {
+          name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User',
+          email: userRes.email || userRes.mobile
         };
-        
+
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('user', JSON.stringify(userData));
-        
+
         setUser(userData);
-        navigate('/dashboard');
+        const from = location.state?.from || '/dashboard';
+        navigate(from);
       }
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
@@ -103,13 +112,13 @@ export const Auth: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 py-20 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-900 flex items-center justify-center px-4 pt-8 pb-20 relative overflow-hidden">
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-teal-600/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Back to Home Button */}
-      <button 
-        onClick={() => navigate('/')} 
+      <button
+        onClick={() => navigate('/')}
         className="absolute top-10 left-10 flex items-center gap-2 text-slate-400 hover:text-white transition-all font-bold group z-10"
       >
         <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:bg-teal-600 group-hover:border-teal-600 transition-all">
@@ -129,17 +138,16 @@ export const Auth: React.FC = () => {
         <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
           {/* Admin Toggle */}
           <div className="flex justify-center mb-6">
-            <button 
+            <button
               onClick={() => {
                 setIsAdmin(!isAdmin);
                 setUsePhone(false);
                 setIsLogin(true);
               }}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all border ${
-                isAdmin 
-                  ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 shadow-lg shadow-amber-500/10' 
-                  : 'bg-white/5 border-white/10 text-slate-500 hover:border-white/20'
-              }`}
+              className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all border ${isAdmin
+                ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 shadow-lg shadow-amber-500/10'
+                : 'bg-white/5 border-white/10 text-slate-500 hover:border-white/20'
+                }`}
             >
               {isAdmin ? 'Admin Mode Active' : 'Switch to Admin Login'}
             </button>
@@ -151,9 +159,8 @@ export const Auth: React.FC = () => {
                 <button
                   key={String(login)}
                   onClick={() => setIsLogin(login)}
-                  className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${
-                    isLogin === login ? 'bg-white text-slate-900 shadow-lg' : 'text-slate-400 hover:text-slate-200'
-                  }`}
+                  className={`flex-1 py-3 rounded-xl text-sm font-bold transition-all ${isLogin === login ? 'bg-white text-slate-900 shadow-lg' : 'text-slate-400 hover:text-slate-200'
+                    }`}
                 >
                   {login ? 'Sign In' : 'Create Account'}
                 </button>
@@ -258,7 +265,7 @@ export const Auth: React.FC = () => {
               </div>
             )}
 
-            <button 
+            <button
               onClick={handleAuth}
               disabled={isLoading}
               className={`w-full py-4 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-lg shadow-teal-600/20 flex items-center justify-center gap-2 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
@@ -280,7 +287,7 @@ export const Auth: React.FC = () => {
               <div className="flex-grow h-px bg-white/10" />
             </div>
 
-            
+
           </div>
 
           {!isAdmin && (
