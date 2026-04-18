@@ -141,11 +141,11 @@ const HealthInsurance: React.FC = () => {
             <h2 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">How It Works</h2>
             <p className="text-slate-500 font-medium">Get your health insurance in 4 simple steps</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
             {/* Connection Line */}
             <div className="hidden md:block absolute top-12 left-24 right-24 h-0.5 bg-slate-100 z-0" />
-            
+
             {steps.map((step, i) => (
               <div key={i} className="relative z-10 group">
                 <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 text-center h-full">
@@ -176,23 +176,23 @@ const HealthInsurance: React.FC = () => {
 
             <div className="flex w-max animate-slider hover:[animation-play-state:paused] gap-8 px-4 py-10">
               {[...reviews, ...reviews].map((review, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className="w-[420px] p-10 rounded-[3rem] bg-white border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-2xl hover:shadow-blue-600/10 hover:-translate-y-2 transition-all duration-500 group/card relative overflow-hidden text-left"
                 >
                   <div className="absolute -top-20 -right-20 w-40 h-40 bg-blue-50 rounded-full blur-3xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" />
-                  
+
                   <div className="relative z-10">
                     <div className="flex gap-1 mb-8">
                       {[...Array(5)].map((_, j) => (
                         <Star key={j} className={cn("w-4 h-4 fill-current", j < review.rating ? "text-amber-400" : "text-slate-200")} />
                       ))}
                     </div>
-                    
+
                     <p className="text-slate-700 font-medium leading-relaxed mb-10 italic text-lg tracking-tight">
                       "{review.text}"
                     </p>
-                    
+
                     <div className="flex items-center gap-5">
                       <div className="relative">
                         <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md">
@@ -223,16 +223,16 @@ const HealthInsurance: React.FC = () => {
 
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className={cn(
                   "group border transition-all duration-300 rounded-[2rem]",
-                  openFaq === i 
-                    ? "bg-white border-blue-100 shadow-xl shadow-blue-600/5" 
+                  openFaq === i
+                    ? "bg-white border-blue-100 shadow-xl shadow-blue-600/5"
                     : "bg-white border-slate-100 hover:bg-white hover:border-slate-200 shadow-sm"
                 )}
               >
-                <button 
+                <button
                   onClick={() => setOpenFaq(openFaq === i ? null : i)}
                   className="w-full p-6 md:p-8 flex items-center justify-between text-left"
                 >
@@ -241,10 +241,10 @@ const HealthInsurance: React.FC = () => {
                     "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm",
                     openFaq === i ? "bg-blue-600 text-white rotate-180" : "bg-white text-slate-400"
                   )}>
-                    {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" /> }
+                    {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
                   </div>
                 </button>
-                
+
                 <div className={cn(
                   "grid transition-all duration-300 ease-in-out",
                   openFaq === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
@@ -262,7 +262,7 @@ const HealthInsurance: React.FC = () => {
 
         {/* CTA */}
         <div className="text-center">
-          <Link 
+          <Link
             to="/compare?category=health"
             className="inline-flex items-center gap-2 px-10 py-5 bg-teal-600 text-white rounded-2xl font-bold hover:bg-teal-500 transition-all shadow-xl shadow-teal-600/30"
           >

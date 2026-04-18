@@ -78,15 +78,15 @@ const MOCK_FAQS = [
 ];
 
 const PARTNERS = [
-  { name: 'LIC of India', short: 'LIC', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/LIC_logo.png/200px-LIC_logo.png', bg: '#1e3a8a', color: '#fbbf24' },
-  { name: 'HDFC Life', short: 'HDFC', url: 'https://logo.clearbit.com/hdfclife.com', bg: '#dc2626', color: '#ffffff' },
-  { name: 'Star Health', short: '★ Star', url: 'https://logo.clearbit.com/starhealth.in', bg: '#1d4ed8', color: '#ffffff' },
-  { name: 'ICICI Lombard', short: 'ICICI', url: 'https://logo.clearbit.com/icicilombard.com', bg: '#ea580c', color: '#ffffff' },
-  { name: 'Bajaj Allianz', short: 'Bajaj', url: 'https://logo.clearbit.com/bajajallianz.com', bg: '#1e40af', color: '#ffffff' },
-  { name: 'Max Life', short: 'Max', url: 'https://logo.clearbit.com/maxlifeinsurance.com', bg: '#0f172a', color: '#38bdf8' },
-  { name: 'Niva Bupa', short: 'Niva', url: 'https://logo.clearbit.com/nivabupa.com', bg: '#0284c7', color: '#ffffff' },
-  { name: 'TATA AIG', short: 'TATA', url: 'https://logo.clearbit.com/tataaig.com', bg: '#1e3a8a', color: '#ef4444' },
-  { name: 'HDFC ERGO', short: 'ERGO', url: 'https://logo.clearbit.com/hdfcergo.com', bg: '#7c3aed', color: '#ffffff' },
+  { name: 'HDFC ERGO', short: 'ERGO', url: 'https://upload.wikimedia.org/wikipedia/en/5/56/HDFC_ERGO_Logo_2025.png', bg: '#7c3aed', color: '#ffffff' },
+  { name: 'ICICI Lombard', short: 'ICICI', url: 'https://upload.wikimedia.org/wikipedia/en/0/05/ICICI_Lombard.svg', bg: '#ea580c', color: '#ffffff' },
+  { name: 'TATA AIG', short: 'TATA', url: 'https://upload.wikimedia.org/wikipedia/commons/0/03/TATA_AIG_logo.png', bg: '#1e3a8a', color: '#ef4444' },
+  { name: 'Bajaj Allianz', short: 'Bajaj', url: 'https://upload.wikimedia.org/wikipedia/commons/8/81/Bajaj_Allianz_Insurance.svg', bg: '#1e40af', color: '#ffffff' },
+  { name: 'Star Health', short: '★ Star', url: 'https://upload.wikimedia.org/wikipedia/commons/e/ed/Star_Health_and_Allied_Insurance.svg', bg: '#1d4ed8', color: '#ffffff' },
+  { name: 'Niva Bupa', short: 'Niva', url: 'https://upload.wikimedia.org/wikipedia/commons/1/14/Niva_Bupa_Logo.jpg', bg: '#0284c7', color: '#ffffff' },
+  { name: 'LIC of India', short: 'LIC', url: 'https://upload.wikimedia.org/wikipedia/commons/7/7d/Life_Insurance_Corporation_of_India.svg', bg: '#1e3a8a', color: '#fbbf24' },
+  { name: 'HDFC Life', short: 'HDFC', url: 'https://upload.wikimedia.org/wikipedia/en/8/8f/HDFC_Life_Logo.svg', bg: '#dc2626', color: '#ffffff' },
+  { name: 'Max Life', short: 'Max', url: 'https://upload.wikimedia.org/wikipedia/en/4/4b/Max_Life_Insurance.svg', bg: '#0f172a', color: '#38bdf8' },
 ];
 
 
@@ -218,7 +218,7 @@ export const Home: React.FC = () => {
                 Select a category to explore premium plans from India's top insurers
               </p>
             </div>
-            
+
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
               {[
                 { title: 'Health', Icon: HeartPulse, desc: 'Coverage for medical emergencies', partners: 'Star Health, Niva Bupa, Care', iconBg: 'bg-blue-100/50 text-blue-600', hoverBg: 'hover:border-blue-200 hover:bg-blue-50/30', href: '/insurance/health' },
@@ -259,11 +259,11 @@ export const Home: React.FC = () => {
 
             <div className="flex w-max animate-slider hover:[animation-play-state:paused] items-center py-4">
               {[...PARTNERS, ...PARTNERS].map((partner, i) => (
-                <div key={i} className="flex-shrink-0 w-48 h-12 mx-8 flex items-center justify-center grayscale hover:grayscale-0 transition-all duration-500 opacity-60 hover:opacity-100 group">
+                <div key={i} className="flex-shrink-0 w-48 h-20 mx-4 bg-white border border-slate-100 rounded-2xl shadow-sm flex items-center justify-center hover:shadow-md hover:border-teal-100 transition-all duration-500 group">
                   <img
                     src={partner.url}
                     alt={partner.name}
-                    className="max-w-full max-h-full object-contain transform group-hover:scale-110 transition-transform duration-500"
+                    className="max-w-[70%] max-h-[60%] object-contain transform group-hover:scale-110 transition-transform duration-500"
                     onError={(e) => {
                       (e.target as HTMLImageElement).style.display = 'none';
                       const parent = (e.target as HTMLElement).parentElement;
@@ -395,24 +395,24 @@ export const Home: React.FC = () => {
           {/* Single Row: Moving Right to Left */}
           <div className="flex w-max animate-slider hover:[animation-play-state:paused] gap-8 px-4 py-10">
             {[...MOCK_REVIEWS, ...MOCK_REVIEWS].map((review, i) => (
-              <div 
-                key={i} 
+              <div
+                key={i}
                 className="w-[420px] p-10 rounded-[3rem] bg-white border border-slate-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-2xl hover:shadow-teal-600/10 hover:-translate-y-2 transition-all duration-500 group/card relative overflow-hidden"
               >
                 {/* Subtle card glow */}
                 <div className="absolute -top-20 -right-20 w-40 h-40 bg-teal-50 rounded-full blur-3xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-700" />
-                
+
                 <div className="relative z-10">
                   <div className="flex gap-1 mb-8">
                     {[...Array(5)].map((_, j) => (
                       <Star key={j} className={cn("w-4 h-4 fill-current", j < review.rating ? "text-amber-400" : "text-slate-200")} />
                     ))}
                   </div>
-                  
+
                   <p className="text-slate-700 font-medium leading-relaxed mb-10 italic text-lg tracking-tight">
                     "{review.text}"
                   </p>
-                  
+
                   <div className="flex items-center gap-5">
                     <div className="relative">
                       <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md">
@@ -449,16 +449,16 @@ export const Home: React.FC = () => {
 
             <div className="space-y-4">
               {MOCK_FAQS.map((faq, i) => (
-                <div 
-                  key={i} 
+                <div
+                  key={i}
                   className={cn(
                     "group border transition-all duration-300 rounded-[2rem]",
-                    openFaq === i 
-                      ? "bg-white border-teal-100 shadow-xl shadow-teal-600/5" 
+                    openFaq === i
+                      ? "bg-white border-teal-100 shadow-xl shadow-teal-600/5"
                       : "bg-slate-50/50 border-slate-100 hover:bg-white hover:border-slate-200"
                   )}
                 >
-                  <button 
+                  <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                     className="w-full p-6 md:p-8 flex items-center justify-between text-left"
                   >
@@ -467,10 +467,10 @@ export const Home: React.FC = () => {
                       "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm",
                       openFaq === i ? "bg-teal-600 text-white rotate-180" : "bg-white text-slate-400"
                     )}>
-                      {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" /> }
+                      {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
                     </div>
                   </button>
-                  
+
                   <div className={cn(
                     "grid transition-all duration-300 ease-in-out",
                     openFaq === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
