@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Receipt } from 'lucide-react';
+import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Receipt, ArrowRight, ChevronRight } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
@@ -36,17 +36,16 @@ const Navbar: React.FC = () => {
   ];
 
   const insuranceCategories = [
-    { name: 'Health Insurance', href: '/insurance/health', Icon: HeartPulse, desc: 'Star, Niva Bupa, Care' },
-    { name: 'Life / Term', href: '/insurance/life', Icon: Shield, desc: 'LIC, HDFC Life, Max Life' },
-    { name: 'Motor Insurance', href: '/insurance/motor', Icon: Car, desc: 'ICICI, Bajaj Allianz' },
-    { name: 'Investment Plans', href: '/insurance/investment', Icon: TrendingUp, desc: 'ULIP, SIP + Insurance' },
+    { name: 'Health', href: '/insurance/health', Icon: HeartPulse, desc: 'Medical & Dental', details: ['Individual Health', 'Family Floater', 'Senior Citizen'] },
+    { name: 'Life / Term', href: '/insurance/life', Icon: Shield, desc: 'Family Protection', details: ['Term Life', 'Savings Plan', 'Retirement'] },
+    { name: 'Motor', href: '/insurance/motor', Icon: Car, desc: 'Vehicle Safety', details: ['Car Insurance', 'Two Wheeler', 'Commercial'] },
+    { name: 'Investment', href: '/insurance/investment', Icon: TrendingUp, desc: 'Wealth Manager', details: ['ULIP Plans', 'Capital Guarantee', 'Guaranteed Income'] },
   ];
 
   const calculatorLinks = [
-    { name: 'Premium Calculator', href: '/advisor', Icon: Calculator, desc: 'Estimate your monthly premium' },
-    { name: 'Tax Saving Calc', href: '/insurance/health', Icon: Receipt, desc: '80D & 80C deductions' },
-    { name: 'SIP Calculator', href: '/insurance/investment', Icon: PieChart, desc: 'Wealth compounding tool' },
-    { name: 'Health Score', href: '/advisor', Icon: HeartPulse, desc: 'Check your health index' },
+    { name: 'Premium Calculator', href: '/advisor', Icon: Calculator },
+    { name: 'Tax Saving Calc', href: '/insurance/health', Icon: Receipt },
+    { name: 'SIP Calculator', href: '/insurance/investment', Icon: PieChart },
   ];
 
 
@@ -94,81 +93,94 @@ const Navbar: React.FC = () => {
                 <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isInsuranceOpen && "rotate-180")} />
               </button>
 
-              {/* Dropdown Menu - Mega Menu Style */}
+              {/* Dropdown Menu - Standard Horizontal Mega Menu */}
               {isInsuranceOpen && (
-                <div className="absolute top-full -left-20 w-[640px] pt-3 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
-                  <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-8">
-                    <div className="grid grid-cols-2 gap-10">
-                      {/* Column 1: Insurance Plans */}
-                      <div>
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
-                          Insurance Plans
-                        </div>
-                        <div className="grid gap-2">
-                          {insuranceCategories.map((cat) => (
-                            <Link
-                              key={cat.name}
+                <div className="absolute top-full -left-48 w-[840px] pt-3 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
+                  <div className="bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden">
+                    <div className="flex">
+                      {/* Categories Columns */}
+                      <div className="flex-1 grid grid-cols-4 gap-0 divide-x divide-slate-50">
+                        {insuranceCategories.map((cat) => (
+                          <div key={cat.name} className="p-6 flex flex-col group/col">
+                            <Link 
                               to={cat.href}
-                              className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
+                              className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 hover:text-teal-600 transition-colors"
                               onClick={() => setIsInsuranceOpen(false)}
                             >
-                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
-                                <cat.Icon className="w-5 h-5" />
-                              </div>
-                              <div>
-                                <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
-                                  {cat.name}
-                                </div>
-                                <div className="text-[11px] text-slate-400 font-medium">{cat.desc}</div>
-                              </div>
+                              <cat.Icon className="w-4 h-4" />
+                              {cat.name}
                             </Link>
-                          ))}
-                        </div>
+                            
+                            <div className="space-y-4">
+                              <div className="space-y-2">
+                                {cat.details.map(detail => (
+                                  <Link 
+                                    key={detail}
+                                    to={cat.href}
+                                    className="block text-[11px] text-slate-500 hover:text-teal-600 font-bold flex items-center justify-between group/item"
+                                    onClick={() => setIsInsuranceOpen(false)}
+                                  >
+                                    <span>{detail}</span>
+                                    <ChevronRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-teal-600" />
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
 
-                      {/* Column 2: Calculators & Tools */}
-                      <div>
-                        <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-6 px-3">
-                          Tools & Calculators
+                      {/* Right Sidebar for Tools */}
+                      <div className="w-56 bg-slate-50 p-6 border-l border-slate-100">
+                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
+                          Comparison Tools
                         </div>
-                        <div className="grid gap-2">
+                        <div className="space-y-4">
                           {calculatorLinks.map((calc) => (
                             <Link
                               key={calc.name}
                               to={calc.href}
-                              className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
+                              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white hover:shadow-sm transition-all group/tool border border-transparent hover:border-slate-100"
                               onClick={() => setIsInsuranceOpen(false)}
                             >
-                              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
-                                <calc.Icon className="w-5 h-5" />
+                              <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 group-hover/tool:bg-teal-600 group-hover/tool:text-white transition-colors">
+                                <calc.Icon className="w-4 h-4" />
                               </div>
-                              <div>
-                                <div className="text-sm font-bold text-slate-900 group-hover/item:text-teal-600">
-                                  {calc.name}
-                                </div>
-                                <div className="text-[11px] text-slate-400 font-medium">{calc.desc}</div>
-                              </div>
+                              <span className="text-[11px] font-bold text-slate-600 group-hover/tool:text-slate-900">{calc.name}</span>
                             </Link>
                           ))}
+                          
+                          <div className="pt-4 mt-4 border-t border-slate-200">
+                            <Link
+                              to="/compare"
+                              className="flex items-center justify-between p-3.5 bg-slate-900 rounded-2xl text-white shadow-xl shadow-slate-950/20 hover:bg-teal-600 transition-all group/compare"
+                              onClick={() => setIsInsuranceOpen(false)}
+                            >
+                               <div className="flex flex-col">
+                                 <span className="text-[9px] font-black text-teal-400 uppercase tracking-widest leading-none mb-1">Expert Tool</span>
+                                 <span className="text-xs font-black uppercase tracking-tight">Compare Plans</span>
+                               </div>
+                               <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center group-hover/compare:bg-white group-hover/compare:text-teal-600 transition-colors">
+                                 <Scale className="w-4 h-4" />
+                               </div>
+                            </Link>
+                          </div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Footer Action */}
-                    <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-teal-50 px-3 py-1 rounded-full text-[10px] font-bold text-teal-600 uppercase">
-                          Featured
-                        </div>
-                        <span className="text-xs text-slate-500 font-medium">Compare plans side-by-side for best value</span>
-                      </div>
-                      <Link
-                        to="/compare"
-                        className="flex items-center gap-2 text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors"
-                        onClick={() => setIsInsuranceOpen(false)}
-                      >
-                        Compare All Plans <Scale className="w-4 h-4" />
-                      </Link>
+                    {/* Footer bar */}
+                    <div className="bg-slate-50/50 px-8 py-3 border-t border-slate-100 flex items-center justify-between">
+                       <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
+                         <Shield className="w-3.5 h-3.5" /> Direct Insurer Partner
+                       </p>
+                       <div className="flex items-center gap-4">
+                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">IRDAI Licensed Broker</span>
+                         <div className="h-4 w-px bg-slate-200" />
+                         <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Live Secure
+                         </span>
+                       </div>
                     </div>
                   </div>
                 </div>

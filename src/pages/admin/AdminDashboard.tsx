@@ -117,43 +117,43 @@ export const AdminDashboard: React.FC = () => {
 
       {/* Sidebar */}
       <aside className={cn(
-        "w-72 bg-slate-950 text-white fixed h-full z-[80] flex flex-col transition-all duration-500 ease-in-out border-r border-white/5",
+        "w-64 bg-slate-950 text-white fixed h-full z-[80] flex flex-col transition-all duration-500 ease-in-out border-r border-white/5",
         isSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full lg:translate-x-0"
       )}>
-        <div className="p-8 border-b border-white/5 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="bg-teal-600 p-2.5 rounded-2xl shadow-xl shadow-teal-600/20 rotate-3 group-hover:rotate-0 transition-transform">
-              <Shield className="w-6 h-6 text-white" />
+        <div className="p-6 border-b border-white/5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-teal-600 p-2 rounded-xl shadow-xl shadow-teal-600/20">
+              <Shield className="w-5 h-5 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-black text-xl tracking-tight leading-none mb-1">SafeGuard</span>
-              <span className="text-[10px] font-bold text-teal-400 uppercase tracking-[0.2em] leading-none">Console v2.0</span>
+              <span className="font-bold text-lg tracking-tight leading-none mb-1">SafeGuard</span>
+              <span className="text-[9px] font-bold text-teal-400 uppercase tracking-widest leading-none">Console v2.0</span>
             </div>
           </div>
           <button className="lg:hidden p-2 text-white/40 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
         
-        <nav className="flex-grow p-6 space-y-1.5 overflow-y-auto">
+        <nav className="flex-grow p-4 space-y-1 overflow-y-auto">
           {menuItems.map((item) => (
             <button
               key={item.label}
               onClick={() => setActiveMenu(item.label)}
               className={cn(
-                "w-full flex items-center justify-between px-4 py-4 rounded-2xl font-bold text-sm transition-all group relative overflow-hidden",
+                "w-full flex items-center justify-between px-4 py-3 rounded-xl font-bold text-xs transition-all group relative overflow-hidden",
                 activeMenu === item.label
                   ? "bg-teal-600 text-white shadow-lg shadow-teal-600/20"
                   : "text-slate-400 hover:text-white hover:bg-white/5"
               )}
             >
-              <div className="flex items-center gap-4 relative z-10">
-                <item.Icon className={cn("w-5 h-5", activeMenu === item.label ? "text-white" : "text-slate-500 group-hover:text-teal-400")} />
+              <div className="flex items-center gap-3 relative z-10">
+                <item.Icon className={cn("w-4 h-4", activeMenu === item.label ? "text-white" : "text-slate-500 group-hover:text-teal-400")} />
                 {item.label}
               </div>
               {item.badge !== undefined && item.badge > 0 && (
                 <span className={cn(
-                  "px-2 py-0.5 rounded-full text-[10px] font-black relative z-10",
+                  "px-1.5 py-0.5 rounded-full text-[9px] font-black relative z-10",
                   activeMenu === item.label ? "bg-white/20 text-white" : "bg-teal-600 text-white shadow-lg shadow-teal-600/30"
                 )}>
                   {item.badge}
@@ -163,110 +163,109 @@ export const AdminDashboard: React.FC = () => {
           ))}
         </nav>
 
-        <div className="p-6 border-t border-white/5 space-y-4">
-          <div className="bg-white/5 rounded-2xl p-4 border border-white/5 flex items-center gap-4">
-             <div className="w-10 h-10 rounded-xl bg-teal-600 flex items-center justify-center text-white shrink-0">
-               <Shield className="w-5 h-5" />
+        <div className="p-4 border-t border-white/5 space-y-3">
+          <div className="bg-white/5 rounded-xl p-3 border border-white/5 flex items-center gap-3">
+             <div className="w-8 h-8 rounded-lg bg-teal-600 flex items-center justify-center text-white shrink-0">
+               <Shield className="w-4 h-4" />
              </div>
              <div className="min-w-0">
-               <p className="text-sm font-bold truncate">Admin One</p>
-               <p className="text-[10px] text-teal-500 font-bold uppercase tracking-widest">Master Access</p>
+               <p className="text-xs font-bold truncate">Admin One</p>
+               <p className="text-[9px] text-teal-500 font-bold uppercase tracking-widest">Master Access</p>
              </div>
           </div>
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-4 px-4 py-4 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-2xl font-bold text-sm transition-all group"
+            className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl font-bold text-xs transition-all group"
           >
-            <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <LogOut className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
             Logout Session
           </button>
         </div>
       </aside>
 
       {/* Main Content */}
-      <main className="flex-grow lg:ml-72 bg-slate-50 min-h-screen overflow-y-auto">
+      <main className="flex-grow lg:ml-64 bg-slate-50 min-h-screen overflow-y-auto">
         {/* Top Navigation */}
-        <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+        <div className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200 px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
              <button 
                 onClick={() => setIsSidebarOpen(true)}
-                className="lg:hidden p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-600"
+                className="lg:hidden p-2 bg-slate-50 border border-slate-200 rounded-lg text-slate-600"
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5" />
               </button>
-              <div className="hidden md:flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest">
-                <Activity className="w-4 h-4 text-teal-600" />
+              <div className="hidden md:flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <Activity className="w-3.5 h-3.5 text-teal-600" />
                 System Live &middot; 24 Workers Active
               </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-slate-50 rounded-xl border border-slate-200 text-[11px] font-bold text-slate-500">
-               <Smartphone className="w-4 h-4" />
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-500">
+               <Smartphone className="w-3.5 h-3.5" />
                App Status: <span className="text-teal-600 uppercase ml-1">Normal</span>
             </div>
             <button className="relative p-2 text-slate-400 hover:text-slate-900 transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white animate-ping" />
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-red-500 rounded-full border-2 border-white animate-ping" />
             </button>
             <button 
               onClick={() => navigate('/')}
-              className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl font-bold text-sm hover:bg-slate-800 transition-all group"
+              className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-lg font-bold text-xs hover:bg-slate-800 transition-all group"
             >
-              Public View <ExternalLink className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              Public View <ExternalLink className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto p-4 md:p-10">
-          <header className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mb-12">
+        <div className="max-w-7xl mx-auto p-4 md:p-8">
+          <header className="flex flex-col xl:flex-row xl:items-end justify-between gap-6 mb-8">
             <div>
-              <div className="flex items-center gap-3 mb-3">
-                <div className="h-8 w-1.5 bg-teal-600 rounded-full" />
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight">Inquiry Management</h1>
+              <div className="flex items-center gap-2 mb-2">
+                <div className="h-6 w-1 bg-teal-600 rounded-full" />
+                <h1 className="text-2xl font-black text-slate-900 tracking-tight">Inquiry Management</h1>
               </div>
-              <p className="text-slate-500 font-medium text-lg max-w-2xl leading-relaxed">
+              <p className="text-slate-500 font-medium text-sm max-w-2xl leading-relaxed">
                 Review and process user inquiries from the contact portal. Total inquiries captured: <span className="text-slate-900 font-bold">{contacts.length}</span>
               </p>
             </div>
             
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="relative group min-w-[320px]">
-                <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="relative group min-w-[280px]">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 group-focus-within:text-teal-600 transition-colors" />
                 <input 
                   type="text" 
-                  placeholder="Search by name, subject or message..."
+                  placeholder="Search inquiries..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-12 pr-6 py-4 bg-white border border-slate-200 rounded-[1.5rem] focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all w-full text-sm shadow-sm font-medium"
+                  className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all w-full text-xs shadow-sm font-medium"
                 />
               </div>
-              <button className="p-4 bg-white border border-slate-200 rounded-[1.5rem] text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
-                <Filter className="w-5 h-5" />
+              <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all shadow-sm">
+                <Filter className="w-4 h-4" />
               </button>
-              <button className="px-8 py-4 bg-teal-600 text-white rounded-[1.5rem] font-bold text-sm hover:bg-teal-500 transition-all flex items-center gap-3 shadow-xl shadow-teal-600/20">
-                <Download className="w-4 h-4" />
-                Download Report
+              <button className="px-5 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-500 transition-all flex items-center gap-2 shadow-xl shadow-teal-600/10">
+                <Download className="w-3.5 h-3.5" />
+                Report
               </button>
             </div>
           </header>
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
             {[
               { label: 'Total Inquiries', value: contacts.length, Icon: Mail, color: 'text-teal-600', bg: 'bg-teal-50' },
               { label: 'Unread Messages', value: unreadCount, Icon: Bell, color: 'text-amber-600', bg: 'bg-amber-50', highlight: true },
               { label: 'System Health', value: 'Optimal', Icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
               { label: 'Avg Feedback', value: '4.8', Icon: Clock, color: 'text-slate-600', bg: 'bg-slate-50' },
             ].map((stat, i) => (
-              <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative overflow-hidden">
-                {stat.highlight && <div className="absolute top-0 right-0 p-2"><div className="w-2 h-2 bg-red-500 rounded-full animate-ping" /></div>}
-                <div className={cn("w-16 h-16 rounded-[1.5rem] flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner", stat.bg, stat.color)}>
-                  <stat.Icon className="w-8 h-8" />
+              <div key={i} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center gap-4 group hover:shadow-md transition-all relative overflow-hidden">
+                <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-inner", stat.bg, stat.color)}>
+                  <stat.Icon className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{stat.label}</p>
-                  <p className="text-3xl font-black text-slate-900">{stat.value}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">{stat.label}</p>
+                  <p className="text-xl font-black text-slate-900">{stat.value}</p>
                 </div>
               </div>
             ))}
@@ -274,50 +273,48 @@ export const AdminDashboard: React.FC = () => {
 
           {(error || success) && (
             <div className={cn(
-              "p-6 rounded-[1.5rem] text-sm font-bold mb-8 animate-in slide-in-from-top-4 duration-300 flex items-center gap-4",
+              "p-4 rounded-xl text-xs font-bold mb-6 animate-in slide-in-from-top-4 duration-300 flex items-center gap-3",
               error ? "bg-red-50 border border-red-100 text-red-600" : "bg-teal-50 border border-teal-100 text-teal-600"
             )}>
-              {error ? <X className="w-5 h-5 shrink-0" /> : <CheckCircle className="w-5 h-5 shrink-0" />}
+              {error ? <X className="w-4 h-4 shrink-0" /> : <CheckCircle className="w-4 h-4 shrink-0" />}
               {error || success}
             </div>
           )}
 
-          <div className="bg-white rounded-[3rem] border border-slate-100 shadow-2xl shadow-slate-200/40 overflow-hidden relative">
-            <div className="absolute top-0 left-0 right-0 h-1.5 bg-teal-600" />
+          <div className="bg-white rounded-2xl border border-slate-100 shadow-lg overflow-hidden relative">
+            <div className="absolute top-0 left-0 right-0 h-1 bg-teal-600" />
             <div className="overflow-x-auto">
               <table className="w-full text-left">
                 <thead>
                   <tr className="bg-slate-50/50">
-                    <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Contact Identity</th>
-                    <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Objective</th>
-                    <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Message Content</th>
-                    <th className="px-8 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Timestamp</th>
-                    <th className="px-10 py-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Operations</th>
+                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">User</th>
+                    <th className="px-5 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Subject</th>
+                    <th className="px-5 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Message</th>
+                    <th className="px-5 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Date</th>
+                    <th className="px-6 py-4 text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
                   {isLoading ? (
                     Array(5).fill(0).map((_, i) => (
                       <tr key={i} className="animate-pulse">
-                        <td className="px-10 py-8"><div className="h-12 w-48 bg-slate-100 rounded-xl"></div></td>
-                        <td className="px-8 py-8"><div className="h-6 w-32 bg-slate-100 rounded-full"></div></td>
-                        <td className="px-8 py-8"><div className="h-6 w-full bg-slate-100 rounded-xl"></div></td>
-                        <td className="px-8 py-8"><div className="h-6 w-24 bg-slate-100 rounded-xl"></div></td>
-                        <td className="px-10 py-8 text-right"><div className="h-10 w-20 bg-slate-100 rounded-xl ml-auto"></div></td>
+                        <td className="px-6 py-4"><div className="h-10 w-40 bg-slate-100 rounded-lg"></div></td>
+                        <td className="px-5 py-4"><div className="h-5 w-24 bg-slate-100 rounded-full"></div></td>
+                        <td className="px-5 py-4"><div className="h-5 w-full bg-slate-100 rounded-lg"></div></td>
+                        <td className="px-5 py-4"><div className="h-5 w-20 bg-slate-100 rounded-lg"></div></td>
+                        <td className="px-6 py-4 text-right"><div className="h-8 w-16 bg-slate-100 rounded-lg ml-auto"></div></td>
                       </tr>
                     ))
                   ) : filteredContacts.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-10 py-32 text-center">
-                        <div className="flex flex-col items-center gap-6">
-                          <div className="w-24 h-24 bg-slate-50 rounded-[2rem] flex items-center justify-center border border-slate-100">
-                            <FileText className="w-12 h-12 text-slate-200" />
+                      <td colSpan={5} className="px-6 py-20 text-center">
+                        <div className="flex flex-col items-center gap-4">
+                          <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100">
+                            <FileText className="w-8 h-8 text-slate-200" />
                           </div>
                           <div>
-                            <p className="text-slate-900 font-black text-2xl mb-2">Workspace Empty</p>
-                            <p className="text-slate-500 font-medium max-w-sm mx-auto">
-                              There are currently no inquiries matching your search or filters.
-                            </p>
+                            <p className="text-slate-950 font-black text-xl mb-1">Queue Empty</p>
+                            <p className="text-slate-500 font-medium text-xs">No matching inquiries found.</p>
                           </div>
                         </div>
                       </td>
@@ -331,64 +328,63 @@ export const AdminDashboard: React.FC = () => {
                           !contact.is_read ? "bg-teal-50/10" : "hover:bg-slate-50/50"
                         )}
                       >
-                        <td className="px-10 py-8">
-                          <div className="flex items-center gap-5">
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
                             <div className={cn(
-                              "w-12 h-12 rounded-[1.25rem] flex items-center justify-center text-lg font-black shrink-0 transition-transform group-hover/row:scale-110",
+                              "w-9 h-9 rounded-xl flex items-center justify-center text-sm font-black shrink-0",
                               !contact.is_read ? "bg-teal-600 text-white shadow-lg shadow-teal-600/20" : "bg-slate-100 text-slate-400"
                             )}>
                               {contact.name.charAt(0)}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-black text-slate-900 text-base flex items-center gap-3">
+                              <p className="font-black text-slate-900 text-sm flex items-center gap-2">
                                 {contact.name}
-                                {!contact.is_read && <span className="w-2 h-2 bg-teal-500 rounded-full animate-pulse" />}
+                                {!contact.is_read && <span className="w-1.5 h-1.5 bg-teal-500 rounded-full" />}
                               </p>
-                              <p className="text-slate-500 text-xs font-bold leading-none mt-1">{contact.email}</p>
+                              <p className="text-slate-500 text-[10px] font-bold leading-none">{contact.email}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-8">
+                        <td className="px-5 py-4">
                           <span className={cn(
-                            "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                            "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
                             !contact.is_read ? "bg-teal-600 text-white border-teal-600" : "bg-slate-50 text-slate-500 border-slate-100"
                           )}>
                             {contact.subject}
                           </span>
                         </td>
-                        <td className="px-8 py-8">
-                          <p className="text-slate-600 text-sm font-medium line-clamp-2 max-w-sm leading-relaxed group-hover/row:text-slate-900 transition-colors">
+                        <td className="px-5 py-4">
+                          <p className="text-slate-600 text-xs font-medium line-clamp-1 max-w-[200px] leading-relaxed group-hover/row:text-slate-900 transition-colors">
                             {contact.message}
                           </p>
                         </td>
-                        <td className="px-8 py-8">
-                          <div className="flex flex-col text-xs font-bold whitespace-nowrap">
-                            <span className="text-slate-900">{new Date(contact.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-                            <span className="text-slate-400 font-medium">{new Date(contact.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span>
+                        <td className="px-5 py-4">
+                          <div className="flex flex-col text-[10px] font-bold whitespace-nowrap">
+                            <span className="text-slate-900">{new Date(contact.created_at).toLocaleDateString()}</span>
+                            <span className="text-slate-400 font-medium">{new Date(contact.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                           </div>
                         </td>
-                        <td className="px-10 py-8 text-right">
-                          <div className="flex items-center justify-end gap-3 opacity-0 group-hover/row:opacity-100 transition-all translate-x-4 group-hover/row:translate-x-0">
+                        <td className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-all">
                             <button 
                               onClick={() => handleToggleRead(contact.id)}
                               className={cn(
-                                "p-3 rounded-xl transition-all shadow-sm",
+                                "p-2 rounded-lg transition-all",
                                 contact.is_read 
                                   ? "text-teal-600 bg-teal-50 hover:bg-teal-100" 
                                   : "text-slate-400 bg-white border border-slate-100 hover:text-teal-600 hover:border-teal-200"
                               )}
-                              title={contact.is_read ? "Mark as unread" : "Mark as read"}
                             >
-                              <CheckCircle className="w-5 h-5" />
+                              <CheckCircle className="w-4 h-4" />
                             </button>
                             <button 
                               onClick={() => handleDelete(contact.id)}
-                              className="p-3 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-xl transition-all shadow-sm shadow-red-500/10"
+                              className="p-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                          {!contact.is_read && <div className="group-hover/row:hidden font-black text-[10px] text-teal-600 uppercase tracking-widest">New Priority</div>}
+                          {!contact.is_read && <div className="group-hover/row:hidden font-black text-[9px] text-teal-600 uppercase tracking-widest">Priority</div>}
                         </td>
                       </tr>
                     ))
@@ -397,13 +393,13 @@ export const AdminDashboard: React.FC = () => {
               </table>
             </div>
             
-            <div className="px-10 py-8 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
-               <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                 Showing {filteredContacts.length} of {contacts.length} entries
+            <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
+               <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                 {filteredContacts.length} Entries Found
                </div>
                <div className="flex gap-2">
-                 <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-400 cursor-not-allowed">Previous</button>
-                 <button className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-teal-600 hover:text-white hover:border-teal-600 transition-all">Next</button>
+                 <button className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-400">Prev</button>
+                 <button className="px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-slate-600 hover:bg-teal-600 hover:text-white transition-all">Next</button>
                </div>
             </div>
           </div>
