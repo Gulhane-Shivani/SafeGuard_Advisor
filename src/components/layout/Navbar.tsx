@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Receipt, ChevronRight } from 'lucide-react';
+import { Shield, Menu, X, Bell, User, LogOut, ChevronDown, HeartPulse, Car, TrendingUp, Scale, Calculator, PieChart, Receipt, ArrowRight, ChevronRight, Activity } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAppStore } from '../../store';
@@ -8,7 +8,7 @@ const Navbar: React.FC = () => {
   const { state, logout } = useAppStore();
   const { user } = state;
   const isLoggedIn = !!user;
-  
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isInsuranceOpen, setIsInsuranceOpen] = useState(false);
@@ -20,7 +20,7 @@ const Navbar: React.FC = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-    
+
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -36,18 +36,11 @@ const Navbar: React.FC = () => {
   ];
 
   const insuranceCategories = [
-    { name: 'Health', href: '/insurance/health', Icon: HeartPulse, desc: 'Medical & Dental', details: ['Individual Health', 'Family Floater', 'Senior Citizen'] },
-    { name: 'Life / Term', href: '/insurance/life', Icon: Shield, desc: 'Family Protection', details: ['Term Life', 'Savings Plan', 'Retirement'] },
-    { name: 'Motor', href: '/insurance/motor', Icon: Car, desc: 'Vehicle Safety', details: ['Car Insurance', 'Two Wheeler', 'Commercial'] },
-    { name: 'Investment', href: '/insurance/investment', Icon: TrendingUp, desc: 'Wealth Manager', details: ['ULIP Plans', 'Capital Guarantee', 'Guaranteed Income'] },
+    { name: 'Health', href: '/insurance/health', Icon: HeartPulse, details: ['Individual Health', 'Family Floater', 'Senior Citizen'] },
+    { name: 'Life / Term', href: '/insurance/life', Icon: Shield, details: ['Term Life', 'Savings Plan', 'Retirement'] },
+    { name: 'Motor', href: '/insurance/motor', Icon: Car, details: ['Car Insurance', 'Two Wheeler', 'Commercial'] },
+    { name: 'Investment', href: '/insurance/investment', Icon: TrendingUp, details: ['ULIP Plans', 'Capital Guarantee', 'Guaranteed Income'] },
   ];
-
-  const calculatorLinks = [
-    { name: 'Premium Calculator', href: '/advisor', Icon: Calculator },
-    { name: 'Tax Saving Calc', href: '/insurance/health', Icon: Receipt },
-    { name: 'SIP Calculator', href: '/insurance/investment', Icon: PieChart },
-  ];
-
 
   return (
     <nav
@@ -76,12 +69,12 @@ const Navbar: React.FC = () => {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             {/* Insurance Plans Dropdown */}
-            <div 
+            <div
               className="relative group"
               onMouseEnter={() => setIsInsuranceOpen(true)}
               onMouseLeave={() => setIsInsuranceOpen(false)}
             >
-              <button 
+              <button
                 className={cn(
                   "flex items-center gap-1 text-sm font-medium transition-colors py-2",
                   location.pathname === '/compare' || isInsuranceOpen
@@ -93,94 +86,91 @@ const Navbar: React.FC = () => {
                 <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isInsuranceOpen && "rotate-180")} />
               </button>
 
-              {/* Dropdown Menu - Standard Horizontal Mega Menu */}
+              {/* Mega Dropdown */}
               {isInsuranceOpen && (
-                <div className="absolute top-full -left-48 w-[840px] pt-3 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
+                <div className="absolute top-full -left-64 w-[960px] pt-4 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
                   <div className="bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden">
                     <div className="flex">
-                      {/* Categories Columns */}
-                      <div className="flex-1 grid grid-cols-4 gap-0 divide-x divide-slate-50">
+                      {/* Products Grid */}
+                      <div className="flex-1 p-10 grid grid-cols-4 gap-12">
                         {insuranceCategories.map((cat) => (
-                          <div key={cat.name} className="p-6 flex flex-col group/col">
-                            <Link 
+                          <div key={cat.name} className="space-y-6">
+                            <Link
                               to={cat.href}
-                              className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 hover:text-teal-600 transition-colors"
+                              className="flex items-center gap-3 group/header"
                               onClick={() => setIsInsuranceOpen(false)}
                             >
-                              <cat.Icon className="w-4 h-4" />
-                              {cat.name}
+                              <div className="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center group-hover/header:bg-teal-600 group-hover/header:text-white transition-all">
+                                <cat.Icon className="w-5 h-5" />
+                              </div>
+                              <span className="text-sm font-black text-slate-900 uppercase tracking-widest">{cat.name}</span>
                             </Link>
-                            
-                            <div className="space-y-4">
-                              <div className="space-y-2">
-                                {cat.details.map(detail => (
-                                  <Link 
-                                    key={detail}
+
+                            <ul className="space-y-4">
+                              {cat.details.map(detail => (
+                                <li key={detail}>
+                                  <Link
                                     to={cat.href}
-                                    className="block text-[11px] text-slate-500 hover:text-teal-600 font-bold flex items-center justify-between group/item"
+                                    className="text-sm font-bold text-slate-500 hover:text-teal-600 transition-colors flex items-center justify-between group/item"
                                     onClick={() => setIsInsuranceOpen(false)}
                                   >
-                                    <span>{detail}</span>
-                                    <ChevronRight className="w-3 h-3 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all text-teal-600" />
+                                    {detail}
+                                    <ChevronRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover/item:opacity-100 group-hover/item:translate-x-0 transition-all" />
                                   </Link>
-                                ))}
-                              </div>
-                            </div>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
                         ))}
                       </div>
 
-                      {/* Right Sidebar for Tools */}
-                      <div className="w-56 bg-slate-50 p-6 border-l border-slate-100">
-                        <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">
-                          Comparison Tools
+                      {/* Side Actions */}
+                      <div className="w-64 bg-slate-50/50 p-10 border-l border-slate-100 space-y-8">
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Calculators</p>
+                          <Link
+                            to="/advisor"
+                            className="flex items-center gap-4 group/calc"
+                            onClick={() => setIsInsuranceOpen(false)}
+                          >
+                            <div className="w-10 h-10 rounded-xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 group-hover/calc:text-teal-600 group-hover/calc:border-teal-100 transition-all">
+                              <Calculator className="w-5 h-5" />
+                            </div>
+                            <span className="text-sm font-bold text-slate-600 group-hover/calc:text-teal-600">Premium Calc</span>
+                          </Link>
                         </div>
-                        <div className="space-y-4">
-                          {calculatorLinks.map((calc) => (
-                            <Link
-                              key={calc.name}
-                              to={calc.href}
-                              className="flex items-center gap-3 p-2.5 rounded-xl hover:bg-white hover:shadow-sm transition-all group/tool border border-transparent hover:border-slate-100"
-                              onClick={() => setIsInsuranceOpen(false)}
-                            >
-                              <div className="w-8 h-8 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 group-hover/tool:bg-teal-600 group-hover/tool:text-white transition-colors">
-                                <calc.Icon className="w-4 h-4" />
-                              </div>
-                              <span className="text-[11px] font-bold text-slate-600 group-hover/tool:text-slate-900">{calc.name}</span>
-                            </Link>
-                          ))}
-                          
-                          <div className="pt-4 mt-4 border-t border-slate-200">
-                            <Link
-                              to="/compare"
-                              className="flex items-center justify-between p-3.5 bg-slate-900 rounded-2xl text-white shadow-xl shadow-slate-950/20 hover:bg-teal-600 transition-all group/compare"
-                              onClick={() => setIsInsuranceOpen(false)}
-                            >
-                               <div className="flex flex-col">
-                                 <span className="text-[9px] font-black text-teal-400 uppercase tracking-widest leading-none mb-1">Expert Tool</span>
-                                 <span className="text-xs font-black uppercase tracking-tight">Compare Plans</span>
-                               </div>
-                               <div className="w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center group-hover/compare:bg-white group-hover/compare:text-teal-600 transition-colors">
-                                 <Scale className="w-4 h-4" />
-                               </div>
-                            </Link>
-                          </div>
+
+                        <div>
+                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4">Actions</p>
+                          <Link
+                            to="/compare"
+                            className="block p-5 bg-slate-900 rounded-2xl text-white shadow-xl shadow-slate-950/20 hover:bg-teal-600 transition-all group/compare"
+                            onClick={() => setIsInsuranceOpen(false)}
+                          >
+                            <div className="flex items-center justify-between mb-2">
+                              <Scale className="w-5 h-5 text-teal-400" />
+                              <ChevronRight className="w-4 h-4 text-white/50 group-hover/compare:translate-x-1 transition-transform" />
+                            </div>
+                            <p className="text-sm font-black uppercase tracking-tight">Compare Plans</p>
+                            <p className="text-[10px] text-white/50 font-medium">Find the best value</p>
+                          </Link>
                         </div>
                       </div>
                     </div>
 
-                    {/* Footer bar */}
-                    <div className="bg-slate-50/50 px-8 py-3 border-t border-slate-100 flex items-center justify-between">
-                       <p className="text-[10px] font-bold text-slate-400 flex items-center gap-2">
-                         <Shield className="w-3.5 h-3.5" /> Direct Insurer Partner
-                       </p>
-                       <div className="flex items-center gap-4">
-                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">IRDAI Licensed Broker</span>
-                         <div className="h-4 w-px bg-slate-200" />
-                         <span className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" /> Live Secure
-                         </span>
-                       </div>
+                    {/* Bottom Status */}
+                    <div className="px-10 py-4 bg-white border-t border-slate-50 flex items-center justify-between">
+                      <div className="flex items-center gap-6">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          <Shield className="w-3.5 h-3.5" /> Licensed Broker
+                        </div>
+                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                          <Activity className="w-3.5 h-3.5" /> 24x7 Support
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2 text-[10px] font-black text-emerald-600 uppercase tracking-widest">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Platform Secure
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -209,10 +199,10 @@ const Navbar: React.FC = () => {
               <Bell className="w-5 h-5" />
               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
             </button>
-            
+
             {isLoggedIn ? (
               <div className="relative group/profile">
-                <button 
+                <button
                   className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 rounded-full border border-teal-100 hover:bg-teal-100 transition-colors group"
                 >
                   <div className="bg-white p-1 rounded-full shadow-sm text-teal-600 group-hover:scale-110 transition-transform">
@@ -225,7 +215,7 @@ const Navbar: React.FC = () => {
                 </button>
 
                 {/* Profile Dropdown */}
-                <div 
+                <div
                   className="absolute top-full right-0 mt-2 w-56 pt-2 opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200"
                 >
                   <div className="bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 overflow-hidden pt-2">
@@ -233,23 +223,23 @@ const Navbar: React.FC = () => {
                       <p className="text-xs font-bold text-slate-400 capitalize">Account</p>
                       <p className="text-sm font-bold text-slate-900 truncate">{user?.email}</p>
                     </div>
-                    
+
                     <div className="p-2 space-y-1">
                       {user?.role === 'admin' && (
-                        <Link 
-                          to="/admin/dashboard" 
+                        <Link
+                          to="/admin/dashboard"
                           className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-amber-600 hover:bg-amber-50 rounded-xl transition-all"
                         >
                           <Shield className="w-4 h-4" /> Admin Panel
                         </Link>
                       )}
-                      <Link 
-                        to="/profile" 
+                      <Link
+                        to="/profile"
                         className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all"
                       >
                         <User className="w-4 h-4" /> My Profile
                       </Link>
-                      <button 
+                      <button
                         onClick={handleLogout}
                         className="w-full flex items-center gap-3 px-4 py-3 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition-all"
                       >
@@ -285,7 +275,7 @@ const Navbar: React.FC = () => {
           <div className="flex flex-col gap-4">
             {/* Mobile Dropdown */}
             <div className="flex flex-col">
-              <button 
+              <button
                 onClick={() => setIsMobileDropdownOpen(!isMobileDropdownOpen)}
                 className={cn(
                   "flex items-center justify-between text-base font-bold py-2 transition-colors",
@@ -295,10 +285,9 @@ const Navbar: React.FC = () => {
                 Insurance Plans
                 <ChevronDown className={cn("w-5 h-5 transition-transform", isMobileDropdownOpen && "rotate-180")} />
               </button>
-              
+
               {isMobileDropdownOpen && (
                 <div className="pl-4 mt-2 space-y-4 animate-in slide-in-from-left duration-200">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Insurance Plans</div>
                   {insuranceCategories.map((cat) => (
                     <Link
                       key={cat.name}
@@ -310,19 +299,15 @@ const Navbar: React.FC = () => {
                       <span className="text-sm font-medium text-slate-600">{cat.name}</span>
                     </Link>
                   ))}
-                  
-                  <div className="pt-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Calculators</div>
-                  {calculatorLinks.map((calc) => (
-                    <Link
-                      key={calc.name}
-                      to={calc.href}
-                      className="flex items-center gap-3 py-1"
-                      onClick={() => { setIsMobileMenuOpen(false); setIsMobileDropdownOpen(false); }}
-                    >
-                      <calc.Icon className="w-5 h-5 text-slate-400" />
-                      <span className="text-sm font-medium text-slate-600">{calc.name}</span>
-                    </Link>
-                  ))}
+
+                  <Link
+                    to="/advisor"
+                    className="flex items-center gap-3 py-1"
+                    onClick={() => { setIsMobileMenuOpen(false); setIsMobileDropdownOpen(false); }}
+                  >
+                    <Calculator className="w-5 h-5 text-slate-400" />
+                    <span className="text-sm font-medium text-slate-600">Calculators</span>
+                  </Link>
 
                   <Link
                     to="/compare"
@@ -352,22 +337,22 @@ const Navbar: React.FC = () => {
               </Link>
             ))}
             <hr className="border-slate-100" />
-            
+
             {isLoggedIn ? (
               <>
                 <div className="w-full py-3 bg-teal-50 text-teal-700 rounded-xl font-bold text-center border border-teal-100">
                   Logged in as {user?.name || 'User'}
                 </div>
                 {user?.role === 'admin' && (
-                  <Link 
-                    to="/admin/dashboard" 
+                  <Link
+                    to="/admin/dashboard"
                     className="w-full py-3 bg-amber-50 text-amber-600 rounded-xl font-bold text-center border border-amber-100 flex items-center justify-center gap-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <Shield className="w-4 h-4" /> Admin Panel
                   </Link>
                 )}
-                <button 
+                <button
                   onClick={() => { handleLogout(); setIsMobileMenuOpen(false); }}
                   className="w-full py-3 bg-slate-100 text-slate-600 rounded-xl font-bold text-center flex items-center justify-center gap-2"
                 >
