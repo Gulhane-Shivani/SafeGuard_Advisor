@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Target, Shield, HeartPulse, Car, TrendingUp } from 'lucide-react';
 import { cn } from '../utils/helpers';
-import { AuthModal } from '../components/layout/AuthModal';
 
 export const Advisor: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [step, setStep] = useState(1);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
 
   const [formData, setFormData] = useState({

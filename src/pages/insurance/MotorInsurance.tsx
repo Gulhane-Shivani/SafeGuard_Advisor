@@ -1,21 +1,11 @@
 import React from 'react';
-import { Car, ShieldCheck, Zap, HelpCircle, CheckCircle2, ArrowRight, Star, Plus, Minus, CheckCircle, Clock, Shield } from 'lucide-react';
+import { Car, ShieldCheck, Zap, CheckCircle2, ArrowRight, Star, Plus, Minus, CheckCircle } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { Link } from 'react-router-dom';
 import PlanCard from '../../components/insurance/PlanCard';
 
 
-const PARTNERS = [
-  { name: 'LIC of India', short: 'LIC', url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/LIC_logo.png/200px-LIC_logo.png', bg: '#1e3a8a', color: '#fbbf24' },
-  { name: 'HDFC Life', short: 'HDFC', url: 'https://logo.clearbit.com/hdfclife.com', bg: '#dc2626', color: '#ffffff' },
-  { name: 'Star Health', short: '★ Star', url: 'https://logo.clearbit.com/starhealth.in', bg: '#1d4ed8', color: '#ffffff' },
-  { name: 'ICICI Lombard', short: 'ICICI', url: 'https://logo.clearbit.com/icicilombard.com', bg: '#ea580c', color: '#ffffff' },
-  { name: 'Bajaj Allianz', short: 'Bajaj', url: 'https://logo.clearbit.com/bajajallianz.com', bg: '#1e40af', color: '#ffffff' },
-  { name: 'Max Life', short: 'Max', url: 'https://logo.clearbit.com/maxlifeinsurance.com', bg: '#0f172a', color: '#38bdf8' },
-  { name: 'Niva Bupa', short: 'Niva', url: 'https://logo.clearbit.com/nivabupa.com', bg: '#0284c7', color: '#ffffff' },
-  { name: 'TATA AIG', short: 'TATA', url: 'https://logo.clearbit.com/tataaig.com', bg: '#1e3a8a', color: '#ef4444' },
-  { name: 'HDFC ERGO', short: 'ERGO', url: 'https://logo.clearbit.com/hdfcergo.com', bg: '#7c3aed', color: '#ffffff' },
-];
+
 
 const MotorInsurance: React.FC = () => {
   const [openFaq, setOpenFaq] = React.useState<number | null>(null);
