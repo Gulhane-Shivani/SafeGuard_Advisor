@@ -185,19 +185,39 @@ const MotorInsurance: React.FC = () => {
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div key={i} className={cn("group border transition-all duration-300 rounded-[2rem]", openFaq === i ? "bg-white border-orange-100 shadow-xl shadow-orange-600/5" : "bg-white border-slate-100 hover:bg-white hover:border-slate-200 shadow-sm")}>
-                <button onClick={() => setOpenFaq(openFaq === i ? null : i)} className="w-full p-6 md:p-8 flex items-center justify-between text-left">
-                  <h3 className="text-lg font-bold text-slate-900 pr-8">{faq.q}</h3>
-                  <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm", openFaq === i ? "bg-orange-600 text-white rotate-180" : "bg-white text-slate-400")}>
-                    {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
-                  </div>
-                </button>
-                <div className={cn("grid transition-all duration-300 ease-in-out", openFaq === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
-                  <div className="overflow-hidden">
-                    <div className="px-8 pb-8 text-slate-500 leading-relaxed font-medium">{faq.a}</div>
+                <div
+                  key={i}
+                  className={cn(
+                    "group border transition-all duration-300 rounded-[1.5rem]",
+                    openFaq === i
+                      ? "bg-white border-orange-100 shadow-xl shadow-orange-600/5"
+                      : "bg-white border-slate-100 hover:bg-white hover:border-slate-200 shadow-sm"
+                  )}
+                >
+                  <button
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="w-full p-4 md:p-5 flex items-center justify-between text-left"
+                  >
+                    <h3 className="text-base font-bold text-slate-900 pr-8">{faq.q}</h3>
+                    <div className={cn(
+                      "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm",
+                      openFaq === i ? "bg-orange-600 text-white rotate-180" : "bg-white text-slate-400"
+                    )}>
+                      {openFaq === i ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+                    </div>
+                  </button>
+
+                  <div className={cn(
+                    "grid transition-all duration-300 ease-in-out",
+                    openFaq === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+                  )}>
+                    <div className="overflow-hidden">
+                      <div className="px-6 pb-6 text-slate-500 leading-relaxed font-medium text-sm">
+                        {faq.a}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
             ))}
           </div>
         </div>

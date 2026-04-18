@@ -101,7 +101,7 @@ export const Home: React.FC = () => {
 
 
       {/* Hero */}
-      <section className="pt-10 pb-20 px-6 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+      <section className="pt-10 pb-0 px-6 overflow-hidden bg-gradient-to-b from-slate-50 to-white">
         <div className="container mx-auto">
           <div className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
 
@@ -234,7 +234,7 @@ export const Home: React.FC = () => {
         </div>
 
         {/* Partners Slider */}
-        <div className="mt-20 border-t border-slate-100/50 bg-white/30 backdrop-blur-sm py-16 overflow-hidden relative">
+        <div className="mt-12 border-t border-slate-100/50 bg-white/30 backdrop-blur-sm pt-12 pb-8 overflow-hidden relative">
           <p className="text-center text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mb-12">
             INTEGRATED WITH 50+ IRDAI APPROVED INSURERS
           </p>
@@ -270,7 +270,7 @@ export const Home: React.FC = () => {
       </section>
 
       {/* Why SafeGuard */}
-      <section className="py-24 px-6 bg-white relative">
+      <section className="pt-12 pb-20 px-6 bg-white relative">
         <div className="container mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">India's Smartest Insurance Platform</h2>
@@ -439,7 +439,7 @@ export const Home: React.FC = () => {
                 <div
                   key={i}
                   className={cn(
-                    "group border transition-all duration-300 rounded-[2rem]",
+                    "group border transition-all duration-300 rounded-[1.5rem]",
                     openFaq === i
                       ? "bg-white border-teal-100 shadow-xl shadow-teal-600/5"
                       : "bg-slate-50/50 border-slate-100 hover:bg-white hover:border-slate-200"
@@ -447,14 +447,14 @@ export const Home: React.FC = () => {
                 >
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full p-6 md:p-8 flex items-center justify-between text-left"
+                    className="w-full p-4 md:p-5 flex items-center justify-between text-left"
                   >
-                    <h3 className="text-lg font-bold text-slate-900 pr-8">{faq.q}</h3>
+                    <h3 className="text-base font-bold text-slate-900 pr-8">{faq.q}</h3>
                     <div className={cn(
-                      "w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm",
+                      "w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-300 shadow-sm",
                       openFaq === i ? "bg-teal-600 text-white rotate-180" : "bg-white text-slate-400"
                     )}>
-                      {openFaq === i ? <Minus className="w-6 h-6" /> : <Plus className="w-6 h-6" />}
+                      {openFaq === i ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                     </div>
                   </button>
 
@@ -463,7 +463,7 @@ export const Home: React.FC = () => {
                     openFaq === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                   )}>
                     <div className="overflow-hidden">
-                      <div className="px-8 pb-8 text-slate-500 leading-relaxed font-medium">
+                      <div className="px-6 pb-6 text-slate-500 leading-relaxed font-medium text-sm">
                         {faq.a}
                       </div>
                     </div>
