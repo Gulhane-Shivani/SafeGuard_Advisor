@@ -136,9 +136,9 @@ export const Profile: React.FC = () => {
                   {/* Account Overview Stats */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {[
-                      { label: 'Active Policies', value: '03', Icon: Shield, color: 'text-blue-600', bg: 'bg-blue-50' },
+                      { label: 'Active Policies', value: '03', Icon: Shield, color: 'text-teal-600', bg: 'bg-teal-50' },
                       { label: 'Upcoming Renewals', value: '01', Icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-                      { label: 'Wallet Balance', value: '₹2,450', Icon: Wallet, color: 'text-teal-600', bg: 'bg-teal-50' },
+                      { label: 'Wallet Balance', value: '₹2,450', Icon: Wallet, color: 'text-slate-600', bg: 'bg-slate-50' },
                     ].map((stat, i) => (
                       <div key={i} className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-md transition-all">
                         <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform", stat.bg, stat.color)}>
@@ -187,7 +187,7 @@ export const Profile: React.FC = () => {
                   </div>
 
                   {/* Security Banner */}
-                  <div className="bg-gradient-to-r from-teal-600 to-blue-700 rounded-[2.5rem] p-10 text-white relative overflow-hidden group">
+                  <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-teal-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden group text-left">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32 transition-transform duration-1000 group-hover:scale-110" />
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                       <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center shrink-0">

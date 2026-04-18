@@ -254,10 +254,10 @@ export const AdminDashboard: React.FC = () => {
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
             {[
-              { label: 'Total Inquiries', value: contacts.length, Icon: Mail, color: 'text-blue-600', bg: 'bg-blue-50' },
+              { label: 'Total Inquiries', value: contacts.length, Icon: Mail, color: 'text-teal-600', bg: 'bg-teal-50' },
               { label: 'Unread Messages', value: unreadCount, Icon: Bell, color: 'text-amber-600', bg: 'bg-amber-50', highlight: true },
-              { label: 'Growth rate', value: '+12.5%', Icon: Activity, color: 'text-teal-600', bg: 'bg-teal-50' },
-              { label: 'Response Time', value: '4.2h', Icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-50' },
+              { label: 'System Health', value: 'Optimal', Icon: Activity, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { label: 'Avg Feedback', value: '4.8', Icon: Clock, color: 'text-slate-600', bg: 'bg-slate-50' },
             ].map((stat, i) => (
               <div key={i} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-6 group hover:shadow-xl transition-all relative overflow-hidden">
                 {stat.highlight && <div className="absolute top-0 right-0 p-2"><div className="w-2 h-2 bg-red-500 rounded-full animate-ping" /></div>}
@@ -351,7 +351,7 @@ export const AdminDashboard: React.FC = () => {
                         <td className="px-8 py-8">
                           <span className={cn(
                             "px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border",
-                            !contact.is_read ? "bg-blue-600 text-white border-blue-600" : "bg-slate-50 text-slate-500 border-slate-100"
+                            !contact.is_read ? "bg-teal-600 text-white border-teal-600" : "bg-slate-50 text-slate-500 border-slate-100"
                           )}>
                             {contact.subject}
                           </span>

@@ -11,7 +11,7 @@ const Navbar: React.FC = () => {
   
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isInsuranceOpen, setIsInsuranceOpen] = useState(false);
   const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -79,23 +79,23 @@ const Navbar: React.FC = () => {
             {/* Insurance Plans Dropdown */}
             <div 
               className="relative group"
-              onMouseEnter={() => setIsDropdownOpen(true)}
-              onMouseLeave={() => setIsDropdownOpen(false)}
+              onMouseEnter={() => setIsInsuranceOpen(true)}
+              onMouseLeave={() => setIsInsuranceOpen(false)}
             >
               <button 
                 className={cn(
                   "flex items-center gap-1 text-sm font-medium transition-colors py-2",
-                  location.pathname === '/compare' || isDropdownOpen
+                  location.pathname === '/compare' || isInsuranceOpen
                     ? "text-teal-600 font-bold"
                     : isScrolled ? "text-slate-600 hover:text-teal-600" : "text-slate-600 hover:text-teal-600"
                 )}
               >
                 Insurance Plans
-                <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isDropdownOpen && "rotate-180")} />
+                <ChevronDown className={cn("w-4 h-4 transition-transform duration-200", isInsuranceOpen && "rotate-180")} />
               </button>
 
               {/* Dropdown Menu - Mega Menu Style */}
-              {isDropdownOpen && (
+              {isInsuranceOpen && (
                 <div className="absolute top-full -left-20 w-[640px] pt-3 animate-in fade-in zoom-in slide-in-from-top-2 duration-200">
                   <div className="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 p-8">
                     <div className="grid grid-cols-2 gap-10">
@@ -110,7 +110,7 @@ const Navbar: React.FC = () => {
                               key={cat.name}
                               to={cat.href}
                               className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
-                              onClick={() => setIsDropdownOpen(false)}
+                              onClick={() => setIsInsuranceOpen(false)}
                             >
                               <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
                                 <cat.Icon className="w-5 h-5" />
@@ -137,7 +137,7 @@ const Navbar: React.FC = () => {
                               key={calc.name}
                               to={calc.href}
                               className="flex items-center gap-4 p-3 rounded-2xl transition-all hover:bg-slate-50 group/item"
-                              onClick={() => setIsDropdownOpen(false)}
+                              onClick={() => setIsInsuranceOpen(false)}
                             >
                               <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform group-hover/item:scale-110 group-hover/item:bg-teal-50 group-hover/item:text-teal-600">
                                 <calc.Icon className="w-5 h-5" />
@@ -165,7 +165,7 @@ const Navbar: React.FC = () => {
                       <Link
                         to="/compare"
                         className="flex items-center gap-2 text-sm font-bold text-teal-600 hover:text-teal-700 transition-colors"
-                        onClick={() => setIsDropdownOpen(false)}
+                        onClick={() => setIsInsuranceOpen(false)}
                       >
                         Compare All Plans <Scale className="w-4 h-4" />
                       </Link>
@@ -201,7 +201,6 @@ const Navbar: React.FC = () => {
             {isLoggedIn ? (
               <div className="relative group/profile">
                 <button 
-                  onMouseEnter={() => setIsDropdownOpen(true)}
                   className="flex items-center gap-2 pl-2 pr-4 py-2 bg-teal-50 rounded-full border border-teal-100 hover:bg-teal-100 transition-colors group"
                 >
                   <div className="bg-white p-1 rounded-full shadow-sm text-teal-600 group-hover:scale-110 transition-transform">
@@ -216,7 +215,6 @@ const Navbar: React.FC = () => {
                 {/* Profile Dropdown */}
                 <div 
                   className="absolute top-full right-0 mt-2 w-56 pt-2 opacity-0 invisible group-hover/profile:opacity-100 group-hover/profile:visible transition-all duration-200"
-                  onMouseEnter={() => setIsDropdownOpen(true)}
                 >
                   <div className="bg-white rounded-[1.5rem] shadow-2xl border border-slate-100 overflow-hidden pt-2">
                     <div className="px-5 py-3 border-b border-slate-50">
@@ -377,5 +375,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
-
