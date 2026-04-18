@@ -141,11 +141,12 @@ export const AdminDashboard: React.FC = () => {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Contact Inquiries</h1>
-                <span className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-[10px] font-black uppercase tracking-widest">
-                  {contacts.length} Total
-                </span>
+                  <span className="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-[10px] font-black uppercase tracking-widest">
+                    {contacts.length} Total
+                  </span>
+                </div>
+                <p className="text-slate-500 font-medium tracking-wide">Manage and respond to user messages effectively.</p>
               </div>
-              <p className="text-slate-500 font-medium tracking-wide">Manage and respond to user messages effectively.</p>
             </div>
             
             <div className="flex flex-wrap items-center gap-4">
