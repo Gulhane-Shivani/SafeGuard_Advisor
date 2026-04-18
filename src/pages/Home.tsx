@@ -119,11 +119,7 @@ export const Home: React.FC = () => {
               IRDAI Approved &middot; AI-Powered Insurance Advisor
             </div>
 
-            {isLoggedIn && (
-              <h2 className="text-2xl font-bold text-teal-600 mb-4 animate-in fade-in slide-in-from-bottom duration-500">
-                Welcome back, {userName}!
-              </h2>
-            )}
+
 
             <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 leading-tight mb-6">
               The Right Insurance.{' '}
