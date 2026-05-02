@@ -1,13 +1,42 @@
 import React from 'react';
-import { IndianRupee, CheckCircle2 } from 'lucide-react';
+import { Shield, CreditCard, ChevronRight, CheckCircle2, Info, ArrowRight, IndianRupee } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { cn } from '../../utils/helpers';
+
+import { LoanApplicationModal } from '../../components/LoanApplicationModal';
+import { LoanEligibilityModal } from '../../components/LoanEligibilityModal';
 
 const CustomerPolicyLoan: React.FC = () => {
-  const { data, loading, error } = useCustomer();
+  const { data, loading, error, addLoan } = useCustomer();
+  const [isApplyOpen, setIsApplyOpen] = React.useState(false);
+  const [isEligibilityOpen, setIsEligibilityOpen] = React.useState(false);
+  const [selectedPolicy, setSelectedPolicy] = React.useState<any>(null);
 
-  if (loading || !data) return null;
-  const eligiblePolicies = data.policies.filter(p => p.type.includes('Life'));
+  if (loading || !data) return <LoadingSpinner />;
+  const eligiblePolicies = data.policies.filter((p: any) => p.type.includes('Life'));
+
+  const handleApplyLoan = (policy?: any) => {
+    setSelectedPolicy(policy || null);
+    setIsApplyOpen(true);
+  };
+
+  const handleCheckEligibility = () => {
+    setIsEligibilityOpen(true);
+  };
+
+  const handleLoanSubmit = (loanData: any) => {
+    addLoan({
+      id: `LN-${Math.floor(10000 + Math.random() * 90000)}`,
+      policy: loanData.policyName,
+      amount: `₹${parseInt(loanData.amount).toLocaleString()}`,
+      date: loanData.submissionDate,
+      status: 'In Review',
+      tenure: `${loanData.tenure} Months`,
+      rate: '9% p.a.'
+    });
+  };
 
   return (
     <CustomerLayout>
@@ -25,10 +54,16 @@ const CustomerPolicyLoan: React.FC = () => {
               Get instant loans against your life insurance policy at low interest rates with minimal documentation.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button className="px-8 py-3 bg-white text-teal-600 rounded-xl font-bold shadow-lg hover:bg-teal-50 transition-all">
+              <button 
+                onClick={() => handleApplyLoan()}
+                className="px-8 py-3 bg-white text-teal-600 rounded-xl font-bold shadow-lg hover:bg-teal-50 transition-all"
+              >
                 Apply for Loan
               </button>
-              <button className="px-8 py-3 bg-white/10 border border-white/20 rounded-xl font-bold hover:bg-white/20 transition-all">
+              <button 
+                onClick={handleCheckEligibility}
+                className="px-8 py-3 bg-white/10 border border-white/20 rounded-xl font-bold hover:bg-white/20 transition-all"
+              >
                 Check Eligibility
               </button>
             </div>
@@ -72,7 +107,10 @@ const CustomerPolicyLoan: React.FC = () => {
                       <div><span className="text-slate-400">Sum Assured:</span> <span className="font-bold text-slate-700 ml-1">{policy.sumAssured}</span></div>
                       <div><span className="text-slate-400">Est. Loan:</span> <span className="font-bold text-teal-700 ml-1">₹2,50,000</span></div>
                     </div>
-                    <button className="w-full py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors">
+                    <button 
+                      onClick={() => handleApplyLoan(policy)}
+                      className="w-full py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors"
+                    >
                       Apply for Loan
                     </button>
                   </div>
@@ -99,18 +137,88 @@ const CustomerPolicyLoan: React.FC = () => {
                     <p className="text-sm text-slate-600 font-medium">{step}</p>
                   </div>
                 ))}
-              </div>
-            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-            <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
-              <h3 className="font-bold text-slate-900 mb-5">Loan History</h3>
-              <div className="flex flex-col items-center justify-center py-8 text-slate-400">
-                <CheckCircle2 className="w-10 h-10 mb-3 opacity-30" />
-                <p className="text-sm">No active or previous loans.</p>
-              </div>
+    {/* Loan History Table */}
+        <div className="pt-8 space-y-6">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">Loan History</h2>
+            <p className="text-sm text-slate-500 mt-1">Track your current and previous loan applications.</p>
+          </div>
+
+          <div className="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden mb-10">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-100">
+                    {['Loan ID', 'Policy Name', 'Amount', 'Interest Rate', 'Tenure', 'Date', 'Status'].map(h => (
+                      <th key={h} className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest whitespace-nowrap">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {!data.loans || data.loans.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-8 py-20 text-center">
+                        <div className="text-slate-300 font-bold">No loan history found.</div>
+                      </td>
+                    </tr>
+                  ) : (
+                    data.loans.map((loan: any) => (
+                      <tr key={loan.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                        <td className="px-8 py-6">
+                          <p className="text-xs font-bold text-slate-900">{loan.id}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-sm font-bold text-slate-700 leading-tight">{loan.policy}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-sm font-bold text-teal-600">{loan.amount}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-xs font-medium text-slate-600">{loan.rate}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-xs font-medium text-slate-600">{loan.tenure}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-sm text-slate-500 font-medium">{loan.date}</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <span className={cn(
+                            "inline-flex items-center gap-1.5 text-[10px] font-black uppercase px-3 py-1 rounded-full",
+                            loan.status === 'Disbursed' ? "text-emerald-600 bg-emerald-50" :
+                            loan.status === 'In Review' ? "text-blue-600 bg-blue-50" :
+                                                         "text-slate-500 bg-slate-100"
+                          )}>
+                            {loan.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
+
+        <LoanApplicationModal
+          isOpen={isApplyOpen}
+          onClose={() => setIsApplyOpen(false)}
+          onSubmit={handleLoanSubmit}
+          eligiblePolicies={eligiblePolicies}
+          initialPolicy={selectedPolicy}
+        />
+
+        <LoanEligibilityModal
+          isOpen={isEligibilityOpen}
+          onClose={() => setIsEligibilityOpen(false)}
+          eligiblePolicies={eligiblePolicies}
+        />
       </div>
     </CustomerLayout>
   );

@@ -162,7 +162,7 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
             <div className="h-8 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-slate-900">{data.name}</p>
+                <p className="text-sm font-bold text-slate-900">{data.profile.name}</p>
                 <p className="text-[10px] font-bold text-teal-600 uppercase">Premium Member</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm">

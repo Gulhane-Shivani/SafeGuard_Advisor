@@ -1,19 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, ChevronRight } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const REQUEST_TYPES = [
   'Address Change', 'Nominee Change', 'Duplicate ID Card',
   'Bank Account Update', 'Policy Copy', 'Other',
 ];
 
-const CustomerServiceRequests: React.FC = () => {
-  const { data, loading, error } = useCustomer();
+import { ServiceRequestModal } from '../../components/ServiceRequestModal';
+import { ServiceRequestDetailModal } from '../../components/ServiceRequestDetailModal';
 
-  if (loading || !data) return null;
-  if (error) return <div>Error loading data</div>;
+const CustomerServiceRequests: React.FC = () => {
+  const { data, loading, error, addServiceRequest } = useCustomer();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedType, setSelectedType] = useState<string | undefined>(undefined);
+  const [viewingRequest, setViewingRequest] = useState<any>(null);
+
+  if (loading || !data) return <LoadingSpinner />;
+
+  const handleNewRequest = (type?: string) => {
+    setSelectedType(type);
+    setIsModalOpen(true);
+  };
+
+  const handleFormSubmit = (requestData: any) => {
+    addServiceRequest(requestData);
+    // Success notification could go here
+  };
+
+  const handleViewRequest = (req: any) => {
+    setViewingRequest(req);
+  };
 
   return (
     <CustomerLayout>
@@ -23,7 +43,10 @@ const CustomerServiceRequests: React.FC = () => {
             <h1 className="text-2xl font-bold text-slate-900">Service Requests</h1>
             <p className="text-slate-500 text-sm mt-1">Raise and track service requests easily.</p>
           </div>
-          <button className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-600/20">
+          <button 
+            onClick={() => handleNewRequest()}
+            className="flex items-center gap-2 px-6 py-3 bg-teal-600 text-white rounded-xl text-sm font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
+          >
             <Plus className="w-4 h-4" /> New Request
           </button>
         </div>
@@ -33,9 +56,13 @@ const CustomerServiceRequests: React.FC = () => {
           <h3 className="font-bold text-slate-900 mb-5">Raise a Request</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {REQUEST_TYPES.map(type => (
-              <button key={type} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-blue-300 hover:bg-blue-50 transition-all text-left group">
-                <span className="text-sm font-medium text-slate-700 group-hover:text-blue-700">{type}</span>
-                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500" />
+              <button 
+                key={type} 
+                onClick={() => handleNewRequest(type)}
+                className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-teal-300 hover:bg-teal-50 transition-all text-left group"
+              >
+                <span className="text-sm font-medium text-slate-700 group-hover:text-teal-700">{type}</span>
+                <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-teal-500" />
               </button>
             ))}
           </div>
@@ -73,7 +100,10 @@ const CustomerServiceRequests: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-5">
-                      <button className="text-slate-400 hover:text-teal-600 transition-colors">
+                      <button 
+                        onClick={() => handleViewRequest(req)}
+                        className="text-slate-400 hover:text-teal-600 transition-colors"
+                      >
                         <ChevronRight className="w-5 h-5" />
                       </button>
                     </td>
@@ -84,6 +114,17 @@ const CustomerServiceRequests: React.FC = () => {
           </div>
         </div>
       </div>
+      <ServiceRequestModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleFormSubmit}
+        initialType={selectedType}
+      />
+      <ServiceRequestDetailModal
+        isOpen={!!viewingRequest}
+        onClose={() => setViewingRequest(null)}
+        request={viewingRequest}
+      />
     </CustomerLayout>
   );
 };

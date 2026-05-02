@@ -1,16 +1,45 @@
 import React, { useState } from 'react';
-import { User, Landmark, ChevronRight } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Shield, Bell, CreditCard, ExternalLink, Settings, Landmark, ChevronRight } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { cn } from '../../utils/helpers';
+import { ProfileUpdateModal } from '../../components/ProfileUpdateModal';
+import { NomineeUpdateModal } from '../../components/NomineeUpdateModal';
+import { BankUpdateModal } from '../../components/BankUpdateModal';
+import { SecurityUpdateModal } from '../../components/SecurityUpdateModal';
 
 const CustomerProfile: React.FC = () => {
-  const { data, loading, error } = useCustomer();
+  const { data, loading, error, updateProfile, updateNominee, updateBankDetails } = useCustomer();
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isNomineeOpen, setIsNomineeOpen] = useState(false);
+  const [isBankOpen, setIsBankOpen] = useState(false);
+  const [isSecurityOpen, setIsSecurityOpen] = useState(false);
+  const [securityType, setSecurityType] = useState<'Change Password' | 'Set Security PIN' | 'Two-Factor Auth' | null>(null);
+  const [activeSection, setActiveSection] = useState<string | null>(null);
   const [notifications, setNotifications] = useState({ Email: true, SMS: true, WhatsApp: true });
 
-  if (loading || !data) return null;
+  if (loading || !data) return <LoadingSpinner />;
+
+  const handleUpdateSubmit = (updatedData: any) => {
+    updateProfile(updatedData);
+    setIsEditOpen(false);
+  };
+
+  const handleEdit = (section: string) => {
+    setActiveSection(section);
+    setIsEditOpen(true);
+  };
 
   const toggle = (key: keyof typeof notifications) =>
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
+
+  const handleSecurityAction = (action: string) => {
+    setSecurityType(action as any);
+    setIsSecurityOpen(true);
+  };
+
+  const user = data.profile;
 
   return (
     <CustomerLayout>
@@ -23,17 +52,20 @@ const CustomerProfile: React.FC = () => {
         {/* Profile Hero */}
         <div className="bg-slate-900 rounded-3xl p-8 text-white flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <div className="w-20 h-20 rounded-2xl bg-teal-500 flex items-center justify-center text-3xl font-bold shrink-0">
-            PK
+            {user.name.split(' ').map((n: any) => n[0]).join('')}
           </div>
           <div>
-            <h2 className="text-2xl font-bold">{data.name}</h2>
-            <p className="text-slate-400 mt-1">{data.email}</p>
-            <p className="text-slate-400 text-sm">{data.phone}</p>
+            <h2 className="text-2xl font-bold">{user.name}</h2>
+            <p className="text-slate-400 mt-1">{user.email}</p>
+            <p className="text-slate-400 text-sm">{user.phone}</p>
             <span className="inline-block mt-3 text-[10px] px-3 py-1 rounded-full bg-teal-500/20 text-teal-300 font-bold uppercase tracking-widest">
-              Premium Member • {data.id}
+              Premium Member
             </span>
           </div>
-          <button className="sm:ml-auto px-5 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all">
+          <button 
+            onClick={() => setIsEditOpen(true)}
+            className="sm:ml-auto px-5 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all"
+          >
             Edit Profile
           </button>
         </div>
@@ -46,14 +78,19 @@ const CustomerProfile: React.FC = () => {
                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
                   <User className="w-5 h-5 text-teal-600" /> Personal Information
                 </h3>
-                <button className="text-teal-600 text-sm font-bold hover:underline">Edit</button>
+                <button 
+                  onClick={() => setIsEditOpen(true)}
+                  className="text-teal-600 text-sm font-bold hover:underline"
+                >
+                  Edit
+                </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
-                  { label: 'Full Name',      value: data.name },
-                  { label: 'Date of Birth',  value: data.dob },
-                  { label: 'Email Address',  value: data.email },
-                  { label: 'Mobile Number',  value: data.phone },
+                  { label: 'Full Name',      value: user.name },
+                  { label: 'Date of Birth',  value: user.dob },
+                  { label: 'Email Address',  value: user.email },
+                  { label: 'Mobile Number',  value: user.phone },
                 ].map(row => (
                   <div key={row.label}>
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">{row.label}</p>
@@ -62,7 +99,7 @@ const CustomerProfile: React.FC = () => {
                 ))}
                 <div className="sm:col-span-2">
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Address</p>
-                  <p className="text-sm font-bold text-slate-900">{data.address}</p>
+                  <p className="text-sm font-bold text-slate-900">{user.address}</p>
                 </div>
               </div>
             </section>
@@ -73,7 +110,12 @@ const CustomerProfile: React.FC = () => {
                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
                   <User className="w-5 h-5 text-purple-600" /> Nominee Details
                 </h3>
-                <button className="text-purple-600 text-sm font-bold hover:underline">Update</button>
+                <button 
+                  onClick={() => setIsNomineeOpen(true)}
+                  className="text-purple-600 text-sm font-bold hover:underline"
+                >
+                  Update
+                </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {[
@@ -95,7 +137,12 @@ const CustomerProfile: React.FC = () => {
                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
                   <Landmark className="w-5 h-5 text-blue-600" /> Bank Account Details
                 </h3>
-                <button className="text-blue-600 text-sm font-bold hover:underline">Change</button>
+                <button 
+                  onClick={() => setIsBankOpen(true)}
+                  className="text-blue-600 text-sm font-bold hover:underline"
+                >
+                  Change
+                </button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 {[
@@ -120,7 +167,11 @@ const CustomerProfile: React.FC = () => {
               <h3 className="font-bold text-slate-900 mb-5">Security</h3>
               <div className="space-y-3">
                 {['Change Password', 'Set Security PIN', 'Two-Factor Auth'].map(item => (
-                  <button key={item} className="w-full flex justify-between items-center p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors">
+                  <button 
+                    key={item} 
+                    onClick={() => handleSecurityAction(item)}
+                    className="w-full flex justify-between items-center p-4 bg-slate-50 rounded-2xl hover:bg-slate-100 transition-colors"
+                  >
                     <span className="text-sm font-medium text-slate-700">{item}</span>
                     <ChevronRight className="w-4 h-4 text-slate-400" />
                   </button>
@@ -148,6 +199,48 @@ const CustomerProfile: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <ProfileUpdateModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        onSubmit={handleUpdateSubmit}
+        currentData={{
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          address: user.address,
+          dob: user.dob
+        }}
+      />
+
+      <NomineeUpdateModal
+        isOpen={isNomineeOpen}
+        onClose={() => setIsNomineeOpen(false)}
+        onSubmit={(updatedData) => {
+          updateNominee(updatedData);
+          setIsNomineeOpen(false);
+        }}
+        currentData={data.nominee}
+      />
+
+      <BankUpdateModal
+        isOpen={isBankOpen}
+        onClose={() => setIsBankOpen(false)}
+        onSubmit={(updatedData) => {
+          updateBankDetails(updatedData);
+          setIsBankOpen(false);
+        }}
+        currentData={data.bankDetails}
+      />
+
+      <SecurityUpdateModal
+        isOpen={isSecurityOpen}
+        onClose={() => {
+          setIsSecurityOpen(false);
+          setSecurityType(null);
+        }}
+        type={securityType}
+      />
     </CustomerLayout>
   );
 };

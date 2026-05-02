@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 
 // High-fidelity Mock Data for Customer Portal
 const MOCK_DATA = {
-  name: "Prashant Kumar",
-  email: "test@example.com",
-  phone: "+91 98765 43210",
-  dob: "15 May 1992",
-  address: "Flat 402, Green Glen Layout, Bellandur, Bangalore - 560103",
+  profile: {
+    name: "Prashant Kumar",
+    email: "test@example.com",
+    phone: "+91 98765 43210",
+    dob: "15 May 1992",
+    address: "Flat 402, Green Glen Layout, Bellandur, Bangalore - 560103",
+  },
   nominee: {
     name: "Sneha Kumar",
     relation: "Spouse",
@@ -82,6 +84,17 @@ const MOCK_DATA = {
       type: "Cashless",
       hospital: "Apollo Hospital, Bangalore",
       reason: "Viral Fever & Dehydration"
+    },
+    {
+      id: 2,
+      claim_number: "CLM-45129",
+      policy_title: "HDFC ERGO Optima Restore",
+      status: "Settled",
+      date: "10 Jan 2024",
+      amount: "₹1,25,000",
+      type: "Reimbursement",
+      hospital: "Fortis Hospital, Mumbai",
+      reason: "Surgery Settlement"
     }
   ],
   serviceRequests: [
@@ -103,6 +116,21 @@ const MOCK_DATA = {
   payments: [
     { id: "TXN-88291", policy: "LIC Tech Term Plan", amount: "₹1,199", date: "12 Jan 2024", status: "SUCCESS", method: "UPI" },
     { id: "TXN-77210", policy: "Star Comprehensive Health", amount: "₹799", date: "05 Aug 2023", status: "SUCCESS", method: "Debit Card" }
+  ],
+  loans: [
+    {
+      id: "LN-88210",
+      policy: "LIC Tech Term Plan",
+      amount: "₹50,000",
+      date: "05 Feb 2024",
+      status: "Disbursed",
+      tenure: "12 Months",
+      rate: "9% p.a."
+    }
+  ],
+  supportTickets: [
+    { id: 'TKT-9912', subject: 'Policy Renewal Query', status: 'Resolved', date: '10 Apr 2024' },
+    { id: 'TKT-1002', subject: 'Document Verification', status: 'In Progress', date: '25 Apr 2024' },
   ]
 };
 
@@ -125,9 +153,58 @@ export const useCustomerDashboard = () => {
     }
   };
 
+  const addClaim = (newClaim: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      claims: [newClaim, ...prev.claims]
+    }));
+  };
+
+  const addServiceRequest = (newRequest: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      serviceRequests: [newRequest, ...prev.serviceRequests]
+    }));
+  };
+
+  const addLoan = (newLoan: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      loans: [newLoan, ...(prev.loans || [])]
+    }));
+  };
+
+  const updateProfile = (updatedProfile: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      profile: { ...prev.profile, ...updatedProfile }
+    }));
+  };
+
+  const updateNominee = (updatedNominee: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      nominee: { ...prev.nominee, ...updatedNominee }
+    }));
+  };
+
+  const updateBankDetails = (updatedBank: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      bankDetails: { ...prev.bankDetails, ...updatedBank }
+    }));
+  };
+
+  const addSupportTicket = (newTicket: any) => {
+    setData((prev: any) => ({
+      ...prev,
+      supportTickets: [newTicket, ...(prev.supportTickets || [])]
+    }));
+  };
+
   useEffect(() => {
     fetchDashboard();
   }, []);
 
-  return { data, loading, error, refresh: fetchDashboard };
+  return { data, loading, error, refresh: fetchDashboard, addClaim, addServiceRequest, addLoan, updateProfile, updateNominee, updateBankDetails, addSupportTicket };
 };

@@ -7,6 +7,7 @@ import { cn } from '../../utils/helpers';
 import { PaymentGateway } from '../../components/PaymentGateway';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { jsPDF } from 'jspdf';
 
 const CustomerPolicies: React.FC = () => {
   const { data, loading, error, refresh } = useCustomer();
@@ -19,7 +20,38 @@ const CustomerPolicies: React.FC = () => {
   if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
 
   const handleExportPDF = (policy: any) => {
-    alert(`Generating PDF for ${policy.title}...\nYour download will start shortly.`);
+    const doc = new jsPDF();
+    const fileName = `${policy.title.replace(/\s+/g, '_')}_Document.pdf`;
+
+    // Title
+    doc.setFontSize(22);
+    doc.setTextColor(20, 158, 136); // Teal
+    doc.text('SAFEGUARD ADVISOR', 20, 30);
+    
+    doc.setFontSize(16);
+    doc.setTextColor(30, 41, 59); // Slate
+    doc.text('POLICY CERTIFICATE', 20, 45);
+
+    // Separator
+    doc.setDrawColor(226, 232, 240);
+    doc.line(20, 50, 190, 50);
+
+    // Content
+    doc.setFontSize(12);
+    doc.setTextColor(71, 85, 105);
+    doc.text(`Policy Title: ${policy.title}`, 20, 65);
+    doc.text(`Policy Number: ${policy.policy_number || policy.id}`, 20, 75);
+    doc.text(`Provider: ${policy.provider}`, 20, 85);
+    doc.text(`Status: ${policy.status}`, 20, 95);
+    doc.text(`Premium: ${policy.premium}`, 20, 105);
+    doc.text(`Generated On: ${new Date().toLocaleDateString()}`, 20, 115);
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(148, 163, 184);
+    doc.text('This is a digitally generated document from SafeGuard Advisor Portal.', 20, 280);
+
+    doc.save(fileName);
   };
 
   const handlePayNow = (policy: any) => {
@@ -132,9 +164,9 @@ const CustomerPolicies: React.FC = () => {
                   </button>
                   <button 
                     onClick={() => handleExportPDF(policy)}
-                    className="p-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
+                    className="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-colors flex items-center gap-2"
                   >
-                    <Download className="w-4 h-4" />
+                    <Download className="w-3 h-3" /> Export
                   </button>
                   {policy.status === 'Renewal Due' && (
                     <button 

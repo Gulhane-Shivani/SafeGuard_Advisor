@@ -6,6 +6,7 @@ import { useCustomer } from '../../store/CustomerContext';
 import { PaymentGateway } from '../../components/PaymentGateway';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { jsPDF } from 'jspdf';
 
 const CustomerPolicyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -32,7 +33,38 @@ const CustomerPolicyDetail: React.FC = () => {
   const policy = data.policies.find((p: any) => String(p.id) === String(id) || p.policy_number === id);
 
   const handleExportPDF = () => {
-    alert(`Generating PDF for ${policy.title}...\nYour download will start shortly.`);
+    const doc = new jsPDF();
+    const fileName = `${policy.title.replace(/\s+/g, '_')}_Document.pdf`;
+
+    // Title
+    doc.setFontSize(22);
+    doc.setTextColor(20, 158, 136); // Teal
+    doc.text('SAFEGUARD ADVISOR', 20, 30);
+    
+    doc.setFontSize(16);
+    doc.setTextColor(30, 41, 59); // Slate
+    doc.text('POLICY DETAILS', 20, 45);
+
+    // Separator
+    doc.setDrawColor(226, 232, 240);
+    doc.line(20, 50, 190, 50);
+
+    // Content
+    doc.setFontSize(12);
+    doc.setTextColor(71, 85, 105);
+    doc.text(`Policy Title: ${policy.title}`, 20, 65);
+    doc.text(`Policy Number: ${policy.policy_number || policy.id}`, 20, 75);
+    doc.text(`Provider: ${policy.provider}`, 20, 85);
+    doc.text(`Status: ${policy.status}`, 20, 95);
+    doc.text(`Premium: ${policy.premium}`, 20, 105);
+    doc.text(`Period: ${policy.start_date} to ${policy.end_date}`, 20, 115);
+
+    // Footer
+    doc.setFontSize(10);
+    doc.setTextColor(148, 163, 184);
+    doc.text('This is a digitally generated document from SafeGuard Advisor Portal.', 20, 280);
+
+    doc.save(fileName);
   };
 
   const handlePayNow = () => {
@@ -116,9 +148,9 @@ const CustomerPolicyDetail: React.FC = () => {
               <div className="flex items-start gap-3">
                 <button 
                   onClick={handleExportPDF}
-                  className="px-4 py-2 bg-white/10 rounded-xl font-bold text-sm hover:bg-white/20 transition-all flex items-center gap-2"
+                  className="px-6 py-2 border border-white/30 rounded-xl font-bold text-sm hover:bg-white/10 transition-all flex items-center gap-2"
                 >
-                  <Download className="w-4 h-4" /> Download PDF
+                  <Download className="w-4 h-4" /> Download Policy
                 </button>
                 <button 
                   onClick={handlePayNow}

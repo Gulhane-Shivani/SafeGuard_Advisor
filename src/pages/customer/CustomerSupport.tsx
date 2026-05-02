@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { MessageSquare, PhoneCall, FileText, ChevronRight, ChevronDown, Mail, MapPin } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
+import { useCustomer } from '../../store/CustomerContext';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { cn } from '../../utils/helpers';
+import { LiveChatModal } from '../../components/LiveChatModal';
 
 const FAQS = [
   { q: 'How do I renew my policy?', a: 'Go to My Policies → click "Renew Now" on the policy, or visit Payments & Renewals section.' },
@@ -12,13 +16,39 @@ const FAQS = [
 ];
 
 const CustomerSupport: React.FC = () => {
+  const { data, loading, error, addSupportTicket } = useCustomer();
+  const ticketFormRef = React.useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketDesc, setTicketDesc] = useState('');
   const [ticketSubmitted, setTicketSubmitted] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  if (loading || !data) return <LoadingSpinner />;
+
+  const handleLiveChat = () => {
+    setIsChatOpen(true);
+  };
+
+  const handleWhatsApp = () => {
+    window.open('https://wa.me/919876500000', '_blank');
+  };
+
+  const scrollToTicket = () => {
+    ticketFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   const handleTicket = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    const newTicket = {
+      id: `TKT-${Math.floor(Math.random() * 9000) + 1000}`,
+      subject: ticketSubject,
+      status: 'Open',
+      date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+    };
+
+    addSupportTicket(newTicket);
     setTicketSubmitted(true);
     setTimeout(() => setTicketSubmitted(false), 4000);
     setTicketSubject('');
@@ -42,6 +72,11 @@ const CustomerSupport: React.FC = () => {
           ].map((item, i) => (
             <button
               key={i}
+              onClick={() => {
+                if (item.action === 'Start Chat') handleLiveChat();
+                if (item.action === 'Open WhatsApp') handleWhatsApp();
+                if (item.action === 'New Ticket') scrollToTicket();
+              }}
               className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md hover:border-teal-200 transition-all text-center group"
             >
               <div className={`${item.color} w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform`}>
@@ -84,7 +119,7 @@ const CustomerSupport: React.FC = () => {
           </div>
 
           {/* Raise Ticket + Contact */}
-          <div className="space-y-6">
+          <div className="space-y-6" ref={ticketFormRef}>
             <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
               <h3 className="font-bold text-slate-900 mb-6">Raise a Support Ticket</h3>
               {ticketSubmitted ? (
@@ -152,7 +187,50 @@ const CustomerSupport: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Ticket History */}
+        <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+          <div className="p-8 border-b border-slate-100">
+            <h2 className="text-xl font-bold text-slate-900">Ticket History</h2>
+            <p className="text-sm text-slate-500 mt-1">View and track the status of your previous support requests.</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-slate-50">
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">ID</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Subject</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
+                  <th className="px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-50">
+                {(data.supportTickets || []).map((ticket: any) => (
+                  <tr key={ticket.id} className="hover:bg-slate-50/50 transition-colors">
+                    <td className="px-8 py-5 text-sm font-bold text-slate-900">{ticket.id}</td>
+                    <td className="px-8 py-5 text-sm font-medium text-slate-600">{ticket.subject}</td>
+                    <td className="px-8 py-5">
+                      <span className={cn(
+                        "inline-flex items-center px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest",
+                        ticket.status === 'Resolved' ? "bg-emerald-50 text-emerald-600" :
+                        ticket.status === 'Open' ? "bg-blue-50 text-blue-600" : "bg-amber-50 text-amber-600"
+                      )}>
+                        {ticket.status}
+                      </span>
+                    </td>
+                    <td className="px-8 py-5 text-sm text-slate-500">{ticket.date}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
+      
+      <LiveChatModal 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+      />
     </CustomerLayout>
   );
 };
