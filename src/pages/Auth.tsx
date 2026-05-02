@@ -85,7 +85,7 @@ export const Auth: React.FC = () => {
 
         navigate('/admin/dashboard');
       } else {
-        const { user: userRes } = response.data;
+        const { user: userRes, access_token } = response.data;
 
         if (!userRes) {
           throw new Error('Server did not return user details.');
@@ -97,6 +97,7 @@ export const Auth: React.FC = () => {
         };
 
         localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(userData));
 
         setUser(userData);

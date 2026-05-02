@@ -22,8 +22,8 @@ import HealthInsurance from './pages/insurance/HealthInsurance';
 import LifeInsurance from './pages/insurance/LifeInsurance';
 import MotorInsurance from './pages/insurance/MotorInsurance';
 import InvestmentInsurance from './pages/insurance/InvestmentInsurance';
-import { Profile } from './pages/Profile';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { CustomerProvider } from './store/CustomerContext';
 import './styles/globals.css';
 
 import { AppProvider } from './store';
@@ -47,7 +47,6 @@ const AppContent = () => {
           <Route path="/advisor" element={<Advisor />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/claims" element={<Claims />} />
-          <Route path="/profile" element={<Profile />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
@@ -58,16 +57,22 @@ const AppContent = () => {
           <Route path="/insurance/motor" element={<MotorInsurance />} />
           <Route path="/insurance/investment" element={<InvestmentInsurance />} />
           {/* Customer Portal Routes */}
-          <Route path="/customer" element={<CustomerHome />} />
-          <Route path="/customer/policies" element={<CustomerPolicies />} />
-          <Route path="/customer/policies/:id" element={<CustomerPolicyDetail />} />
-          <Route path="/customer/payments" element={<CustomerPayments />} />
-          <Route path="/customer/claims" element={<CustomerClaims />} />
-          <Route path="/customer/requests" element={<CustomerServiceRequests />} />
-          <Route path="/customer/vault" element={<CustomerDocumentVault />} />
-          <Route path="/customer/profile" element={<CustomerProfile />} />
-          <Route path="/customer/loan" element={<CustomerPolicyLoan />} />
-          <Route path="/customer/support" element={<CustomerSupport />} />
+          <Route path="/customer/*" element={
+            <CustomerProvider>
+              <Routes>
+                <Route path="/" element={<CustomerHome />} />
+                <Route path="/policies" element={<CustomerPolicies />} />
+                <Route path="/policies/:id" element={<CustomerPolicyDetail />} />
+                <Route path="/payments" element={<CustomerPayments />} />
+                <Route path="/claims" element={<CustomerClaims />} />
+                <Route path="/requests" element={<CustomerServiceRequests />} />
+                <Route path="/vault" element={<CustomerDocumentVault />} />
+                <Route path="/profile" element={<CustomerProfile />} />
+                <Route path="/loan" element={<CustomerPolicyLoan />} />
+                <Route path="/support" element={<CustomerSupport />} />
+              </Routes>
+            </CustomerProvider>
+          } />
         </Routes>
       </main>
 

@@ -234,7 +234,7 @@ const Navbar: React.FC = () => {
                         </Link>
                       )}
                       <Link
-                        to="/profile"
+                        to="/customer/profile"
                         className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all"
                       >
                         <User className="w-4 h-4" /> My Profile

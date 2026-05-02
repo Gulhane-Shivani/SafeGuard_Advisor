@@ -1,10 +1,12 @@
 import React from 'react';
 import { IndianRupee, CheckCircle2 } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 
 const CustomerPolicyLoan: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error } = useCustomer();
+
+  if (loading || !data) return null;
   const eligiblePolicies = data.policies.filter(p => p.type.includes('Life'));
 
   return (

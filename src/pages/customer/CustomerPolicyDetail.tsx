@@ -1,13 +1,69 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Shield, HeartPulse, Car, Home, ChevronRight, CheckCircle2, Briefcase, User, Download, LayoutDashboard } from 'lucide-react';
+import { Shield, HeartPulse, Car, Home, ChevronRight, CheckCircle2, Briefcase, User, Download, LayoutDashboard, CreditCard } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
+import { PaymentGateway } from '../../components/PaymentGateway';
+
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CustomerPolicyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const policy = CUSTOMER_DATA.policies.find(p => p.id === id);
+  const { data, loading, error, refresh } = useCustomer();
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
+
+  if (loading || !data) return <LoadingSpinner />;
+  
+  if (error || !data) {
+    return (
+      <CustomerLayout>
+        <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+          <h2 className="text-xl font-bold text-slate-900">Unable to load policy</h2>
+          <p className="text-slate-500 mt-2">{error || 'Session expired. Please login again.'}</p>
+          <button onClick={() => navigate('/customer/policies')} className="mt-6 px-6 py-2 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700">
+            Back to Policies
+          </button>
+        </div>
+      </CustomerLayout>
+    );
+  }
+  
+  const policy = data.policies.find((p: any) => String(p.id) === String(id) || p.policy_number === id);
+
+  const handleExportPDF = () => {
+    alert(`Generating PDF for ${policy.title}...\nYour download will start shortly.`);
+  };
+
+  const handlePayNow = () => {
+    setPaymentModal({
+      isOpen: true,
+      amount: policy.premium,
+      policyName: policy.title
+    });
+  };
+
+  const handlePaymentSuccess = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/customer/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          policy: paymentModal.policyName,
+          amount: paymentModal.amount,
+          method: 'Net Banking'
+        })
+      });
+      if (response.ok) {
+        refresh();
+      }
+    } catch (err) {
+      console.error('Failed to record payment:', err);
+    }
+  };
 
   if (!policy) {
     return (
@@ -58,11 +114,17 @@ const CustomerPolicyDetail: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <button className="px-4 py-2 bg-white/10 rounded-xl font-bold text-sm hover:bg-white/20 transition-all flex items-center gap-2">
+                <button 
+                  onClick={handleExportPDF}
+                  className="px-4 py-2 bg-white/10 rounded-xl font-bold text-sm hover:bg-white/20 transition-all flex items-center gap-2"
+                >
                   <Download className="w-4 h-4" /> Download PDF
                 </button>
-                <button className="px-6 py-2 bg-teal-500 rounded-xl font-bold text-sm hover:bg-teal-600 transition-all">
-                  Renew Policy
+                <button 
+                  onClick={handlePayNow}
+                  className="px-6 py-2 bg-teal-500 rounded-xl font-bold text-sm hover:bg-teal-600 transition-all"
+                >
+                  {policy.status === 'Renewal Due' ? 'Renew Policy' : 'Pay Now'}
                 </button>
               </div>
             </div>
@@ -77,8 +139,8 @@ const CustomerPolicyDetail: React.FC = () => {
                   <LayoutDashboard className="w-5 h-5 text-teal-600" /> Coverage Details
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {policy.coverage?.map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">
+                  {policy.coverage?.map((item) => (
+                    <div key={item} className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">
                       <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
                       <span className="text-sm font-medium text-slate-700">{item}</span>
                     </div>
@@ -92,8 +154,8 @@ const CustomerPolicyDetail: React.FC = () => {
                   <Briefcase className="w-5 h-5 text-blue-600" /> Benefits & Features
                 </h2>
                 <div className="space-y-3">
-                  {policy.benefits?.map((item, i) => (
-                    <div key={i} className="flex gap-4">
+                  {policy.benefits?.map((item) => (
+                    <div key={item} className="flex gap-4">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                       <p className="text-sm text-slate-600">{item}</p>
                     </div>
@@ -110,8 +172,8 @@ const CustomerPolicyDetail: React.FC = () => {
                       { label: 'Cash Value',        value: (policy as any).cashValue },
                       { label: 'Surrender Value',   value: (policy as any).surrenderValue },
                       { label: 'Loan Eligibility',  value: (policy as any).loanEligibility },
-                    ].map((item, i) => (
-                      <div key={i}>
+                    ].map((item) => (
+                      <div key={item.label}>
                         <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest mb-1">{item.label}</p>
                         <p className="text-lg font-bold text-slate-900">{item.value}</p>
                       </div>
@@ -124,10 +186,10 @@ const CustomerPolicyDetail: React.FC = () => {
               <section>
                 <h2 className="text-lg font-bold text-slate-900 mb-5">Premium Payment History</h2>
                 <div className="bg-slate-50 rounded-2xl overflow-hidden">
-                  {CUSTOMER_DATA.payments
-                    .filter(p => p.policy === policy.title)
-                    .map((pay, i) => (
-                    <div key={i} className="flex items-center justify-between p-5 border-b border-white last:border-0">
+                  {(data.payments || [])
+                    .filter((p: any) => p.policy === policy.title)
+                    .map((pay: any) => (
+                    <div key={pay.transaction_id || pay.id} className="flex items-center justify-between p-5 border-b border-white last:border-0">
                       <div>
                         <p className="text-sm font-bold text-slate-900">{pay.date}</p>
                         <p className="text-xs text-slate-400">{pay.method} • {pay.id}</p>
@@ -138,7 +200,7 @@ const CustomerPolicyDetail: React.FC = () => {
                       </div>
                     </div>
                   ))}
-                  {CUSTOMER_DATA.payments.filter(p => p.policy === policy.title).length === 0 && (
+                  {((data.payments || []).filter((p: any) => p.policy === policy.title).length === 0) && (
                     <p className="text-sm text-slate-400 text-center py-8">No payment history found.</p>
                   )}
                 </div>
@@ -151,12 +213,12 @@ const CustomerPolicyDetail: React.FC = () => {
                 <h3 className="font-bold text-slate-900 mb-5">Policy Period</h3>
                 <div className="space-y-4 text-sm">
                   {[
-                    { label: 'Start Date',      value: policy.startDate },
-                    { label: 'End Date',        value: policy.endDate },
+                    { label: 'Start Date',      value: policy.start_date },
+                    { label: 'End Date',        value: policy.end_date },
                     { label: 'Premium',         value: `${policy.premium}/mo` },
-                    { label: 'Due Date',        value: policy.dueDate },
-                  ].map((row, i) => (
-                    <div key={i} className="flex justify-between border-b border-slate-200 pb-3 last:border-0">
+                    { label: 'Due Date',        value: policy.due_date },
+                  ].map((row) => (
+                    <div key={row.label} className="flex justify-between border-b border-slate-200 pb-3 last:border-0">
                       <span className="text-slate-500">{row.label}</span>
                       <span className="font-bold text-slate-900">{row.value}</span>
                     </div>
@@ -195,6 +257,14 @@ const CustomerPolicyDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <PaymentGateway 
+        isOpen={paymentModal.isOpen}
+        amount={paymentModal.amount}
+        policyName={paymentModal.policyName}
+        onClose={() => setPaymentModal({ ...paymentModal, isOpen: false })}
+        onSuccess={handlePaymentSuccess}
+      />
     </CustomerLayout>
   );
 };

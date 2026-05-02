@@ -1,7 +1,7 @@
 import React from 'react';
 import { Plus, ChevronRight } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
 
 const REQUEST_TYPES = [
@@ -10,7 +10,10 @@ const REQUEST_TYPES = [
 ];
 
 const CustomerServiceRequests: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error } = useCustomer();
+
+  if (loading || !data) return null;
+  if (error) return <div>Error loading data</div>;
 
   return (
     <CustomerLayout>

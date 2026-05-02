@@ -1,11 +1,13 @@
 import React from 'react';
 import { Plus, CheckCircle2, Clock } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
 
 const CustomerClaims: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error } = useCustomer();
+
+  if (loading || !data) return null;
 
   const statusSteps = ['Submitted', 'Under Review', 'Approved', 'Settled'];
 

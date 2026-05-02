@@ -1,11 +1,47 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Settings, CheckCircle2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { CreditCard, History, ChevronRight, CheckCircle2, Shield, Calendar, IndianRupee, Settings } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
+import { PaymentGateway } from '../../components/PaymentGateway';
+import { cn } from '../../utils/helpers';
+
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CustomerPayments: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error, refresh } = useCustomer();
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
+
+  if (loading || !data) return <LoadingSpinner />;
+
+  const handlePayNow = (policy: any) => {
+    setPaymentModal({
+      isOpen: true,
+      amount: policy.premium,
+      policyName: policy.title
+    });
+  };
+
+  const handlePaymentSuccess = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/customer/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          policy: paymentModal.policyName,
+          amount: paymentModal.amount,
+          method: 'Debit Card'
+        })
+      });
+      if (response.ok) {
+        refresh();
+      }
+    } catch (err) {
+      console.error('Failed to record payment:', err);
+    }
+  };
 
   return (
     <CustomerLayout>
@@ -24,12 +60,15 @@ const CustomerPayments: React.FC = () => {
                 <div key={policy.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
                   <div>
                     <p className="font-bold text-slate-900">{policy.title}</p>
-                    <p className="text-xs text-slate-500 mt-1">Due: {policy.dueDate}</p>
+                    <p className="text-xs text-slate-500 mt-1">Due: {policy.due_date}</p>
                     <p className="text-xs text-slate-400 mt-0.5">{policy.provider}</p>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-slate-900">{policy.premium}</p>
-                    <button className="mt-2 px-4 py-1.5 bg-teal-600 text-white rounded-lg text-xs font-bold hover:bg-teal-700 transition-all">
+                    <button 
+                      onClick={() => handlePayNow(policy)}
+                      className="mt-2 px-4 py-1.5 bg-teal-600 text-white rounded-lg text-xs font-bold hover:bg-teal-700 transition-all"
+                    >
                       Pay Now
                     </button>
                   </div>
@@ -67,8 +106,8 @@ const CustomerPayments: React.FC = () => {
         <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
           <h3 className="font-bold text-slate-900 mb-6">Pay Premium</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {['UPI / QR', 'Debit / Credit Card', 'Net Banking', 'Wallets'].map((method, i) => (
-              <button key={i} className="p-4 rounded-2xl border-2 border-slate-100 hover:border-teal-400 hover:bg-teal-50 transition-all text-center font-bold text-sm text-slate-700 hover:text-teal-700">
+            {['UPI / QR', 'Debit / Credit Card', 'Net Banking', 'Wallets'].map((method) => (
+              <button key={method} className="p-4 rounded-2xl border-2 border-slate-100 hover:border-teal-400 hover:bg-teal-50 transition-all text-center font-bold text-sm text-slate-700 hover:text-teal-700">
                 {method}
               </button>
             ))}
@@ -91,6 +130,14 @@ const CustomerPayments: React.FC = () => {
           </button>
         </div>
       </div>
+
+      <PaymentGateway 
+        isOpen={paymentModal.isOpen}
+        amount={paymentModal.amount}
+        policyName={paymentModal.policyName}
+        onClose={() => setPaymentModal({ ...paymentModal, isOpen: false })}
+        onSuccess={handlePaymentSuccess}
+      />
     </CustomerLayout>
   );
 };

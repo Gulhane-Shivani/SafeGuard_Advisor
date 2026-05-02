@@ -1,10 +1,12 @@
 import React from 'react';
 import { FileText, Download } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 
 const CustomerDocumentVault: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error } = useCustomer();
+
+  if (loading || !data) return null;
 
   return (
     <CustomerLayout>
@@ -19,10 +21,10 @@ const CustomerDocumentVault: React.FC = () => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.policies.map(policy => (
-            <div key={policy.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:border-teal-200 transition-all">
-              <div className="flex items-center gap-3 mb-5">
+            <div key={policy.id} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
+              <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
                   <FileText className="w-6 h-6" />
                 </div>

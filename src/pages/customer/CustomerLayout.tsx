@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Shield, CreditCard, FileText, Settings,
   HelpCircle, LogOut, Download, Bell, User, Landmark, Menu, X
 } from 'lucide-react';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
 
 const menuItems = [
@@ -19,11 +19,17 @@ const menuItems = [
   { id: 'support',  label: 'Support',            icon: HelpCircle,      path: '/customer/support' },
 ];
 
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+
 const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
+  const { data, loading, error } = useCustomer();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const unreadCount = CUSTOMER_DATA.notifications.filter((n: any) => n.unread).length;
+
+  if (loading || !data) return <LoadingSpinner />;
+
+  const unreadCount = data.notifications.filter((n: any) => n.unread).length;
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -133,7 +139,7 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
                     </button>
                   </div>
                   <div className="divide-y divide-slate-50 max-h-72 overflow-y-auto">
-                    {CUSTOMER_DATA.notifications.map((n: any) => (
+                    {data.notifications.map((n: any) => (
                       <div key={n.id} className={cn('p-4 hover:bg-slate-50 transition-colors', n.unread && 'bg-orange-50/50')}>
                         <div className="flex gap-3">
                           <div className={cn('w-2 h-2 rounded-full mt-1.5 shrink-0', n.unread ? 'bg-orange-500' : 'bg-slate-200')} />
@@ -156,7 +162,7 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
             <div className="h-8 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-slate-900">{CUSTOMER_DATA.name}</p>
+                <p className="text-sm font-bold text-slate-900">{data.name}</p>
                 <p className="text-[10px] font-bold text-teal-600 uppercase">Premium Member</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm">

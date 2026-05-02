@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { User, Landmark, ChevronRight } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 
 const CustomerProfile: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error } = useCustomer();
   const [notifications, setNotifications] = useState({ Email: true, SMS: true, WhatsApp: true });
+
+  if (loading || !data) return null;
 
   const toggle = (key: keyof typeof notifications) =>
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));

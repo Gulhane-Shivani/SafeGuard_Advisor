@@ -1,15 +1,60 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Shield, CreditCard, FileText, Clock, AlertCircle,
   Download, Plus, HeartPulse, Car, Home, Landmark, PhoneCall
 } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
+import { PaymentGateway } from '../../components/PaymentGateway';
+
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CustomerHome: React.FC = () => {
-  const data = CUSTOMER_DATA;
+  const { data, loading, error, refresh } = useCustomer();
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
+
+  if (loading || !data) return <LoadingSpinner />;
+
+  if (error || !data) return (
+    <CustomerLayout>
+      <div className="text-center py-20 bg-white rounded-3xl border border-slate-100">
+        <h2 className="text-xl font-bold text-slate-900">Oops! Something went wrong</h2>
+        <p className="text-slate-500 mt-2">{error || 'Could not load dashboard'}</p>
+      </div>
+    </CustomerLayout>
+  );
+
+  const handlePayNow = (policy: any) => {
+    setPaymentModal({
+      isOpen: true,
+      amount: policy.premium,
+      policyName: policy.title
+    });
+  };
+
+  const handlePaymentSuccess = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/customer/payments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          policy: paymentModal.policyName,
+          amount: paymentModal.amount,
+          method: 'UPI / QR'
+        })
+      });
+      if (response.ok) {
+        refresh();
+      }
+    } catch (err) {
+      console.error('Failed to record payment:', err);
+    }
+  };
 
   return (
     <CustomerLayout>
@@ -21,11 +66,8 @@ const CustomerHome: React.FC = () => {
             <p className="text-slate-500 mt-1">Here's a summary of your insurance portfolio.</p>
           </div>
           <div className="flex gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold hover:bg-slate-50 transition-all shadow-sm">
-              <Download className="w-4 h-4" /> Export Report
-            </button>
             <Link
-              to="/customer/policies"
+              to="/compare"
               className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-xl text-sm font-semibold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20"
             >
               <Plus className="w-4 h-4" /> New Policy
@@ -40,8 +82,8 @@ const CustomerHome: React.FC = () => {
             { label: 'Total Sum Assured', value: data.stats.totalSumAssured, icon: Landmark, color: 'bg-purple-50 text-purple-600' },
             { label: 'Monthly Premium',   value: data.stats.totalPremium,    icon: CreditCard, color: 'bg-teal-50 text-teal-600'  },
             { label: 'Pending Claims',    value: data.stats.pendingClaims,   icon: FileText, color: 'bg-orange-50 text-orange-600' },
-          ].map((stat, i) => (
-            <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+          ].map((stat) => (
+            <div key={stat.label} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
               <div className={`${stat.color} w-12 h-12 rounded-2xl flex items-center justify-center mb-4`}>
                 <stat.icon className="w-6 h-6" />
               </div>
@@ -75,7 +117,7 @@ const CustomerHome: React.FC = () => {
                       </div>
                       <div>
                         <h3 className="font-bold text-slate-900">{policy.title}</h3>
-                        <p className="text-xs text-slate-500">{policy.id} • {policy.provider}</p>
+                        <p className="text-xs text-slate-500">{policy.policy_number} • {policy.provider}</p>
                       </div>
                     </div>
                     <div className="text-right">
@@ -98,8 +140,8 @@ const CustomerHome: React.FC = () => {
                   { label: 'Download ID', icon: Download,   to: '/customer/vault'    },
                   { label: 'File Claim',  icon: FileText,   to: '/customer/claims'   },
                   { label: 'Support',     icon: PhoneCall,  to: '/customer/support'  },
-                ].map((action, i) => (
-                  <Link key={i} to={action.to} className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/10 group">
+                ].map((action) => (
+                  <Link key={action.label} to={action.to} className="flex flex-col items-center gap-3 p-4 rounded-2xl bg-white/5 hover:bg-white/10 transition-all border border-white/10 group">
                     <div className="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <action.icon className="w-6 h-6" />
                     </div>
@@ -124,13 +166,16 @@ const CustomerHome: React.FC = () => {
                   <div className="flex justify-between mb-3">
                     <div>
                       <p className="text-sm font-bold text-slate-900">{policy.title}</p>
-                      <p className="text-xs text-orange-700 mt-1">Due: {policy.dueDate}</p>
+                      <p className="text-xs text-orange-700 mt-1">Due: {policy.due_date}</p>
                     </div>
                     <p className="text-sm font-bold">{policy.premium}</p>
                   </div>
-                  <Link to="/customer/payments" className="block w-full py-2 bg-orange-600 text-white rounded-xl text-xs font-bold text-center hover:bg-orange-700 transition-colors">
+                  <button 
+                    onClick={() => handlePayNow(policy)}
+                    className="block w-full py-2 bg-orange-600 text-white rounded-xl text-xs font-bold text-center hover:bg-orange-700 transition-colors"
+                  >
                     Pay Now
-                  </Link>
+                  </button>
                 </div>
               ))}
             </div>
@@ -143,10 +188,10 @@ const CustomerHome: React.FC = () => {
               {data.claims.filter(c => c.status !== 'Settled').map(claim => (
                 <div key={claim.id} className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                   <div className="flex justify-between items-center mb-1">
-                    <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{claim.id}</span>
+                    <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{claim.claim_number}</span>
                     <span className="text-[10px] font-bold text-blue-600">{claim.status}</span>
                   </div>
-                  <p className="text-sm font-bold text-slate-900 mt-2">{claim.policyName}</p>
+                  <p className="text-sm font-bold text-slate-900 mt-2">{claim.policy_title}</p>
                   <p className="text-xs text-slate-500">{claim.hospital || claim.reason}</p>
                   <div className="mt-3 bg-blue-200 rounded-full h-1.5">
                     <div className="bg-blue-600 h-1.5 rounded-full w-2/3" />
@@ -157,6 +202,14 @@ const CustomerHome: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <PaymentGateway 
+        isOpen={paymentModal.isOpen}
+        amount={paymentModal.amount}
+        policyName={paymentModal.policyName}
+        onClose={() => setPaymentModal({ ...paymentModal, isOpen: false })}
+        onSuccess={handlePaymentSuccess}
+      />
     </CustomerLayout>
   );
 };

@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, HeartPulse, Car, Home, Download, Search } from 'lucide-react';
+import { Shield, HeartPulse, Car, Home, Download, Search, CreditCard } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
-import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
+import { PaymentGateway } from '../../components/PaymentGateway';
+
+import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CustomerPolicies: React.FC = () => {
+  const { data, loading, error, refresh } = useCustomer();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
   const navigate = useNavigate();
-  const data = CUSTOMER_DATA;
+
+  if (loading || !data) return <LoadingSpinner />;
+  if (error) return <div className="p-10 text-center text-red-500">{error}</div>;
+
+  const handleExportPDF = (policy: any) => {
+    alert(`Generating PDF for ${policy.title}...\nYour download will start shortly.`);
+  };
+
+  const handlePayNow = (policy: any) => {
+    setPaymentModal({
+      isOpen: true,
+      amount: policy.premium,
+      policyName: policy.title
+    });
+  };
 
   const filtered = data.policies.filter(p => {
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
@@ -95,11 +114,11 @@ const CustomerPolicies: React.FC = () => {
                     <p className="text-sm text-slate-500">{policy.id} • {policy.provider}</p>
                     <div className="flex flex-wrap gap-6 mt-3 text-xs">
                       <div><span className="text-slate-400">Type:</span> <span className="font-bold text-slate-700 ml-1">{policy.type}</span></div>
-                      <div><span className="text-slate-400">Sum Assured:</span> <span className="font-bold text-slate-700 ml-1">{policy.sumAssured}</span></div>
+                      <div><span className="text-slate-400">Sum Assured:</span> <span className="font-bold text-slate-700 ml-1">{policy.sum_assured}</span></div>
                       <div><span className="text-slate-400">Premium:</span> <span className="font-bold text-slate-700 ml-1">{policy.premium}/mo</span></div>
-                      <div><span className="text-slate-400">Due:</span> <span className="font-bold text-slate-700 ml-1">{policy.dueDate}</span></div>
-                      <div><span className="text-slate-400">Start:</span> <span className="font-bold text-slate-700 ml-1">{policy.startDate}</span></div>
-                      <div><span className="text-slate-400">End:</span> <span className="font-bold text-slate-700 ml-1">{policy.endDate}</span></div>
+                      <div><span className="text-slate-400">Due:</span> <span className="font-bold text-slate-700 ml-1">{policy.due_date}</span></div>
+                      <div><span className="text-slate-400">Start:</span> <span className="font-bold text-slate-700 ml-1">{policy.start_date}</span></div>
+                      <div><span className="text-slate-400">End:</span> <span className="font-bold text-slate-700 ml-1">{policy.end_date}</span></div>
                     </div>
                   </div>
                 </div>
@@ -111,16 +130,25 @@ const CustomerPolicies: React.FC = () => {
                   >
                     View Details
                   </button>
-                  <button className="p-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-colors">
+                  <button 
+                    onClick={() => handleExportPDF(policy)}
+                    className="p-2 bg-slate-50 text-slate-600 rounded-xl hover:bg-slate-100 transition-colors"
+                  >
                     <Download className="w-4 h-4" />
                   </button>
                   {policy.status === 'Renewal Due' && (
-                    <button className="px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold hover:bg-orange-700 transition-colors">
+                    <button 
+                      onClick={() => handlePayNow(policy)}
+                      className="px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold hover:bg-orange-700 transition-colors"
+                    >
                       Renew Now
                     </button>
                   )}
                   {policy.status === 'Active' && (
-                    <button className="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors">
+                    <button 
+                      onClick={() => handlePayNow(policy)}
+                      className="px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors"
+                    >
                       Pay Now
                     </button>
                   )}
@@ -136,6 +164,16 @@ const CustomerPolicies: React.FC = () => {
           )}
         </div>
       </div>
+
+      <PaymentGateway 
+        isOpen={paymentModal.isOpen}
+        amount={paymentModal.amount}
+        policyName={paymentModal.policyName}
+        onClose={() => setPaymentModal({ ...paymentModal, isOpen: false })}
+        onSuccess={() => {
+          // Success handled in gateway, maybe trigger a toast or refresh here
+        }}
+      />
     </CustomerLayout>
   );
 };
