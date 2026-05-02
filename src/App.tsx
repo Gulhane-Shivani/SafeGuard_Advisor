@@ -4,7 +4,16 @@ import { Home } from './pages/Home';
 import { Advisor } from './pages/Advisor';
 import { Compare } from './pages/Compare';
 import { Claims } from './pages/Claims';
-import { Dashboard } from './pages/Dashboard';
+import CustomerHome from './pages/customer/CustomerHome';
+import CustomerPolicies from './pages/customer/CustomerPolicies';
+import CustomerPolicyDetail from './pages/customer/CustomerPolicyDetail';
+import CustomerPayments from './pages/customer/CustomerPayments';
+import CustomerClaims from './pages/customer/CustomerClaims';
+import CustomerServiceRequests from './pages/customer/CustomerServiceRequests';
+import CustomerDocumentVault from './pages/customer/CustomerDocumentVault';
+import CustomerProfile from './pages/customer/CustomerProfile';
+import CustomerPolicyLoan from './pages/customer/CustomerPolicyLoan';
+import CustomerSupport from './pages/customer/CustomerSupport';
 import { Auth } from './pages/Auth';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
@@ -25,7 +34,8 @@ const AppContent = () => {
   const location = useLocation();
   const isAdminPath = location.pathname.startsWith('/admin');
   const isAuthPath = location.pathname === '/auth';
-  const hideLayout = isAdminPath || isAuthPath;
+  const isCustomerPath = location.pathname.startsWith('/customer');
+  const hideLayout = isAdminPath || isAuthPath || isCustomerPath;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -37,7 +47,6 @@ const AppContent = () => {
           <Route path="/advisor" element={<Advisor />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/claims" element={<Claims />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
@@ -48,6 +57,17 @@ const AppContent = () => {
           <Route path="/insurance/life" element={<LifeInsurance />} />
           <Route path="/insurance/motor" element={<MotorInsurance />} />
           <Route path="/insurance/investment" element={<InvestmentInsurance />} />
+          {/* Customer Portal Routes */}
+          <Route path="/customer" element={<CustomerHome />} />
+          <Route path="/customer/policies" element={<CustomerPolicies />} />
+          <Route path="/customer/policies/:id" element={<CustomerPolicyDetail />} />
+          <Route path="/customer/payments" element={<CustomerPayments />} />
+          <Route path="/customer/claims" element={<CustomerClaims />} />
+          <Route path="/customer/requests" element={<CustomerServiceRequests />} />
+          <Route path="/customer/vault" element={<CustomerDocumentVault />} />
+          <Route path="/customer/profile" element={<CustomerProfile />} />
+          <Route path="/customer/loan" element={<CustomerPolicyLoan />} />
+          <Route path="/customer/support" element={<CustomerSupport />} />
         </Routes>
       </main>
 

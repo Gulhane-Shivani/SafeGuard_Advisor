@@ -25,7 +25,7 @@ export const Auth: React.FC = () => {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (isLoggedIn) {
-      navigate('/dashboard');
+      navigate('/customer');
     }
   }, [navigate]);
 
@@ -100,7 +100,7 @@ export const Auth: React.FC = () => {
         localStorage.setItem('user', JSON.stringify(userData));
 
         setUser(userData);
-        const from = location.state?.from || '/dashboard';
+        const from = location.state?.from || '/customer';
         navigate(from);
       }
     } catch (err: any) {
