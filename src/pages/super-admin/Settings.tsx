@@ -70,6 +70,52 @@ const MasterSettings: React.FC = () => {
     }
   };
 
+  const [templates, setTemplates] = useState([
+    { id: 1, title: 'Welcome Email', channel: 'Email', icon: 'Mail', subject: 'Welcome to SafeGuard Advisor!', body: `Dear {{customer_name}},
+
+Welcome to SafeGuard Advisor! We are thrilled to have you on board.
+
+Your policy {{policy_number}} is now active. Our team is here to support you every step of the way.
+
+Best regards,
+The SafeGuard Team` },
+    { id: 2, title: 'Renewal Reminder', channel: 'SMS', icon: 'MessageSquare', subject: 'Policy Renewal Reminder', body: `Hi {{customer_name}}, your SafeGuard policy {{policy_number}} is due for renewal on {{renewal_date}}. Renew now to stay protected. Call us at 1800-XXX-XXXX or visit safeguard-advisor.com.` },
+    { id: 3, title: 'Policy Issued', channel: 'WhatsApp', icon: 'MessageSquare', subject: 'Your Policy is Now Active', body: `Hello {{customer_name}} 👋
+
+Great news! Your *{{policy_name}}* policy has been successfully issued.
+
+📋 Policy No: {{policy_number}}
+📅 Start Date: {{start_date}}
+💰 Premium: {{premium_amount}}
+
+For any queries, reply to this message or call our helpline.` },
+    { id: 4, title: 'Claim Status Update', channel: 'Email', icon: 'Mail', subject: 'Your Claim {{claim_number}} Status Update', body: `Dear {{customer_name}},
+
+We are writing to update you on the status of your claim {{claim_number}}.
+
+Current Status: {{claim_status}}
+Estimated Resolution: {{resolution_date}}
+
+Our claims team will keep you informed of any further developments.
+
+Warm regards,
+SafeGuard Advisor Claims Team` },
+  ]);
+
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<typeof templates[0] | null>(null);
+
+  const handleOpenEditTemplate = (template: typeof templates[0]) => {
+    setEditingTemplate({ ...template });
+    setIsTemplateModalOpen(true);
+  };
+
+  const handleSaveTemplate = () => {
+    if (!editingTemplate) return;
+    setTemplates(templates.map(t => t.id === editingTemplate.id ? editingTemplate : t));
+    setIsTemplateModalOpen(false);
+  };
+
   const productColumns = [
     { header: 'Product Name', accessor: 'name' },
     { header: 'Insurer', accessor: 'insurer' },
@@ -287,24 +333,24 @@ const MasterSettings: React.FC = () => {
 
         {activeTab === 'templates' && (
            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[
-                 { title: 'Welcome Email', channel: 'Email', icon: Mail },
-                 { title: 'Renewal Reminder', channel: 'SMS', icon: MessageSquare },
-                 { title: 'Policy Issued', channel: 'WhatsApp', icon: MessageSquare },
-                 { title: 'Claim Status Update', channel: 'Email', icon: Mail },
-              ].map((temp) => (
-                 <div key={temp.title} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-teal-200 transition-all">
+              {templates.map((temp) => (
+                 <div key={temp.id} className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col gap-6 group hover:border-teal-200 transition-all">
                     <div className="flex justify-between items-start">
                        <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-400 group-hover:bg-teal-50 group-hover:text-teal-600 transition-all">
-                          <temp.icon className="w-6 h-6" />
+                          {temp.channel === 'Email' ? <Mail className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
                        </div>
                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest border border-slate-100 px-3 py-1 rounded-full">{temp.channel}</span>
                     </div>
                     <div>
                        <h4 className="font-bold text-slate-900">{temp.title}</h4>
-                       <p className="text-xs text-slate-500 font-medium mt-1">Automatic notification sent to customers upon trigger.</p>
+                       <p className="text-xs text-slate-500 font-medium mt-1">Subject: {temp.subject}</p>
                     </div>
-                    <button className="mt-2 py-3 bg-slate-50 text-slate-700 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all">Edit Template Content</button>
+                    <button 
+                      onClick={() => handleOpenEditTemplate(temp)}
+                      className="mt-2 py-3 bg-slate-50 text-slate-700 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all"
+                    >
+                      Edit Template Content
+                    </button>
                  </div>
               ))}
            </div>
@@ -501,6 +547,58 @@ const MasterSettings: React.FC = () => {
             </div>
           ))}
         </div>
+      </PlatformModal>
+      <PlatformModal
+        isOpen={isTemplateModalOpen}
+        onClose={() => setIsTemplateModalOpen(false)}
+        title={`Edit: ${editingTemplate?.title}`}
+        size="lg"
+        footer={
+          <>
+            <button
+              onClick={() => setIsTemplateModalOpen(false)}
+              className="px-6 py-2.5 rounded-xl font-bold text-slate-500 hover:bg-slate-100 transition-all text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSaveTemplate}
+              className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 text-sm"
+            >
+              Save Template
+            </button>
+          </>
+        }
+      >
+        {editingTemplate && (
+          <div className="space-y-6">
+            <div className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Channel:</span>
+              <span className="text-xs font-black text-teal-600 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-100">{editingTemplate.channel}</span>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Subject / Heading</label>
+              <input
+                type="text"
+                value={editingTemplate.subject}
+                onChange={(e) => setEditingTemplate({ ...editingTemplate, subject: e.target.value })}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all text-sm"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest">Message Body</label>
+              <p className="text-[10px] text-slate-400 font-medium">Available variables: {'{{customer_name}}'}, {'{{policy_number}}'}, {'{{renewal_date}}'}, {'{{premium_amount}}'}</p>
+              <textarea
+                rows={10}
+                value={editingTemplate.body}
+                onChange={(e) => setEditingTemplate({ ...editingTemplate, body: e.target.value })}
+                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none transition-all text-sm font-mono resize-none"
+              />
+            </div>
+          </div>
+        )}
       </PlatformModal>
     </div>
   );

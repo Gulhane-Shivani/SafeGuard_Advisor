@@ -7,6 +7,10 @@ import {
 } from 'lucide-react';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { cn } from '../../utils/helpers';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+
+const SECURITY_KEYS = ['mfa', 'ipWhitelist', 'forcePassword', 'sessionTimeout'] as const;
 
 const SystemConfig: React.FC = () => {
   const [notifications, setNotifications] = useState({
@@ -16,7 +20,66 @@ const SystemConfig: React.FC = () => {
     browser: true
   });
 
+  const [security, setSecurity] = useState({
+    mfa: true,
+    ipWhitelist: false,
+    forcePassword: true,
+    sessionTimeout: true
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [isBackingUp, setIsBackingUp] = useState(false);
+
+  const handleSaveAll = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      setIsSaving(false);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+
+      const doc = new jsPDF();
+
+      doc.setFontSize(18);
+      doc.setTextColor(15, 118, 110); // teal
+      doc.text('SafeGuard Advisor', 14, 18);
+      doc.setFontSize(12);
+      doc.setTextColor(100);
+      doc.text('System Configuration Report', 14, 26);
+      doc.setFontSize(9);
+      doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 33);
+
+      autoTable(doc, {
+        startY: 40,
+        head: [['Security Setting', 'Status']],
+        body: [
+          ['Multi-Factor Authentication (MFA)', security.mfa ? 'Enabled' : 'Disabled'],
+          ['IP Whitelisting', security.ipWhitelist ? 'Enabled' : 'Disabled'],
+          ['Force Password Change', security.forcePassword ? 'Enabled' : 'Disabled'],
+          ['Session Timeout', security.sessionTimeout ? 'Enabled' : 'Disabled'],
+        ],
+        headStyles: { fillColor: [15, 118, 110] },
+        styles: { fontSize: 10 },
+      });
+
+      const afterSecurity = (doc as any).lastAutoTable.finalY + 10;
+
+      autoTable(doc, {
+        startY: afterSecurity,
+        head: [['Notification Channel', 'Status']],
+        body: [
+          ['Email Notifications', notifications.email ? 'Active' : 'Inactive'],
+          ['SMS Gateway', notifications.sms ? 'Active' : 'Inactive'],
+          ['WhatsApp API', notifications.whatsapp ? 'Active' : 'Inactive'],
+          ['In-App Alerts', notifications.browser ? 'Active' : 'Inactive'],
+        ],
+        headStyles: { fillColor: [15, 118, 110] },
+        styles: { fontSize: 10 },
+      });
+
+      doc.save(`safeguard_config_${new Date().toISOString().split('T')[0]}.pdf`);
+    }, 1200);
+  };
 
   const handleBackup = () => {
     setIsBackingUp(true);
@@ -55,14 +118,35 @@ INSERT INTO \`users\` (\`name\`, \`role\`) VALUES ('Shivani Gulhane', 'AGENT');
     }, 2000);
   };
 
+  const securityItems = [
+    { key: 'mfa' as const, label: 'Multi-Factor Authentication (MFA)', desc: 'Require code from authenticator app for staff login' },
+    { key: 'ipWhitelist' as const, label: 'IP Whitelisting', desc: 'Restrict admin access to specific office network IPs' },
+    { key: 'forcePassword' as const, label: 'Force Password Change', desc: 'Require users to change passwords every 90 days' },
+    { key: 'sessionTimeout' as const, label: 'Session Timeout', desc: 'Automatically logout inactive users after 30 minutes' },
+  ];
+
   return (
     <div className="space-y-10">
       <SectionHeader 
         title="System Administration" 
         description="Global system settings, security protocols, notification preferences, and database management."
         actions={
-          <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all flex items-center gap-2">
-            <Save className="w-4 h-4" /> Save All Changes
+          <button 
+            onClick={handleSaveAll}
+            disabled={isSaving}
+            className={cn(
+              "px-6 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center gap-2 disabled:opacity-60",
+              saveSuccess
+                ? "bg-teal-500 text-white"
+                : "bg-slate-900 text-white hover:bg-slate-800"
+            )}
+          >
+            {isSaving
+              ? <><RefreshCw className="w-4 h-4 animate-spin" /> Saving...</>
+              : saveSuccess
+              ? <><CheckCircle2 className="w-4 h-4" /> Saved!</>
+              : <><Save className="w-4 h-4" /> Save All Changes</>
+            }
           </button>
         }
       />
@@ -74,26 +158,24 @@ INSERT INTO \`users\` (\`name\`, \`role\`) VALUES ('Shivani Gulhane', 'AGENT');
               <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
                  <Lock className="w-5 h-5" />
               </div>
-              <h3 className="font-bold text-slate-900">Security & Authentication</h3>
+              <h3 className="font-bold text-slate-900">Security &amp; Authentication</h3>
            </div>
            
            <div className="space-y-4">
-              {[
-                 { label: 'Multi-Factor Authentication (MFA)', desc: 'Require code from authenticator app for staff login', enabled: true },
-                 { label: 'IP Whitelisting', desc: 'Restrict admin access to specific office network IPs', enabled: false },
-                 { label: 'Force Password Change', desc: 'Require users to change passwords every 90 days', enabled: true },
-                 { label: 'Session Timeout', desc: 'Automatically logout inactive users after 30 minutes', enabled: true },
-              ].map((s) => (
-                 <div key={s.label} className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+              {securityItems.map((s) => (
+                 <div key={s.key} className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
                     <div>
                        <p className="text-sm font-bold text-slate-900">{s.label}</p>
                        <p className="text-[10px] text-slate-500 font-medium">{s.desc}</p>
                     </div>
-                    <div className={cn(
-                       "w-12 h-6 rounded-full relative p-1 transition-all cursor-pointer",
-                       s.enabled ? "bg-teal-600" : "bg-slate-300"
-                    )}>
-                       <div className={cn("w-4 h-4 bg-white rounded-full transition-all", s.enabled ? "ml-auto" : "ml-0")} />
+                    <div 
+                      onClick={() => setSecurity({...security, [s.key]: !security[s.key]})}
+                      className={cn(
+                        "w-12 h-6 rounded-full relative p-1 transition-all cursor-pointer",
+                        security[s.key] ? "bg-teal-600" : "bg-slate-300"
+                      )}
+                    >
+                       <div className={cn("w-4 h-4 bg-white rounded-full transition-all", security[s.key] ? "ml-auto" : "ml-0")} />
                     </div>
                  </div>
               ))}
@@ -147,7 +229,7 @@ INSERT INTO \`users\` (\`name\`, \`role\`) VALUES ('Shivani Gulhane', 'AGENT');
             </div>
             <div className="relative z-10 space-y-6">
                <div>
-                  <h3 className="text-xl font-bold">Database & Storage Management</h3>
+                  <h3 className="text-xl font-bold">Database &amp; Storage Management</h3>
                   <p className="text-slate-400 text-sm mt-1">Last automated backup: Today at 04:00 AM. Total storage used: 1.4 TB / 5 TB.</p>
                </div>
                <div className="flex gap-3">
