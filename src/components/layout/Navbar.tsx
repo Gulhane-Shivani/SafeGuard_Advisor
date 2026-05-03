@@ -71,7 +71,7 @@ const Navbar: React.FC = () => {
             {/* Insurance Plans Dropdown */}
             <div
               className="relative group"
-              onMouseEnter={() => { setIsInsuranceOpen(true); setIsDemoPortalsOpen(false); }}
+              onMouseEnter={() => { setIsInsuranceOpen(true); }}
               onMouseLeave={() => setIsInsuranceOpen(false)}
             >
               <button

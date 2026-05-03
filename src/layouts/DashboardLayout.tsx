@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Shield, LayoutDashboard, Users, FileText, Settings, 
   BarChart3, LogOut, Menu, X, Bell, 
@@ -23,7 +23,6 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const { role, setRole } = usePlatform();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate();
 
   React.useEffect(() => {
     if (location.pathname.startsWith('/super-admin') && role !== PLATFORM_ROLES.SUPER_ADMIN) {
