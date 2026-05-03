@@ -124,7 +124,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
                   to={item.path}
                   onClick={() => setIsSidebarOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs transition-all",
+                    "flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all",
                     isActive
                       ? "bg-teal-600 text-white shadow-lg shadow-teal-600/20"
                       : "text-slate-400 hover:text-white hover:bg-white/5"
@@ -138,7 +138,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           </nav>
 
           <div className="p-6 border-t border-white/5">
-            <Link to="/auth" className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl font-bold text-xs transition-all">
+            <Link to="/auth" className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl font-medium text-sm transition-all">
               <LogOut className="w-4 h-4" />
               Sign Out
             </Link>

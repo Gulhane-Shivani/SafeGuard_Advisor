@@ -14,6 +14,8 @@ import {
   Tooltip, ResponsiveContainer, BarChart, Bar, 
   Cell 
 } from 'recharts';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const REVENUE_DATA = [
   { name: 'Jan', value: 4000 },
@@ -29,10 +31,34 @@ const AGENT_PERFORMANCE = [
   { name: 'Sarah B.', sales: 38 },
   { name: 'Mike C.', sales: 52 },
   { name: 'Emma D.', sales: 31 },
+  { name: 'Raj K.', sales: 48 },
+  { name: 'Priya M.', sales: 42 },
+  { name: 'Vikram S.', sales: 39 },
 ];
 
 const SuperAdminOverview: React.FC = () => {
   const { data } = usePlatform();
+
+  const handleDownloadLogs = () => {
+    const doc = new jsPDF();
+    doc.text('SafeGuard Advisor - System Activity Logs', 14, 15);
+    
+    const tableData = data.activityLogs.map(log => [
+      log.time,
+      log.user,
+      log.action
+    ]);
+
+    autoTable(doc, {
+      head: [['Time', 'User', 'Action']],
+      body: tableData,
+      startY: 20,
+      styles: { fontSize: 10 },
+      headStyles: { fillColor: [13, 148, 136] } // teal-600
+    });
+
+    doc.save('system_activity_logs.pdf');
+  };
 
   return (
     <div className="space-y-10">
@@ -105,7 +131,7 @@ const SuperAdminOverview: React.FC = () => {
                   cursor={{fill: '#f8fafc'}}
                   contentStyle={{borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)', fontWeight: 'bold'}}
                 />
-                <Bar dataKey="sales" radius={[8, 8, 0, 0]}>
+                <Bar dataKey="sales" radius={[8, 8, 0, 0]} maxBarSize={32}>
                   {AGENT_PERFORMANCE.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={index % 2 === 0 ? '#0d9488' : '#2dd4bf'} />
                   ))}
@@ -133,7 +159,10 @@ const SuperAdminOverview: React.FC = () => {
                 </div>
               ))}
             </div>
-            <button className="w-full mt-8 py-3 border-2 border-slate-50 rounded-2xl text-xs font-bold text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all uppercase tracking-widest">
+            <button 
+              onClick={handleDownloadLogs}
+              className="w-full mt-8 py-3 border-2 border-slate-50 rounded-2xl text-xs font-bold text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all uppercase tracking-widest"
+            >
               Download Full Log
             </button>
          </div>
