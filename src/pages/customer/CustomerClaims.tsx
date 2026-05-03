@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Plus, CheckCircle2, Clock, Upload, History, Activity, ChevronRight, Search, Filter } from 'lucide-react';
+import { Plus, CheckCircle2, Clock, Upload, History, Activity, Search, Filter } from 'lucide-react';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';

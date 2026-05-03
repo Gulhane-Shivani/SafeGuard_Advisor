@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, ClipboardList, Info, Calendar, Tag, FileText } from 'lucide-react';
-import { cn } from '../utils/helpers';
+
 
 interface ServiceRequestDetailModalProps {
   isOpen: boolean;
