@@ -50,7 +50,33 @@ const Reports: React.FC = () => {
   ];
 
   const handleExport = () => {
-    alert(`Exporting ${reportType.toUpperCase()} report as CSV...\nData collation complete. Download will begin shortly.`);
+    let exportData: any[] = [];
+    if (reportType === 'sales') {
+      exportData = data.policies;
+    } else if (reportType === 'claims') {
+      exportData = data.claims;
+    } else if (reportType === 'renewals') {
+      exportData = data.policies.filter((p: any) => p.status === 'Renewal Due');
+    }
+
+    if (exportData.length === 0) return;
+
+    const headers = Object.keys(exportData[0]).join(',');
+    const rows = exportData.map(row => 
+      Object.values(row).map(val => `"${val}"`).join(',')
+    ).join('\n');
+    
+    const csvContent = `${headers}\n${rows}`;
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `safeguard_${reportType}_report_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
