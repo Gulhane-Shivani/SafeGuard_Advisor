@@ -4,7 +4,7 @@ import {
   HelpCircle, LogOut, ChevronRight, Download, Plus, 
   Clock, AlertCircle, CheckCircle2, Search, Bell, 
   User, Briefcase, IndianRupee, HeartPulse, Car, 
-  Home, Landmark, PhoneCall, MessageSquare, Menu, X
+  Home, Landmark, PhoneCall, MessageSquare, Menu
 } from 'lucide-react';
 import { CUSTOMER_DATA } from '../../data/mockCustomerData';
 import { cn } from '../../utils/helpers';

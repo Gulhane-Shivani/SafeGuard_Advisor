@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, CreditCard, ChevronRight, CheckCircle2, Info, ArrowRight, IndianRupee } from 'lucide-react';
+import { IndianRupee } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
@@ -9,7 +9,7 @@ import { LoanApplicationModal } from '../../components/LoanApplicationModal';
 import { LoanEligibilityModal } from '../../components/LoanEligibilityModal';
 
 const CustomerPolicyLoan: React.FC = () => {
-  const { data, loading, error, addLoan } = useCustomer();
+  const { data, loading, addLoan } = useCustomer();
   const [isApplyOpen, setIsApplyOpen] = React.useState(false);
   const [isEligibilityOpen, setIsEligibilityOpen] = React.useState(false);
   const [selectedPolicy, setSelectedPolicy] = React.useState<any>(null);
@@ -94,7 +94,7 @@ const CustomerPolicyLoan: React.FC = () => {
               <p className="text-slate-400 text-sm text-center py-8">No eligible life insurance policies found.</p>
             ) : (
               <div className="space-y-4">
-                {eligiblePolicies.map(policy => (
+                {eligiblePolicies.map((policy: any) => (
                   <div key={policy.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
                     <div className="flex justify-between items-start mb-3">
                       <div>

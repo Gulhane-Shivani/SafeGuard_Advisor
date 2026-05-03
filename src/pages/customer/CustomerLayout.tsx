@@ -23,7 +23,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
-  const { data, loading, error } = useCustomer();
+  const { data, loading } = useCustomer();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 

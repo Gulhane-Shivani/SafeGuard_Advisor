@@ -6,7 +6,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { jsPDF } from 'jspdf';
 
 const CustomerDocumentVault: React.FC = () => {
-  const { data, loading, error } = useCustomer();
+  const { data, loading } = useCustomer();
 
   if (loading || !data) return <LoadingSpinner />;
 
@@ -52,9 +52,7 @@ const CustomerDocumentVault: React.FC = () => {
     handleDownload('Full_Archive', 'All_Documents');
   };
 
-  const handleDownloadDoc = (policyName: string, docName: string) => {
-    alert(`Downloading ${docName} for ${policyName}...\nYour secure document is being fetched from the vault.`);
-  };
+
 
   return (
     <CustomerLayout>
@@ -73,7 +71,7 @@ const CustomerDocumentVault: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data.policies.map(policy => (
+          {data.policies.map((policy: any) => (
             <div key={policy.id} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group">
               <div className="flex items-center gap-4 mb-6">
                 <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">

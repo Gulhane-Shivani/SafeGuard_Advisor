@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Plus, CheckCircle2, Clock, Upload, History, Activity, Search, Filter } from 'lucide-react';
+import { Plus, CheckCircle2, Clock, Upload, History, Activity } from 'lucide-react';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
@@ -8,7 +8,7 @@ import { ClaimForm } from '../../components/ClaimForm';
 import { ClaimStatusModal } from '../../components/ClaimStatusModal';
 
 const CustomerClaims: React.FC = () => {
-  const { data, loading, error, addClaim } = useCustomer();
+  const { data, loading, addClaim } = useCustomer();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [trackingClaim, setTrackingClaim] = useState<any>(null);
   const historyRef = useRef<HTMLDivElement>(null);

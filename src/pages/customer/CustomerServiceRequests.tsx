@@ -14,7 +14,7 @@ import { ServiceRequestModal } from '../../components/ServiceRequestModal';
 import { ServiceRequestDetailModal } from '../../components/ServiceRequestDetailModal';
 
 const CustomerServiceRequests: React.FC = () => {
-  const { data, loading, error, addServiceRequest } = useCustomer();
+  const { data, loading, addServiceRequest } = useCustomer();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<string | undefined>(undefined);
   const [viewingRequest, setViewingRequest] = useState<any>(null);
@@ -83,7 +83,7 @@ const CustomerServiceRequests: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {data.serviceRequests.map(req => (
+                {data.serviceRequests.map((req: any) => (
                   <tr key={req.id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
                     <td className="px-6 py-5 font-bold text-slate-900">{req.id}</td>
                     <td className="px-6 py-5 text-sm text-slate-700 font-medium">{req.type}</td>

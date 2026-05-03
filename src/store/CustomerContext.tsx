@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, type ReactNode } from 'react';
 import { useCustomerDashboard } from '../hooks/useCustomerDashboard';
 
 interface CustomerContextType {
@@ -6,6 +6,13 @@ interface CustomerContextType {
   loading: boolean;
   error: string | null;
   refresh: () => void;
+  addClaim: (newClaim: any) => void;
+  addServiceRequest: (newRequest: any) => void;
+  addLoan: (newLoan: any) => void;
+  updateProfile: (updatedProfile: any) => void;
+  updateNominee: (updatedNominee: any) => void;
+  updateBankDetails: (updatedBank: any) => void;
+  addSupportTicket: (newTicket: any) => void;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(undefined);

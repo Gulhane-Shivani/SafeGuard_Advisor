@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Shield, HeartPulse, Car, Home, ChevronRight, CheckCircle2, Briefcase, User, Download, LayoutDashboard, CreditCard } from 'lucide-react';
+import { Shield, HeartPulse, Car, Home, ChevronRight, CheckCircle2, Briefcase, User, Download, LayoutDashboard } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
 import { PaymentGateway } from '../../components/PaymentGateway';
@@ -171,7 +171,7 @@ const CustomerPolicyDetail: React.FC = () => {
                   <LayoutDashboard className="w-5 h-5 text-teal-600" /> Coverage Details
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {policy.coverage?.map((item) => (
+                  {policy.coverage?.map((item: string) => (
                     <div key={item} className="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl">
                       <CheckCircle2 className="w-5 h-5 text-teal-600 shrink-0" />
                       <span className="text-sm font-medium text-slate-700">{item}</span>
@@ -186,7 +186,7 @@ const CustomerPolicyDetail: React.FC = () => {
                   <Briefcase className="w-5 h-5 text-blue-600" /> Benefits & Features
                 </h2>
                 <div className="space-y-3">
-                  {policy.benefits?.map((item) => (
+                  {policy.benefits?.map((item: string) => (
                     <div key={item} className="flex gap-4">
                       <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-2 shrink-0" />
                       <p className="text-sm text-slate-600">{item}</p>

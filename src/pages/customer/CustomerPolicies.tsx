@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, HeartPulse, Car, Home, Download, Search, CreditCard } from 'lucide-react';
+import { Shield, HeartPulse, Car, Home, Download, Search } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
 import { cn } from '../../utils/helpers';
@@ -10,7 +10,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { jsPDF } from 'jspdf';
 
 const CustomerPolicies: React.FC = () => {
-  const { data, loading, error, refresh } = useCustomer();
+  const { data, loading, error } = useCustomer();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
@@ -62,7 +62,7 @@ const CustomerPolicies: React.FC = () => {
     });
   };
 
-  const filtered = data.policies.filter(p => {
+  const filtered = data.policies.filter((p: any) => {
     const matchSearch = p.title.toLowerCase().includes(search.toLowerCase()) ||
       p.provider.toLowerCase().includes(search.toLowerCase()) ||
       p.id.toLowerCase().includes(search.toLowerCase());
@@ -124,7 +124,7 @@ const CustomerPolicies: React.FC = () => {
 
         {/* Policy Cards */}
         <div className="space-y-4">
-          {filtered.map(policy => (
+          {filtered.map((policy: any) => (
             <div key={policy.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:border-teal-200 transition-all">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
                 <div className="flex items-start gap-4">

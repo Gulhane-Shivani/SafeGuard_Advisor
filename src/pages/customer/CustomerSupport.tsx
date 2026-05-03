@@ -16,7 +16,7 @@ const FAQS = [
 ];
 
 const CustomerSupport: React.FC = () => {
-  const { data, loading, error, addSupportTicket } = useCustomer();
+  const { data, loading, addSupportTicket } = useCustomer();
   const ticketFormRef = React.useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [ticketSubject, setTicketSubject] = useState('');

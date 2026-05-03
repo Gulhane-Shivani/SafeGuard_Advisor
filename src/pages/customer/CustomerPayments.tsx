@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { CreditCard, History, ChevronRight, CheckCircle2, Shield, Calendar, IndianRupee, Settings } from 'lucide-react';
+import { CheckCircle2, Settings } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
 import { PaymentGateway } from '../../components/PaymentGateway';
-import { cn } from '../../utils/helpers';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 
 const CustomerPayments: React.FC = () => {
-  const { data, loading, error, refresh } = useCustomer();
+  const { data, loading, refresh } = useCustomer();
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
 
   if (loading || !data) return <LoadingSpinner />;
@@ -56,7 +55,7 @@ const CustomerPayments: React.FC = () => {
           <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
             <h3 className="font-bold text-slate-900 mb-6">Upcoming Renewals</h3>
             <div className="space-y-4">
-              {data.policies.filter(p => p.status === 'Renewal Due' || p.status === 'Active').map(policy => (
+              {data.policies.filter((p: any) => p.status === 'Renewal Due' || p.status === 'Active').map((policy: any) => (
                 <div key={policy.id} className="p-5 bg-slate-50 rounded-2xl border border-slate-100 flex justify-between items-center">
                   <div>
                     <p className="font-bold text-slate-900">{policy.title}</p>
@@ -81,7 +80,7 @@ const CustomerPayments: React.FC = () => {
           <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm">
             <h3 className="font-bold text-slate-900 mb-6">Payment History</h3>
             <div className="space-y-2">
-              {data.payments.map(payment => (
+              {data.payments.map((payment: any) => (
                 <div key={payment.id} className="flex items-center justify-between p-4 border-b border-slate-50 last:border-0 hover:bg-slate-50/50 rounded-xl transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-10 h-10 rounded-full bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">

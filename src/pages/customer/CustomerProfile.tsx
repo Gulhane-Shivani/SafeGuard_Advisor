@@ -1,22 +1,22 @@
 import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, Shield, Bell, CreditCard, ExternalLink, Settings, Landmark, ChevronRight } from 'lucide-react';
+import { User, Landmark, ChevronRight } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
-import { cn } from '../../utils/helpers';
+
 import { ProfileUpdateModal } from '../../components/ProfileUpdateModal';
 import { NomineeUpdateModal } from '../../components/NomineeUpdateModal';
 import { BankUpdateModal } from '../../components/BankUpdateModal';
 import { SecurityUpdateModal } from '../../components/SecurityUpdateModal';
 
 const CustomerProfile: React.FC = () => {
-  const { data, loading, error, updateProfile, updateNominee, updateBankDetails } = useCustomer();
+  const { data, loading, updateProfile, updateNominee, updateBankDetails } = useCustomer();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isNomineeOpen, setIsNomineeOpen] = useState(false);
   const [isBankOpen, setIsBankOpen] = useState(false);
   const [isSecurityOpen, setIsSecurityOpen] = useState(false);
   const [securityType, setSecurityType] = useState<'Change Password' | 'Set Security PIN' | 'Two-Factor Auth' | null>(null);
-  const [activeSection, setActiveSection] = useState<string | null>(null);
+
   const [notifications, setNotifications] = useState({ Email: true, SMS: true, WhatsApp: true });
 
   if (loading || !data) return <LoadingSpinner />;
@@ -26,10 +26,7 @@ const CustomerProfile: React.FC = () => {
     setIsEditOpen(false);
   };
 
-  const handleEdit = (section: string) => {
-    setActiveSection(section);
-    setIsEditOpen(true);
-  };
+
 
   const toggle = (key: keyof typeof notifications) =>
     setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
