@@ -22,7 +22,6 @@ import HealthInsurance from './pages/insurance/HealthInsurance';
 import LifeInsurance from './pages/insurance/LifeInsurance';
 import MotorInsurance from './pages/insurance/MotorInsurance';
 import InvestmentInsurance from './pages/insurance/InvestmentInsurance';
-import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { CustomerProvider } from './store/CustomerContext';
 import './styles/globals.css';
 
@@ -30,12 +29,43 @@ import { AppProvider } from './store';
 import ScrollToTop from './utils/ScrollToTop';
 import { Shield } from 'lucide-react';
 
+// Platform Imports
+import { PlatformProvider } from './store/PlatformContext';
+import DashboardLayout from './layouts/DashboardLayout';
+import SuperAdminOverview from './pages/super-admin/Overview';
+import UserManagement from './pages/super-admin/UserManagement';
+import MasterSettings from './pages/super-admin/Settings';
+import Reports from './pages/super-admin/Reports';
+import SystemConfig from './pages/super-admin/Config';
+
+import AdminOverview from './pages/admin/AdminOverview';
+import LeadManagement from './pages/admin/LeadManagement';
+import PolicyManagement from './pages/admin/PolicyManagement';
+import TeamPerformance from './pages/admin/TeamPerformance';
+import Customer360 from './pages/admin/Customer360';
+import Approvals from './pages/admin/Approvals';
+import CommissionView from './pages/admin/CommissionView';
+
+import AgentOverview from './pages/agent/AgentOverview';
+import MyLeads from './pages/agent/MyLeads';
+import MyCustomers from './pages/agent/MyCustomers';
+import QuoteGenerator from './pages/agent/QuoteGenerator';
+import Tasks from './pages/agent/Tasks';
+import AgentCommission from './pages/agent/AgentCommission';
+
+import CSROverview from './pages/csr/CSROverview';
+import CustomerSearch from './pages/csr/CustomerSearch';
+import ClaimsSupport from './pages/csr/ClaimsSupport';
+import Renewals from './pages/csr/Renewals';
+import TicketSystem from './pages/csr/TicketSystem';
+import CommunicationLog from './pages/csr/CommunicationLog';
+
 const AppContent = () => {
   const location = useLocation();
-  const isAdminPath = location.pathname.startsWith('/admin');
+  const isPlatformPath = ['/super-admin', '/admin', '/agent', '/csr'].some(path => location.pathname.startsWith(path));
   const isAuthPath = location.pathname === '/auth';
   const isCustomerPath = location.pathname.startsWith('/customer');
-  const hideLayout = isAdminPath || isAuthPath || isCustomerPath;
+  const hideLayout = isPlatformPath || isAuthPath || isCustomerPath;
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -51,11 +81,72 @@ const AppContent = () => {
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="/contact" element={<ContactUs />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/insurance/health" element={<HealthInsurance />} />
           <Route path="/insurance/life" element={<LifeInsurance />} />
           <Route path="/insurance/motor" element={<MotorInsurance />} />
           <Route path="/insurance/investment" element={<InvestmentInsurance />} />
+          
+          {/* Platform Routes */}
+          <Route path="/super-admin/*" element={
+            <PlatformProvider>
+              <DashboardLayout>
+                <Routes>
+                  <Route path="/" element={<SuperAdminOverview />} />
+                  <Route path="/users" element={<UserManagement />} />
+                  <Route path="/settings" element={<MasterSettings />} />
+                  <Route path="/reports" element={<Reports />} />
+                  <Route path="/config" element={<SystemConfig />} />
+                </Routes>
+              </DashboardLayout>
+            </PlatformProvider>
+          } />
+
+          <Route path="/admin/*" element={
+            <PlatformProvider>
+              <DashboardLayout>
+                <Routes>
+                  <Route path="/" element={<AdminOverview />} />
+                  <Route path="/leads" element={<LeadManagement />} />
+                  <Route path="/policies" element={<PolicyManagement />} />
+                  <Route path="/team" element={<TeamPerformance />} />
+                  <Route path="/customers" element={<Customer360 />} />
+                  <Route path="/approvals" element={<Approvals />} />
+                  <Route path="/commission" element={<CommissionView />} />
+                </Routes>
+              </DashboardLayout>
+            </PlatformProvider>
+          } />
+
+          <Route path="/agent/*" element={
+            <PlatformProvider>
+              <DashboardLayout>
+                <Routes>
+                  <Route path="/" element={<AgentOverview />} />
+                  <Route path="/leads" element={<MyLeads />} />
+                  <Route path="/customers" element={<MyCustomers />} />
+                  <Route path="/quote" element={<QuoteGenerator />} />
+                  <Route path="/tasks" element={<Tasks />} />
+                  <Route path="/commission" element={<AgentCommission />} />
+                </Routes>
+              </DashboardLayout>
+            </PlatformProvider>
+          } />
+
+          <Route path="/csr/*" element={
+            <PlatformProvider>
+              <DashboardLayout>
+                <Routes>
+                  <Route path="/" element={<CSROverview />} />
+                  <Route path="/search" element={<CustomerSearch />} />
+                  <Route path="/claims" element={<ClaimsSupport />} />
+                  <Route path="/renewals" element={<Renewals />} />
+                  <Route path="/tickets" element={<TicketSystem />} />
+                  <Route path="/communication" element={<CommunicationLog />} />
+                </Routes>
+              </DashboardLayout>
+            </PlatformProvider>
+          } />
+
           {/* Customer Portal Routes */}
           <Route path="/customer/*" element={
             <CustomerProvider>

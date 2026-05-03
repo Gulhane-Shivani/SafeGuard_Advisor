@@ -71,7 +71,7 @@ const Navbar: React.FC = () => {
             {/* Insurance Plans Dropdown */}
             <div
               className="relative group"
-              onMouseEnter={() => setIsInsuranceOpen(true)}
+              onMouseEnter={() => { setIsInsuranceOpen(true); setIsDemoPortalsOpen(false); }}
               onMouseLeave={() => setIsInsuranceOpen(false)}
             >
               <button
@@ -176,6 +176,8 @@ const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
+
+
 
             {navLinks.map((link) => (
               <Link
@@ -320,6 +322,8 @@ const Navbar: React.FC = () => {
                 </div>
               )}
             </div>
+
+
 
             {navLinks.map((link) => (
               <Link

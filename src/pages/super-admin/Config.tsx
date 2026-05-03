@@ -1,0 +1,165 @@
+
+import React, { useState } from 'react';
+import { 
+  Bell, Lock, Database, Globe, 
+  Cpu, Smartphone, Zap, CheckCircle2,
+  RefreshCw, Save
+} from 'lucide-react';
+import { SectionHeader } from '../../components/platform/SectionHeader';
+import { cn } from '../../utils/helpers';
+
+const SystemConfig: React.FC = () => {
+  const [notifications, setNotifications] = useState({
+    email: true,
+    sms: false,
+    whatsapp: true,
+    browser: true
+  });
+
+  const [isBackingUp, setIsBackingUp] = useState(false);
+
+  const handleBackup = () => {
+    setIsBackingUp(true);
+    setTimeout(() => {
+      setIsBackingUp(false);
+      alert('System backup completed successfully. Archive: safeguard_backup_20240503.sql');
+    }, 2000);
+  };
+
+  return (
+    <div className="space-y-10">
+      <SectionHeader 
+        title="System Administration" 
+        description="Global system settings, security protocols, notification preferences, and database management."
+        actions={
+          <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all flex items-center gap-2">
+            <Save className="w-4 h-4" /> Save All Changes
+          </button>
+        }
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Security Settings */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8">
+           <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-purple-50 text-purple-600 rounded-xl flex items-center justify-center">
+                 <Lock className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-slate-900">Security & Authentication</h3>
+           </div>
+           
+           <div className="space-y-4">
+              {[
+                 { label: 'Multi-Factor Authentication (MFA)', desc: 'Require code from authenticator app for staff login', enabled: true },
+                 { label: 'IP Whitelisting', desc: 'Restrict admin access to specific office network IPs', enabled: false },
+                 { label: 'Force Password Change', desc: 'Require users to change passwords every 90 days', enabled: true },
+                 { label: 'Session Timeout', desc: 'Automatically logout inactive users after 30 minutes', enabled: true },
+              ].map((s) => (
+                 <div key={s.label} className="flex justify-between items-center p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <div>
+                       <p className="text-sm font-bold text-slate-900">{s.label}</p>
+                       <p className="text-[10px] text-slate-500 font-medium">{s.desc}</p>
+                    </div>
+                    <div className={cn(
+                       "w-12 h-6 rounded-full relative p-1 transition-all cursor-pointer",
+                       s.enabled ? "bg-teal-600" : "bg-slate-300"
+                    )}>
+                       <div className={cn("w-4 h-4 bg-white rounded-full transition-all", s.enabled ? "ml-auto" : "ml-0")} />
+                    </div>
+                 </div>
+              ))}
+           </div>
+        </div>
+
+        {/* Notification Settings */}
+        <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-8">
+           <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center">
+                 <Bell className="w-5 h-5" />
+              </div>
+              <h3 className="font-bold text-slate-900">Global Notifications</h3>
+           </div>
+           
+           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {[
+                 { key: 'email', label: 'Email Notifications', icon: Globe },
+                 { key: 'sms', label: 'SMS Gateway', icon: Smartphone },
+                 { key: 'whatsapp', label: 'WhatsApp API', icon: Zap },
+                 { key: 'browser', label: 'In-App Alerts', icon: Bell },
+              ].map((n) => (
+                 <div 
+                   key={n.key}
+                   onClick={() => setNotifications({...notifications, [n.key]: !notifications[n.key as keyof typeof notifications]})}
+                   className={cn(
+                      "p-6 rounded-3xl border transition-all cursor-pointer flex flex-col gap-4",
+                      notifications[n.key as keyof typeof notifications] 
+                        ? "bg-teal-50 border-teal-100 text-teal-600" 
+                        : "bg-white border-slate-100 text-slate-400"
+                   )}
+                 >
+                    <n.icon className={cn("w-6 h-6", notifications[n.key as keyof typeof notifications] ? "text-teal-600" : "text-slate-300")} />
+                    <div className="flex items-center justify-between">
+                       <span className="text-xs font-black uppercase tracking-widest">{n.label}</span>
+                       {notifications[n.key as keyof typeof notifications] && <CheckCircle2 className="w-4 h-4" />}
+                    </div>
+                 </div>
+              ))}
+           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+         {/* Database Management */}
+         <div className="lg:col-span-2 bg-slate-900 p-8 rounded-[2.5rem] text-white flex flex-col md:flex-row items-center gap-10 overflow-hidden relative">
+            <div className="shrink-0">
+               <div className="w-20 h-20 bg-white/10 rounded-3xl flex items-center justify-center text-teal-400 border border-white/10">
+                  <Database className="w-10 h-10" />
+               </div>
+            </div>
+            <div className="relative z-10 space-y-6">
+               <div>
+                  <h3 className="text-xl font-bold">Database & Storage Management</h3>
+                  <p className="text-slate-400 text-sm mt-1">Last automated backup: Today at 04:00 AM. Total storage used: 1.4 TB / 5 TB.</p>
+               </div>
+               <div className="flex gap-3">
+                  <button 
+                    onClick={handleBackup}
+                    disabled={isBackingUp}
+                    className="px-6 py-2.5 bg-teal-500 text-white rounded-xl font-bold text-xs hover:bg-teal-600 transition-all flex items-center gap-2 disabled:opacity-50"
+                  >
+                    {isBackingUp ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Database className="w-4 h-4" />}
+                    {isBackingUp ? 'Processing...' : 'Run Manual Backup'}
+                  </button>
+                  <button className="px-6 py-2.5 bg-white/10 text-white rounded-xl font-bold text-xs hover:bg-white/20 transition-all border border-white/10">
+                    Storage Audit
+                  </button>
+               </div>
+            </div>
+            <Cpu className="absolute -right-20 -top-20 w-80 h-80 text-white/5 pointer-events-none rotate-12" />
+         </div>
+
+         {/* System Health */}
+         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm space-y-6">
+            <h3 className="font-bold text-slate-900">System Health</h3>
+            <div className="space-y-4">
+               {[
+                  { label: 'Server Load', value: '14%', status: 'Normal' },
+                  { label: 'Uptime', value: '99.98%', status: 'Normal' },
+                  { label: 'Error Rate', value: '0.02%', status: 'Optimal' },
+               ].map(h => (
+                  <div key={h.label} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                     <div className="flex justify-between items-center mb-2">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{h.label}</span>
+                        <span className="text-[10px] font-black text-teal-600 uppercase tracking-widest bg-teal-50 px-2 py-0.5 rounded-full">{h.status}</span>
+                     </div>
+                     <div className="text-lg font-black text-slate-900">{h.value}</div>
+                  </div>
+               ))}
+            </div>
+         </div>
+      </div>
+    </div>
+  );
+};
+
+export default SystemConfig;
