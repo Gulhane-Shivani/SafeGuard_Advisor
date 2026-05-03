@@ -24,7 +24,7 @@ const AgentOverview: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard label="My Policies" value={myPolicies.length} icon={Shield} trend="+2" trendUp={true} color="teal" />
         <KPICard label="Pending Renewals" value={myPolicies.filter(p => p.status === 'Renewal Due').length} icon={Clock} trend="-1" trendUp={true} color="orange" />
-        <KPICard label="MTD Commission" value="$730" icon={IndianRupee} trend="+15%" trendUp={true} color="emerald" />
+        <KPICard label="MTD Commission" value="₹60,000" icon={IndianRupee} trend="+15%" trendUp={true} color="emerald" />
         <KPICard label="Conversion Rate" value="42%" icon={Zap} trend="+4.5%" trendUp={true} color="blue" />
       </div>
 

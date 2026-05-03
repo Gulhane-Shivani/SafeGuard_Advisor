@@ -44,14 +44,14 @@ const CommissionView: React.FC = () => {
                <IndianRupee className="w-6 h-6" />
             </div>
             <p className="text-[10px] font-black text-teal-200 uppercase tracking-widest mb-1">Total Paid (YTD)</p>
-            <p className="text-3xl font-black">$45,820</p>
+            <p className="text-3xl font-black">$45?38,13,060</p>
          </div>
          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <div className="w-12 h-12 bg-orange-50 text-orange-600 rounded-2xl flex items-center justify-center mb-6">
                <Clock className="w-6 h-6" />
             </div>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Approval</p>
-            <p className="text-3xl font-black text-slate-900">$2,450</p>
+            <p className="text-3xl font-black text-slate-900">$2?2,03,350</p>
          </div>
          <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
             <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6">

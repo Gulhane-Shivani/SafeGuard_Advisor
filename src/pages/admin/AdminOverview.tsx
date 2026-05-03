@@ -129,7 +129,7 @@ const AdminOverview: React.FC = () => {
                               <p className="text-[10px] text-slate-500 font-bold uppercase">Customer: Alice Johnson</p>
                            </div>
                         </div>
-                        <span className="text-xs font-black text-orange-400">$1,200</span>
+                        <span className="text-xs font-black text-orange-400">₹1,20,000</span>
                      </div>
                   ))}
                </div>

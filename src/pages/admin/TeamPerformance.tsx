@@ -38,7 +38,7 @@ const TeamPerformance: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard label="Branch Revenue" value="$84,200" icon={TrendingUp} trend="18.2%" trendUp={true} color="blue" />
+        <KPICard label="Branch Revenue" value="₹70,00,000" icon={TrendingUp} trend="18.2%" trendUp={true} color="blue" />
         <KPICard label="Policies Target" value="72/100" icon={Target} trend="72%" trendUp={true} color="orange" />
         <KPICard label="Active Agents" value={agents.length} icon={Users} trend="No Change" trendUp={true} color="teal" />
         <KPICard label="Conversion Rate" value="31.4%" icon={Zap} trend="2.1%" trendUp={true} color="emerald" />

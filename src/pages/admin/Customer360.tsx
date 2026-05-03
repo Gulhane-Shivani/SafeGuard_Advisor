@@ -52,7 +52,7 @@ const Customer360: React.FC = () => {
     { 
       header: 'Total Value', 
       accessor: 'value',
-      render: () => <span className="font-bold text-teal-600">$4,500</span>
+      render: () => <span className="font-bold text-teal-600">\u20b93,75,000</span>
     },
   ];
 

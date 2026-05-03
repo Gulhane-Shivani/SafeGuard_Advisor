@@ -94,9 +94,9 @@ const QuoteGenerator: React.FC = () => {
                         onChange={(e) => setCustomerDetails({...customerDetails, coverage: e.target.value})}
                         className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3.5 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
                      >
-                        <option value="500000">$500,000</option>
-                        <option value="1000000">$1,000,000</option>
-                        <option value="2000000">$2,000,000</option>
+                        <option value="500000">$500?50,00,000</option>
+                        <option value="1000000">$1?50,00,000?50,00,000</option>
+                        <option value="2000000">$2?50,00,000?50,00,000</option>
                      </select>
                   </div>
                </div>

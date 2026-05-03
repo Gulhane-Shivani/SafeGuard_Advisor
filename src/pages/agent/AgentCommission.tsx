@@ -51,7 +51,7 @@ const AgentCommission: React.FC = () => {
                   <IndianRupee className="w-8 h-8" />
                </div>
                <p className="text-xs font-black text-teal-200 uppercase tracking-widest mb-1">Total Earnings (YTD)</p>
-               <p className="text-5xl font-black">$4,250</p>
+               <p className="text-5xl font-black">₹3,53,750</p>
                <div className="mt-6 inline-flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-xl text-sm font-bold border border-white/10">
                   <TrendingUp className="w-4 h-4" /> +15% from last year
                </div>
@@ -66,7 +66,7 @@ const AgentCommission: React.FC = () => {
                </div>
                <div>
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Pending Payout</p>
-                  <p className="text-3xl font-black text-slate-900">$280</p>
+                  <p className="text-3xl font-black text-slate-900">₹23,000</p>
                   <p className="text-xs font-bold text-slate-500 mt-1">Expected on May 15, 2024</p>
                </div>
             </div>
@@ -78,7 +78,7 @@ const AgentCommission: React.FC = () => {
                </div>
                <div className="text-right">
                   <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest bg-teal-50 px-3 py-1 rounded-full border border-teal-100 inline-block">
-                     $1,200 to Platinum
+                     ₹1,00,000 to Platinum
                   </p>
                </div>
             </div>

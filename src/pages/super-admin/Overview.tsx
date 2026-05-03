@@ -73,7 +73,7 @@ const SuperAdminOverview: React.FC = () => {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard label="Total Revenue" value="$245,800" icon={IndianRupee} trend="12.5%" trendUp={true} color="teal" />
+        <KPICard label="Total Revenue" value="&#8377;2,04,00,000" icon={IndianRupee} trend="12.5%" trendUp={true} color="teal" />
         <KPICard label="Active Customers" value={data.users.length * 120} icon={Users} trend="8.2%" trendUp={true} color="blue" />
         <KPICard label="Policies Issued" value={data.policies.length + 840} icon={Shield} trend="5.1%" trendUp={true} color="purple" />
         <KPICard label="Claims Pending" value={data.claims.filter(c => c.status === 'Pending').length} icon={AlertCircle} trend="2.4%" trendUp={false} color="orange" />

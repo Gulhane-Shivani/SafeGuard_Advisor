@@ -19,16 +19,16 @@ export const INITIAL_DATA = {
     { id: 3, name: 'David Jones', email: 'david@email.com', phone: '+1 234-567-8903', status: 'Cold', type: 'Motor Insurance', source: 'LinkedIn', assignedTo: null, createdAt: '2024-05-03' },
   ],
   policies: [
-    { id: 1, policyNumber: 'SG-LIFE-001', customerName: 'Alice Johnson', type: 'Life Insurance', status: 'Active', premium: '$1,200', startDate: '2023-01-15', endDate: '2024-01-15', agentId: 2 },
-    { id: 2, policyNumber: 'SG-HLTH-002', customerName: 'Bob Brown', type: 'Health Insurance', status: 'Renewal Due', premium: '$800', startDate: '2023-05-20', endDate: '2024-05-20', agentId: 2 },
+    { id: 1, policyNumber: 'SG-LIFE-001', customerName: 'Alice Johnson', type: 'Life Insurance', status: 'Active', premium: '₹1,20,000', startDate: '2023-01-15', endDate: '2024-01-15', agentId: 2 },
+    { id: 2, policyNumber: 'SG-HLTH-002', customerName: 'Bob Brown', type: 'Health Insurance', status: 'Renewal Due', premium: '₹80,000', startDate: '2023-05-20', endDate: '2024-05-20', agentId: 2 },
   ],
   claims: [
-    { id: 1, claimNumber: 'CLM-2024-001', policyNumber: 'SG-LIFE-001', customerName: 'Alice Johnson', amount: '$5,000', status: 'Pending', date: '2024-04-25', type: 'Accident' },
-    { id: 2, claimNumber: 'CLM-2024-002', policyNumber: 'SG-HLTH-002', customerName: 'Bob Brown', amount: '$1,200', status: 'Under Review', date: '2024-05-01', type: 'Medical' },
+    { id: 1, claimNumber: 'CLM-2024-001', policyNumber: 'SG-LIFE-001', customerName: 'Alice Johnson', amount: '₹5,00,000', status: 'Pending', date: '2024-04-25', type: 'Accident' },
+    { id: 2, claimNumber: 'CLM-2024-002', policyNumber: 'SG-HLTH-002', customerName: 'Bob Brown', amount: '₹1,20,000', status: 'Under Review', date: '2024-05-01', type: 'Medical' },
   ],
   products: [
-    { id: 1, name: 'Life Term Shield', insurer: 'SafeGuard Life', category: 'Life', premium: '$50/mo', commission: '15%' },
-    { id: 2, name: 'Family Health Plus', insurer: 'SafeGuard Health', category: 'Health', premium: '$80/mo', commission: '12%' },
+    { id: 1, name: 'Life Term Shield', insurer: 'ICICI Lombard', category: 'Life', premium: '₹4,500/mo', commission: '15%' },
+    { id: 2, name: 'Family Health Plus', insurer: 'Star Health', category: 'Health', premium: '₹7,200/mo', commission: '12%' },
   ],
   tickets: [
     { id: 1, ticketId: 'TKT-1001', customerName: 'Alice Johnson', subject: 'Policy document missing', status: 'Open', priority: 'High', date: '2024-05-03' },
@@ -43,7 +43,7 @@ export const INITIAL_DATA = {
     { id: 2, user: 'Sarah Admin', action: 'Approved Claim: CLM-2024-005', time: '4 hours ago' },
   ],
   commissions: [
-    { id: 1, agentName: 'John Agent', amount: '$450', status: 'Paid', date: '2024-04-30' },
-    { id: 2, agentName: 'John Agent', amount: '$280', status: 'Pending', date: '2024-05-02' },
+    { id: 1, agentName: 'John Agent', amount: '₹37,500', status: 'Paid', date: '2024-04-30' },
+    { id: 2, agentName: 'John Agent', amount: '₹23,000', status: 'Pending', date: '2024-05-02' },
   ]
 };

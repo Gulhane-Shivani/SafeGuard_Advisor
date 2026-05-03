@@ -9,9 +9,9 @@ import { cn } from '../../utils/helpers';
 
 const Approvals: React.FC = () => {
   const [approvals, setApprovals] = useState([
-    { id: 1, type: 'Quote Discount', agent: 'John Agent', customer: 'Emma Wilson', amount: '$1,200', reqDiscount: '15%', status: 'Pending', time: '2 hours ago' },
-    { id: 2, type: 'High Value Policy', agent: 'Sarah Admin', customer: 'David Jones', amount: '$15,000', reqDiscount: 'None', status: 'Pending', time: '5 hours ago' },
-    { id: 3, type: 'Claim Exception', agent: 'Mike CSR', customer: 'Alice Johnson', amount: '$5,000', reqDiscount: 'N/A', status: 'Pending', time: '1 day ago' },
+    { id: 1, type: 'Quote Discount', agent: 'John Agent', customer: 'Emma Wilson', amount: '₹1,20,000', reqDiscount: '15%', status: 'Pending', time: '2 hours ago' },
+    { id: 2, type: 'High Value Policy', agent: 'Sarah Admin', customer: 'David Jones', amount: '₹15,00,000', reqDiscount: 'None', status: 'Pending', time: '5 hours ago' },
+    { id: 3, type: 'Claim Exception', agent: 'Mike CSR', customer: 'Alice Johnson', amount: '₹5,00,000', reqDiscount: 'N/A', status: 'Pending', time: '1 day ago' },
   ]);
 
   const handleAction = (id: number, action: 'Approve' | 'Reject') => {
