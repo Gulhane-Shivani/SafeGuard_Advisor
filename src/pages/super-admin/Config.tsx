@@ -22,7 +22,36 @@ const SystemConfig: React.FC = () => {
     setIsBackingUp(true);
     setTimeout(() => {
       setIsBackingUp(false);
-      alert('System backup completed successfully. Archive: safeguard_backup_20240503.sql');
+      const sqlContent = `-- SafeGuard Advisor Full Database Backup
+-- Generated: ${new Date().toISOString()}
+-- Version: 1.0.0
+
+CREATE DATABASE IF NOT EXISTS safeguard_db;
+USE safeguard_db;
+
+-- Table structure for \`users\`
+CREATE TABLE \`users\` (
+  \`id\` int(11) NOT NULL AUTO_INCREMENT,
+  \`name\` varchar(255) NOT NULL,
+  \`role\` varchar(50) NOT NULL,
+  PRIMARY KEY (\`id\`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Dumping data for table \`users\`
+INSERT INTO \`users\` (\`name\`, \`role\`) VALUES ('Super Admin', 'SUPER_ADMIN');
+INSERT INTO \`users\` (\`name\`, \`role\`) VALUES ('Shivani Gulhane', 'AGENT');
+
+-- Backup completed successfully
+`;
+      const blob = new Blob([sqlContent], { type: 'application/sql' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `safeguard_backup_${new Date().toISOString().split('T')[0]}.sql`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     }, 2000);
   };
 
