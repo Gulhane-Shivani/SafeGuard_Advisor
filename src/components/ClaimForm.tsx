@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Shield, FileText, Activity, MapPin, Calendar, IndianRupee } from 'lucide-react';
+import { X, Shield, Activity, MapPin, Calendar, IndianRupee } from 'lucide-react';
 import { cn } from '../utils/helpers';
 
 interface ClaimFormProps {

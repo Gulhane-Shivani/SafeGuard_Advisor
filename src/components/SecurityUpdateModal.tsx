@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Shield, Lock, Smartphone, Key, Save, CheckCircle2 } from 'lucide-react';
+import { X, Lock, Smartphone, Key, Save, CheckCircle2 } from 'lucide-react';
 
 interface SecurityUpdateModalProps {
   isOpen: boolean;
@@ -9,13 +9,7 @@ interface SecurityUpdateModalProps {
 
 export const SecurityUpdateModal: React.FC<SecurityUpdateModalProps> = ({ isOpen, onClose, type }) => {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmPassword: '',
-    pin: '',
-    otp: ''
-  });
+
 
   if (!isOpen || !type) return null;
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Activity, CheckCircle2, Clock, ShieldCheck, MapPin } from 'lucide-react';
+import { X, Activity, CheckCircle2, Clock, ShieldCheck } from 'lucide-react';
 import { cn } from '../utils/helpers';
 
 interface ClaimStatusModalProps {

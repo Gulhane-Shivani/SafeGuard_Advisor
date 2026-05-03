@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { X, Calculator, IndianRupee, Info, ArrowRight, ShieldCheck } from 'lucide-react';
-import { cn } from '../utils/helpers';
+import { X, Calculator, Info, ArrowRight, ShieldCheck } from 'lucide-react';
+
 
 interface LoanEligibilityModalProps {
   isOpen: boolean;

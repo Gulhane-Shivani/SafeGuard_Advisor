@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, CreditCard, IndianRupee, Info, Send, Landmark } from 'lucide-react';
-import { cn } from '../utils/helpers';
+
 
 interface LoanApplicationModalProps {
   isOpen: boolean;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Shield, CreditCard, Lock, CheckCircle2, X, Loader2 } from 'lucide-react';
-import { cn } from '../utils/helpers';
+
 
 interface PaymentGatewayProps {
   isOpen: boolean;

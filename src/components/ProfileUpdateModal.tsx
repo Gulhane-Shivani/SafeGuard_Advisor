@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, User, Mail, Phone, MapPin, Save, Shield } from 'lucide-react';
-import { cn } from '../utils/helpers';
+
 
 interface ProfileUpdateModalProps {
   isOpen: boolean;
