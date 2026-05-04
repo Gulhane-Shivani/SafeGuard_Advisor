@@ -1,32 +1,30 @@
 {
 	"info": {
 		"_postman_id": "4c464cf6-9567-4a24-81d8-efcbf93aa1fd",
-		"name": "SafeGuard Advisor API",
-		"description": "Comprehensive API collection for SafeGuard Advisor insurance platform including Authentication, Admin Management, and Customer Portal.",
+		"name": "SafeGuard Advisor - Testing Collection",
+		"description": "Complete collection for testing all SafeGuard Advisor backend endpoints, including new search and deletion features.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
-			"name": "Authentication",
+			"name": "1. Authentication",
 			"item": [
 				{
-					"name": "User Login",
+					"name": "Login (Admin/SuperAdmin)",
 					"request": {
 						"method": "POST",
-						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"super_admin@safeguard.com\",\n    \"password\": \"password123\"\n}",
+							"raw": "{\n    \"email\": \"superadmin@safeguard.com\",\n    \"password\": \"password123\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/login" }
 					}
 				},
 				{
-					"name": "Hardcoded Admin Login",
+					"name": "Hardcoded Login",
 					"request": {
 						"method": "POST",
-						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin_password_123\"\n}",
@@ -38,61 +36,63 @@
 			]
 		},
 		{
-			"name": "Admin Panel",
+			"name": "2. Super Admin - User Control",
 			"item": [
 				{
-					"name": "Get All Users",
+					"name": "List All Users (Search & Pagination)",
 					"request": {
 						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"url": { "raw": "{{baseUrl}}/admin/users" }
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }],
+						"url": {
+							"raw": "{{baseUrl}}/admin/users?search=john&page=1&page_size=10",
+							"query": [
+								{ "key": "search", "value": "john" },
+								{ "key": "page", "value": "1" },
+								{ "key": "page_size", "value": "10" }
+							]
+						}
 					}
 				},
 				{
-					"name": "Create User Account",
+					"name": "Add New Staff (Admin/Agent/CSR)",
 					"request": {
 						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"full_name\": \"John Agent\",\n    \"email\": \"john.agent@safeguard.com\",\n    \"role\": \"AGENT\",\n    \"primary_branch\": \"Main Branch\"\n}",
+							"raw": "{\n    \"full_name\": \"New Testing User\",\n    \"email\": \"test.user@safeguard.com\",\n    \"role\": \"AGENT\",\n    \"primary_branch\": \"Main Branch\"\n}",
 							"options": { "raw": { "language": "json" } }
 						},
 						"url": { "raw": "{{baseUrl}}/admin/users" }
 					}
 				},
 				{
-					"name": "View Contact Messages",
+					"name": "Delete User",
 					"request": {
-						"method": "GET",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"url": { "raw": "{{baseUrl}}/admin/contacts" }
+						"method": "DELETE",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }],
+						"url": { "raw": "{{baseUrl}}/admin/users/1" }
 					}
 				}
 			]
 		},
 		{
-			"name": "Customer Portal",
+			"name": "3. Admin - Contacts",
 			"item": [
 				{
-					"name": "Record Payment",
+					"name": "Get Contact Messages",
 					"request": {
-						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"policy\": \"Life Insurance Tech Plan\",\n    \"amount\": \"15000\",\n    \"method\": \"Credit Card\"\n}",
-							"options": { "raw": { "language": "json" } }
-						},
-						"url": { "raw": "{{baseUrl}}/customer/payments" }
+						"method": "GET",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }],
+						"url": { "raw": "{{baseUrl}}/admin/contacts" }
+					}
+				},
+				{
+					"name": "Delete Contact",
+					"request": {
+						"method": "DELETE",
+						"header": [{ "key": "Authorization", "value": "Bearer {{token}}", "type": "text" }],
+						"url": { "raw": "{{baseUrl}}/admin/contacts/1" }
 					}
 				}
 			]
@@ -100,6 +100,6 @@
 	],
 	"variable": [
 		{ "key": "baseUrl", "value": "http://127.0.0.1:8000" },
-		{ "key": "token", "value": "YOUR_TOKEN_HERE" }
+		{ "key": "token", "value": "PASTE_TOKEN_HERE" }
 	]
 }

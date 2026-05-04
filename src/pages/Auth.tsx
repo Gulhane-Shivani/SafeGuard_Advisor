@@ -80,8 +80,12 @@ export const Auth: React.FC = () => {
         throw new Error('Server did not return user details.');
       }
 
+      const displayName = (userRes.full_name && userRes.full_name !== 'Anonymous') 
+        ? userRes.full_name 
+        : (userRes.mobile || userRes.email?.split('@')[0] || 'User');
+
       const userData = {
-        name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User',
+        name: displayName,
         email: userRes.email || userRes.mobile,
         role: (userRes.role || 'CUSTOMER').toUpperCase()
       };

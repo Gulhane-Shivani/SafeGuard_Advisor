@@ -117,15 +117,18 @@ const UserManagement: React.FC = () => {
         title="Active Users"
         description="Showing all registered staff and administrators"
         columns={columns}
-        data={users.map(u => ({
-          id: u.id,
-          name: u.full_name,
-          email: u.email,
-          role: u.role || 'CUSTOMER',
-          branch: u.primary_branch || 'Main Branch',
-          status: u.status || 'Active',
-          avatar: u.full_name?.charAt(0).toUpperCase() || 'U'
-        }))}
+        data={users.map(u => {
+          const displayName = (u.full_name && u.full_name !== 'Anonymous') ? u.full_name : (u.email || u.mobile || 'Unknown User');
+          return {
+            id: u.id,
+            name: displayName,
+            email: u.email || u.mobile,
+            role: u.role || 'CUSTOMER',
+            branch: u.primary_branch || 'Main Branch',
+            status: u.status || 'Active',
+            avatar: displayName.charAt(0).toUpperCase() || 'U'
+          };
+        })}
         onEdit={(user) => console.log('Edit', user)}
         onDelete={(user) => console.log('Delete', user.id)}
       />
