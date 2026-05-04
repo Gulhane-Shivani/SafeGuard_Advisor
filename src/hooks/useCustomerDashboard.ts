@@ -144,7 +144,29 @@ export const useCustomerDashboard = () => {
       setLoading(true);
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 800));
-      setData(MOCK_DATA);
+      
+      const storedPoliciesStr = localStorage.getItem('purchasedPolicies');
+      const storedPolicies = storedPoliciesStr ? JSON.parse(storedPoliciesStr) : [];
+      
+      let totalPremiumVal = 2497;
+      let totalCoverageVal = 7500000;
+      
+      storedPolicies.forEach((p: any) => {
+        const premiumNum = parseInt(p.premium.replace(/[^0-9]/g, '')) || 0;
+        totalPremiumVal += premiumNum;
+        totalCoverageVal += 1000000; // Adding 10 Lakh per new policy for demo
+      });
+      
+      setData({
+        ...MOCK_DATA,
+        policies: [...storedPolicies, ...MOCK_DATA.policies],
+        stats: {
+          totalPolicies: MOCK_DATA.stats.activePolicies + storedPolicies.length,
+          totalSumAssured: `₹${totalCoverageVal.toLocaleString('en-IN')}`,
+          totalPremium: `₹${totalPremiumVal.toLocaleString('en-IN')}`,
+          pendingClaims: MOCK_DATA.stats.pendingClaims
+        }
+      });
       setError(null);
     } catch (err: any) {
       setError('Failed to load dashboard');
