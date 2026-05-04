@@ -1,16 +1,36 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserPlus, Shield, MapPin } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
-import { usePlatform } from '../../store/PlatformContext';
 import { cn } from '../../utils/helpers';
+import API from '../../api/baseurl';
 
 const UserManagement: React.FC = () => {
-  const { data, addItem, removeItem } = usePlatform();
+  const [users, setUsers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newUser, setNewUser] = useState({ name: '', email: '', role: 'AGENT', branch: 'Main' });
+  const [newUser, setNewUser] = useState({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await API.get('/admin/users', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUsers(response.data);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to fetch users');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const columns = [
     { 
@@ -63,11 +83,22 @@ const UserManagement: React.FC = () => {
     }
   ];
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    addItem('users', { ...newUser, avatar: newUser.name.charAt(0).toUpperCase(), status: 'Active' });
-    setIsModalOpen(false);
-    setNewUser({ name: '', email: '', role: 'AGENT', branch: 'Main' });
+    try {
+      const token = localStorage.getItem('token');
+      await API.post('/admin/users', newUser, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSuccess('User created successfully. Temporary password sent to email.');
+      setIsModalOpen(false);
+      setNewUser({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });
+      fetchUsers();
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to create user');
+      setTimeout(() => setError(''), 5000);
+    }
   };
 
   return (
@@ -85,13 +116,24 @@ const UserManagement: React.FC = () => {
         }
       />
 
+      {error && <div className="p-4 bg-red-50 text-red-600 rounded-xl font-bold text-xs">{error}</div>}
+      {success && <div className="p-4 bg-teal-50 text-teal-600 rounded-xl font-bold text-xs">{success}</div>}
+
       <PlatformTable 
         title="Active Users"
         description="Showing all registered staff and administrators"
         columns={columns}
-        data={data.users}
+        data={users.map(u => ({
+          id: u.id,
+          name: u.full_name,
+          email: u.email,
+          role: u.role || 'CUSTOMER',
+          branch: u.primary_branch || 'Main Branch',
+          status: u.status || 'Active',
+          avatar: u.full_name?.charAt(0).toUpperCase() || 'U'
+        }))}
         onEdit={(user) => console.log('Edit', user)}
-        onDelete={(user) => removeItem('users', user.id)}
+        onDelete={(user) => console.log('Delete', user.id)}
       />
 
       <PlatformModal 
@@ -111,8 +153,8 @@ const UserManagement: React.FC = () => {
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
               <input 
                 type="text" 
-                value={newUser.name}
-                onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                value={newUser.full_name}
+                onChange={(e) => setNewUser({...newUser, full_name: e.target.value})}
                 placeholder="John Doe" 
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
               />
@@ -143,11 +185,11 @@ const UserManagement: React.FC = () => {
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Branch</label>
               <select 
-                value={newUser.branch}
-                onChange={(e) => setNewUser({...newUser, branch: e.target.value})}
+                value={newUser.primary_branch}
+                onChange={(e) => setNewUser({...newUser, primary_branch: e.target.value})}
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
               >
-                <option value="Main">Main Branch</option>
+                <option value="Main Branch">Main Branch</option>
                 <option value="New York">New York</option>
                 <option value="London">London</option>
                 <option value="Singapore">Singapore</option>

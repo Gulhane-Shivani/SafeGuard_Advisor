@@ -9,6 +9,7 @@ import {
   Clock, PhoneCall
 } from 'lucide-react';
 import { usePlatform } from '../store/PlatformContext';
+import { useAppStore } from '../store';
 import { PLATFORM_ROLES } from '../data/mockPlatformData';
 import { cn } from '../utils/helpers';
 
@@ -21,6 +22,7 @@ interface NavItem {
 
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { role, setRole } = usePlatform();
+  const { state, logout } = useAppStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
 
@@ -138,10 +140,16 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           </nav>
 
           <div className="p-6 border-t border-white/5">
-            <Link to="/auth" className="flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl font-medium text-sm transition-all">
+            <button 
+              onClick={() => {
+                logout();
+                window.location.href = '/';
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 rounded-xl font-medium text-sm transition-all text-left"
+            >
               <LogOut className="w-4 h-4" />
               Sign Out
-            </Link>
+            </button>
           </div>
         </div>
       </aside>
@@ -177,11 +185,11 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
             </button>
             <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
               <div className="hidden sm:flex flex-col text-right">
-                <span className="text-xs font-black text-slate-900 leading-none">User Profile</span>
+                <span className="text-xs font-black text-slate-900 leading-none">{state.user?.name || 'User Profile'}</span>
                 <span className="text-[10px] font-bold text-slate-400 uppercase mt-1">{role.replace('_', ' ')}</span>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm">
-                UA
+              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm uppercase">
+                {state.user?.name?.split(' ').map((n: string) => n[0]).join('') || 'UA'}
               </div>
             </div>
           </div>

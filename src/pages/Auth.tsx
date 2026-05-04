@@ -20,8 +20,6 @@ export const Auth: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isAdmin, setIsAdmin] = useState(false);
-
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (isLoggedIn) {
@@ -35,28 +33,22 @@ export const Auth: React.FC = () => {
     setIsLoading(true);
 
     try {
-      let endpoint = isLogin ? '/login' : '/register';
+      const endpoint = isLogin ? '/login' : '/register';
       const payload: any = {};
 
-      if (isAdmin && isLogin) {
-        endpoint = '/admin/login';
-        payload.username = email; // Using email field as username for admin
-        payload.password = password;
-      } else {
-        if (!isLogin) {
-          if (!fullName) return setError('Full Name is required');
-          payload.full_name = fullName;
-        }
+      if (!isLogin) {
+        if (!fullName) return setError('Full Name is required');
+        payload.full_name = fullName;
+      }
 
-        if (usePhone) {
-          if (!mobile) return setError('Mobile number is required');
-          payload.mobile = mobile;
-        } else {
-          if (!email) return setError('Email is required');
-          if (!password) return setError('Password is required');
-          payload.email = email;
-          payload.password = password;
-        }
+      if (usePhone) {
+        if (!mobile) return setError('Mobile number is required');
+        payload.mobile = mobile;
+      } else {
+        if (!email) return setError('Email is required');
+        if (!password) return setError('Password is required');
+        payload.email = email;
+        payload.password = password;
       }
 
       const response = await API.post(endpoint, payload);
@@ -71,39 +63,38 @@ export const Auth: React.FC = () => {
         return;
       }
 
-      // Handle Login Success (User or Admin)
-      if (isAdmin) {
-        const { access_token, message } = response.data;
-        localStorage.setItem('adminToken', access_token);
-        localStorage.setItem('isAdmin', 'true');
-        setSuccess(message || 'Admin login successful');
+      // Handle Login Success (Role-based redirection)
+      const { user: userRes, access_token } = response.data;
 
-        // Mock admin user data
-        const adminData = { name: 'Administrator', email: 'admin@safeguard.in', role: 'admin' };
-        localStorage.setItem('user', JSON.stringify(adminData));
-        setUser(adminData);
-
-        navigate('/admin/dashboard');
-      } else {
-        const { user: userRes, access_token } = response.data;
-
-        if (!userRes) {
-          throw new Error('Server did not return user details.');
-        }
-
-        const userData = {
-          name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User',
-          email: userRes.email || userRes.mobile
-        };
-
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('token', access_token);
-        localStorage.setItem('user', JSON.stringify(userData));
-
-        setUser(userData);
-        const from = location.state?.from || '/customer';
-        navigate(from);
+      if (!userRes) {
+        throw new Error('Server did not return user details.');
       }
+
+      const userData = {
+        name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User',
+        email: userRes.email || userRes.mobile,
+        role: userRes.role || 'CUSTOMER'
+      };
+
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('token', access_token);
+      localStorage.setItem('user', JSON.stringify(userData));
+
+      setUser(userData);
+      
+      // Dynamic redirection based on role
+      let from = location.state?.from;
+      if (!from || from === '/customer') {
+        const role = userData.role.toUpperCase();
+        if (role === 'SUPER_ADMIN') from = '/super-admin';
+        else if (role === 'ADMIN') from = '/admin';
+        else if (role === 'AGENT') from = '/agent';
+        else if (role === 'CSR') from = '/csr';
+        else from = '/customer';
+      }
+      
+      console.log(`Redirecting ${userData.role} to ${from}`);
+      navigate(from);
     } catch (err: any) {
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
     } finally {
@@ -137,25 +128,7 @@ export const Auth: React.FC = () => {
         </Link>
 
         <div className="bg-white/5 border border-white/10 backdrop-blur-xl rounded-3xl p-8 shadow-2xl">
-          {/* Admin Toggle */}
-          <div className="flex justify-center mb-6">
-            <button
-              onClick={() => {
-                setIsAdmin(!isAdmin);
-                setUsePhone(false);
-                setIsLogin(true);
-              }}
-              className={`px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest transition-all border ${isAdmin
-                ? 'bg-amber-500/20 border-amber-500/50 text-amber-500 shadow-lg shadow-amber-500/10'
-                : 'bg-white/5 border-white/10 text-slate-500 hover:border-white/20'
-                }`}
-            >
-              {isAdmin ? 'Admin Mode Active' : 'Switch to Admin Login'}
-            </button>
-          </div>
-
-          {!isAdmin && (
-            <div className="flex bg-white/5 rounded-2xl p-1 mb-8 border border-white/10">
+          <div className="flex bg-white/5 rounded-2xl p-1 mb-8 border border-white/10">
               {[true, false].map(login => (
                 <button
                   key={String(login)}
@@ -167,7 +140,6 @@ export const Auth: React.FC = () => {
                 </button>
               ))}
             </div>
-          )}
 
           <div className="space-y-5">
             {error && (
@@ -196,8 +168,7 @@ export const Auth: React.FC = () => {
             )}
 
             {/* Login Method Toggle */}
-            {!isAdmin && (
-              <div className="flex gap-2">
+            <div className="flex gap-2">
                 <button
                   onClick={() => setUsePhone(false)}
                   className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${!usePhone ? 'bg-white/10 border-white/20 text-white' : 'border-white/10 text-slate-500 hover:text-slate-300'}`}
@@ -211,7 +182,6 @@ export const Auth: React.FC = () => {
                   Login with Mobile
                 </button>
               </div>
-            )}
 
             {usePhone ? (
               <div className="relative group">
@@ -233,7 +203,7 @@ export const Auth: React.FC = () => {
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-teal-400 transition-colors" />
                 <input
                   type="email"
-                  placeholder={isAdmin ? "Username" : "Email Address"}
+                  placeholder="Email Address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-12 pr-5 py-4 bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-600/50 transition-all"
@@ -246,7 +216,7 @@ export const Auth: React.FC = () => {
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within:text-teal-400 transition-colors" />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder={isAdmin ? "Admin Password" : "Password"}
+                  placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-12 pr-14 py-4 bg-white/5 border border-white/10 text-white placeholder-slate-500 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/30 focus:border-teal-600/50 transition-all"
@@ -291,14 +261,12 @@ export const Auth: React.FC = () => {
 
           </div>
 
-          {!isAdmin && (
             <p className="text-center text-xs text-slate-500 mt-8">
               {isLogin ? "Don't have an account? " : "Already have an account? "}
               <button onClick={() => setIsLogin(!isLogin)} className="text-teal-400 font-bold hover:text-teal-300 transition-colors">
                 {isLogin ? 'Sign up free' : 'Sign in'}
               </button>
             </p>
-          )}
         </div>
 
         <p className="text-center mt-6 text-xs text-slate-500">

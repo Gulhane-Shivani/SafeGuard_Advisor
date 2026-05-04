@@ -5,6 +5,7 @@ import {
   HelpCircle, LogOut, Download, Bell, User, Landmark, Menu, X
 } from 'lucide-react';
 import { useCustomer } from '../../store/CustomerContext';
+import { useAppStore } from '../../store';
 import { cn } from '../../utils/helpers';
 
 const menuItems = [
@@ -24,6 +25,7 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const { data, loading } = useCustomer();
+  const { logout } = useAppStore();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
 
@@ -86,13 +88,16 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
 
         {/* Bottom */}
         <div className="p-6 border-t border-slate-100 space-y-2 shrink-0">
-          <Link
-            to="/auth"
+          <button
+            onClick={() => {
+              logout();
+              window.location.href = '/';
+            }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-sm text-red-500 hover:bg-red-50 transition-all"
           >
             <LogOut className="w-5 h-5" />
             Logout
-          </Link>
+          </button>
         </div>
       </aside>
 
@@ -166,7 +171,7 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
                 <p className="text-[10px] font-bold text-teal-600 uppercase">Premium Member</p>
               </div>
               <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm">
-                PK
+                {data.profile.name.split(' ').map((n: string) => n[0]).join('').toUpperCase()}
               </div>
             </div>
           </div>

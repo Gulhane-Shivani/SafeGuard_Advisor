@@ -7,6 +7,7 @@ import {
   Home, Landmark, PhoneCall, MessageSquare, Menu
 } from 'lucide-react';
 import { CUSTOMER_DATA } from '../../data/mockCustomerData';
+import { useAppStore } from '../../store';
 import { cn } from '../../utils/helpers';
 
 // Sub-components for each section
@@ -760,6 +761,7 @@ const Support = () => (
 export const CustomerDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
+  const { logout } = useAppStore();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [isDarkMode, setDarkMode] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -855,7 +857,13 @@ export const CustomerDashboard: React.FC = () => {
                 <div className={cn("w-4 h-4 bg-white rounded-full transition-transform", isDarkMode && "translate-x-4")}></div>
               </div>
             </button>
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all">
+            <button 
+              onClick={() => {
+                logout();
+                window.location.href = '/';
+              }}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm text-red-500 hover:bg-red-50 transition-all text-left"
+            >
               <LogOut className="w-5 h-5" />
               Logout
             </button>

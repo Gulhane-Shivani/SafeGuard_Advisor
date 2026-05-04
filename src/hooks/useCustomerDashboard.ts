@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useAppStore } from '../store';
 
 // High-fidelity Mock Data for Customer Portal
 const MOCK_DATA = {
@@ -138,6 +139,8 @@ export const useCustomerDashboard = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { state } = useAppStore();
+  const { user } = state;
 
   const fetchDashboard = async () => {
     try {
@@ -159,6 +162,11 @@ export const useCustomerDashboard = () => {
       
       setData({
         ...MOCK_DATA,
+        profile: {
+          ...MOCK_DATA.profile,
+          name: user?.name || MOCK_DATA.profile.name,
+          email: user?.email || MOCK_DATA.profile.email,
+        },
         policies: [...storedPolicies, ...MOCK_DATA.policies],
         stats: {
           totalPolicies: MOCK_DATA.stats.activePolicies + storedPolicies.length,

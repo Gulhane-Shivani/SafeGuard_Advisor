@@ -63,7 +63,7 @@ export const AdminDashboard: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/auth');
+    navigate('/');
   };
 
   const handleDelete = async (id: number) => {

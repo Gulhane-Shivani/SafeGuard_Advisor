@@ -92,7 +92,7 @@ const SuperAdminOverview: React.FC = () => {
             </div>
           </div>
           <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <AreaChart data={REVENUE_DATA}>
                 <defs>
                   <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
@@ -122,7 +122,7 @@ const SuperAdminOverview: React.FC = () => {
             <button className="text-teal-600 text-xs font-bold hover:underline">View Leaderboard</button>
           </div>
           <div className="h-72 w-full">
-            <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%" minWidth={0} minHeight={0}>
               <BarChart data={AGENT_PERFORMANCE}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fontSize: 10, fontWeight: 700, fill: '#94a3b8'}} dy={10} />
