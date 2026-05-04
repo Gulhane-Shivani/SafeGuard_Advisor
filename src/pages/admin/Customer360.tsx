@@ -52,7 +52,14 @@ const Customer360: React.FC = () => {
     { 
       header: 'Total Value', 
       accessor: 'value',
-      render: () => <span className="font-bold text-teal-600">\u20b93,75,000</span>
+      render: (_val: any, row: any) => {
+        const customerPolicies = data.policies.filter(p => p.customerName === row.customerName);
+        const total = customerPolicies.reduce((sum, p) => {
+          const val = parseInt(p.premium.replace(/[^0-9]/g, '')) || 0;
+          return sum + val;
+        }, 0);
+        return <span className="font-bold text-teal-600">₹{total.toLocaleString('en-IN')}</span>;
+      }
     },
   ];
 

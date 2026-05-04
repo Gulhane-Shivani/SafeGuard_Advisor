@@ -1,5 +1,5 @@
-
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   Shield, TrendingUp, BarChart3, 
   CheckCircle2, Clock, 
@@ -11,6 +11,33 @@ import { usePlatform } from '../../store/PlatformContext';
 
 const AdminOverview: React.FC = () => {
   const { data } = usePlatform();
+  const navigate = useNavigate();
+  const [timeFilter, setTimeFilter] = useState('Weekly');
+
+  // Simulated dynamic data based on filter
+  const getFilteredStats = () => {
+    const multipliers: Record<string, number> = {
+      'Daily': 0.1,
+      'Weekly': 0.5,
+      'Monthly': 1.0
+    };
+    const m = multipliers[timeFilter] || 1;
+    
+    return {
+      leads: Math.round(data.leads.length * m * 2.5),
+      policies: Math.round(data.policies.length * m * 1.8),
+      conversion: timeFilter === 'Daily' ? '24%' : timeFilter === 'Weekly' ? '28%' : '32%',
+      pending: Math.round(12 * m),
+      pipeline: {
+        new: Math.round(45 * m),
+        contacted: Math.round(32 * m),
+        quote: Math.round(18 * m),
+        issued: Math.round(12 * m)
+      }
+    };
+  };
+
+  const stats = getFilteredStats();
 
   return (
     <div className="space-y-10">
@@ -20,21 +47,32 @@ const AdminOverview: React.FC = () => {
         actions={
           <div className="flex bg-white border border-slate-200 rounded-xl p-1">
              {['Daily', 'Weekly', 'Monthly'].map(f => (
-                <button key={f} className="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight text-slate-400 hover:text-slate-900 transition-colors">{f}</button>
+                <button 
+                  key={f} 
+                  onClick={() => setTimeFilter(f)}
+                  className={cn(
+                    "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all",
+                    timeFilter === f 
+                      ? "bg-slate-900 text-white shadow-lg" 
+                      : "text-slate-400 hover:text-slate-900"
+                  )}
+                >
+                  {f}
+                </button>
              ))}
           </div>
         }
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard label="Total Leads" value={data.leads.length} icon={TrendingUp} trend="+14" trendUp={true} color="blue" />
-        <KPICard label="Policies" value={data.policies.length} icon={Shield} trend="+5" trendUp={true} color="teal" />
-        <KPICard label="Conversion" value="28%" icon={BarChart3} trend="+2.1%" trendUp={true} color="emerald" />
-        <KPICard label="Pending Approvals" value="12" icon={CheckCircle2} trend="-3" trendUp={false} color="amber" />
+        <KPICard label="Total Leads" value={stats.leads} icon={TrendingUp} trend="+14" trendUp={true} color="blue" />
+        <KPICard label="Policies" value={stats.policies} icon={Shield} trend="+5" trendUp={true} color="teal" />
+        <KPICard label="Conversion" value={stats.conversion} icon={BarChart3} trend="+2.1%" trendUp={true} color="emerald" />
+        <KPICard label="Pending Approvals" value={stats.pending} icon={CheckCircle2} trend="-3" trendUp={false} color="amber" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Quick Actions */}
+        {/* Quick Access */}
         <div className="lg:col-span-1 space-y-6">
            <h3 className="font-black text-slate-900 text-lg">Quick Access</h3>
            <div className="grid grid-cols-1 gap-4">
@@ -44,7 +82,11 @@ const AdminOverview: React.FC = () => {
                  { label: 'Team Leaderboard', icon: BarChart3, path: '/admin/team', color: 'bg-purple-50 text-purple-600' },
                  { label: 'Payout Approvals', icon: IndianRupee, path: '/admin/commission', color: 'bg-teal-50 text-teal-600' },
               ].map((action) => (
-                 <button key={action.label} className="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-3xl hover:border-teal-200 transition-all text-left shadow-sm group">
+                 <button 
+                  key={action.label} 
+                  onClick={() => navigate(action.path)}
+                  className="flex items-center gap-4 p-5 bg-white border border-slate-100 rounded-3xl hover:border-teal-200 transition-all text-left shadow-sm group"
+                >
                     <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform", action.color)}>
                        <action.icon className="w-6 h-6" />
                     </div>
@@ -69,10 +111,10 @@ const AdminOverview: React.FC = () => {
            
            <div className="flex-grow space-y-6 flex flex-col justify-center">
               {[
-                 { label: 'New Leads', value: 45, total: 100, color: 'bg-blue-500' },
-                 { label: 'Contacted', value: 32, total: 100, color: 'bg-indigo-500' },
-                 { label: 'Quote Generated', value: 18, total: 100, color: 'bg-purple-500' },
-                 { label: 'Closed/Policy Issued', value: 12, total: 100, color: 'bg-teal-500' },
+                 { label: 'New Leads', value: stats.pipeline.new, total: 100, color: 'bg-blue-500' },
+                 { label: 'Contacted', value: stats.pipeline.contacted, total: 100, color: 'bg-indigo-500' },
+                 { label: 'Quote Generated', value: stats.pipeline.quote, total: 100, color: 'bg-purple-500' },
+                 { label: 'Closed/Policy Issued', value: stats.pipeline.issued, total: 100, color: 'bg-teal-500' },
               ].map((step) => (
                  <div key={step.label}>
                     <div className="flex justify-between items-center mb-2">
@@ -80,7 +122,7 @@ const AdminOverview: React.FC = () => {
                        <span className="text-xs font-black text-slate-900">{step.value}</span>
                     </div>
                     <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-                       <div className={cn("h-full rounded-full transition-all duration-1000", step.color)} style={{ width: `${step.value}%` }} />
+                       <div className={cn("h-full rounded-full transition-all duration-1000", step.color)} style={{ width: `${(step.value / 60) * 100}%` }} />
                     </div>
                  </div>
               ))}
@@ -89,7 +131,7 @@ const AdminOverview: React.FC = () => {
            <div className="mt-10 pt-8 border-t border-slate-50 grid grid-cols-3 gap-4">
               <div className="text-center">
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Hot Leads</p>
-                 <p className="text-lg font-black text-slate-900">12</p>
+                 <p className="text-lg font-black text-slate-900">{Math.round(12 * (data.leads.length / 3))}</p>
               </div>
               <div className="text-center">
                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Avg. TAT</p>
@@ -112,7 +154,10 @@ const AdminOverview: React.FC = () => {
                </div>
                <h3 className="text-3xl font-black leading-tight">15 Policy Renewals <br /> Due This Week</h3>
                <p className="text-slate-400 text-sm max-w-sm">There are 15 high-value policies due for renewal in the next 7 days. Assign them to agents immediately to prevent lapse.</p>
-               <button className="px-8 py-3 bg-teal-500 text-white rounded-xl font-bold text-sm hover:bg-teal-600 transition-all shadow-xl shadow-teal-500/20">
+               <button 
+                onClick={() => navigate('/admin/policies')}
+                className="px-8 py-3 bg-teal-500 text-white rounded-xl font-bold text-sm hover:bg-teal-600 transition-all shadow-xl shadow-teal-500/20"
+              >
                   Manage Renewals
                </button>
             </div>

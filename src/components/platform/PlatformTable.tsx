@@ -95,7 +95,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                   ))}
                   {(onEdit || onDelete) && (
                     <td className="px-8 py-5 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover/row:opacity-100 transition-all">
+                      <div className="flex items-center justify-end gap-2 transition-all">
                         {onEdit && (
                           <button 
                             onClick={() => onEdit(row)}
