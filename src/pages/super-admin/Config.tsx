@@ -10,8 +10,6 @@ import { cn } from '../../utils/helpers';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-const SECURITY_KEYS = ['mfa', 'ipWhitelist', 'forcePassword', 'sessionTimeout'] as const;
-
 const SystemConfig: React.FC = () => {
   const [notifications, setNotifications] = useState({
     email: true,

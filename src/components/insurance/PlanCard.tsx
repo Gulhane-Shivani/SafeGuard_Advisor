@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, ArrowRight, ShieldCheck, HeartPulse, Car, Home, X, Shield, AlertCircle, CreditCard, CheckCircle2, Loader2 } from 'lucide-react';
+import { Check, ArrowRight, ShieldCheck, HeartPulse, Car, Home, X, CreditCard, CheckCircle2, Loader2 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { AuthModal } from '../layout/AuthModal';
 

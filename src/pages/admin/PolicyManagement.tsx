@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { 
   Shield, Clock, 
   Download, AlertCircle,
-  Activity, Edit2, Trash2,
-  FileText, Send, CheckCircle2
+  Activity,
+  FileText
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -93,7 +93,7 @@ const PolicyManagement: React.FC = () => {
       head: [['Policy #', 'Customer', 'Type', 'Premium', 'Status', 'Expiry Date']],
       body: tableData,
       theme: 'striped',
-      headStyles: { fillStyle: 'shape', fillColor: [20, 158, 136] },
+      headStyles: { fillColor: [20, 158, 136] },
       styles: { fontSize: 9 }
     });
 

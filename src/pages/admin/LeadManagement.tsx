@@ -3,7 +3,7 @@ import {
   TrendingUp,  
   Phone, 
   AlertCircle, Zap,
-  BarChart3, PieChart, Activity,
+  BarChart3, Activity,
   Users, ArrowUpRight, ArrowDownRight,
   Headphones, PlayCircle, Clock as ClockIcon
 } from 'lucide-react';

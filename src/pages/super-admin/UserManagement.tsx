@@ -10,7 +10,6 @@ const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });
-  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -21,7 +20,7 @@ const UserManagement: React.FC = () => {
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to fetch users');
     } finally {
-      setIsLoading(false);
+      // Fetch complete
     }
   };
 

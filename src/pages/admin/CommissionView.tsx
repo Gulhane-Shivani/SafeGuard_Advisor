@@ -52,7 +52,7 @@ const CommissionView: React.FC = () => {
       head: [['Agent Name', 'Payout Amount', 'Processing Date', 'Status']],
       body: tableData,
       theme: 'striped',
-      headStyles: { fillStyle: 'shape', fillColor: [20, 158, 136] },
+      headStyles: { fillColor: [20, 158, 136] },
       styles: { fontSize: 10 }
     });
 
