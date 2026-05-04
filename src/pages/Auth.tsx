@@ -32,7 +32,7 @@ export const Auth: React.FC = () => {
         else if (role === 'ADMIN') redirectPath = '/admin';
         else if (role === 'AGENT') redirectPath = '/agent';
         else if (role === 'CSR') redirectPath = '/csr';
-        navigate(redirectPath);
+        navigate(redirectPath, { replace: true });
       }
     }
   }, [navigate]);
@@ -108,7 +108,7 @@ export const Auth: React.FC = () => {
       }
       
       console.log(`Final redirect to: ${from}`);
-      navigate(from);
+      navigate(from, { replace: true });
     } catch (err: any) {
       console.error('Auth error:', err);
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');

@@ -1,6 +1,7 @@
-
 import React from 'react';
-import { IndianRupee, TrendingUp, Download } from 'lucide-react';
+import { IndianRupee, TrendingUp, Download, Clock } from 'lucide-react';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { usePlatform } from '../../store/PlatformContext';
@@ -32,13 +33,44 @@ const AgentCommission: React.FC = () => {
     }
   ];
 
+  const handleDownloadStatement = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(22);
+    doc.setTextColor(20, 158, 136);
+    doc.text('Commission Payout Statement', 14, 25);
+    
+    doc.setFontSize(10);
+    doc.setTextColor(100);
+    doc.text(`Agent Name: ${agentName}`, 14, 35);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 14, 40);
+
+    const tableData = myCommissions.map(c => [
+      c.amount,
+      c.date,
+      c.status
+    ]);
+
+    autoTable(doc, {
+      startY: 50,
+      head: [['Payout Amount', 'Processing Date', 'Status']],
+      body: tableData,
+      theme: 'striped',
+      headStyles: { fillColor: [20, 158, 136] }
+    });
+
+    doc.save(`Commission_Statement_${agentName.replace(/\s+/g, '_')}.pdf`);
+  };
+
   return (
     <div className="space-y-10">
       <SectionHeader 
         title="Commission Statement" 
         description="Track your earnings, view upcoming payouts, and download detailed statements for tax purposes."
         actions={
-          <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-2">
+          <button 
+            onClick={handleDownloadStatement}
+            className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-2"
+          >
             <Download className="w-4 h-4" /> Download Statement
           </button>
         }
@@ -93,13 +125,5 @@ const AgentCommission: React.FC = () => {
     </div>
   );
 };
-
-// Simple Clock icon component since it wasn't imported from lucide-react directly in the file start
-const Clock = ({ className }: { className?: string }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <circle cx="12" cy="12" r="10"></circle>
-    <polyline points="12 6 12 12 16 14"></polyline>
-  </svg>
-);
 
 export default AgentCommission;

@@ -1,30 +1,44 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Users, 
-  FileText
+  FileText,
+  Search
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { usePlatform } from '../../store/PlatformContext';
 import { cn } from '../../utils/helpers';
+import { PlatformModal } from '../../components/platform/PlatformModal';
 
 const MyCustomers: React.FC = () => {
   const { data } = usePlatform();
+  const navigate = useNavigate();
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const agentId = 2; // Assuming logged in as John Agent
   const myPolicies = data.policies.filter(p => p.agentId === agentId);
 
   // Group policies by customer for this view
   const myCustomers = Array.from(new Set(myPolicies.map(p => p.customerName))).map(name => {
     const customerPolicies = myPolicies.filter(p => p.customerName === name);
+    const hasLife = customerPolicies.some(p => p.type === 'Life Insurance');
+    const hasHealth = customerPolicies.some(p => p.type === 'Health Insurance');
+    
+    let recommendation = 'Critical Care';
+    if (!hasLife) recommendation = 'Term Life Shield';
+    else if (!hasHealth) recommendation = 'Family Health Plus';
+
     return {
       id: name, // Using name as ID for demo
       name,
       email: `${name.toLowerCase().replace(' ', '.')}@email.com`,
-      phone: '+1 234-567-8900',
+      phone: '+91 98765-43210',
       totalPolicies: customerPolicies.length,
       status: customerPolicies.some(p => p.status === 'Renewal Due') ? 'Attention Needed' : 'Stable',
-      policies: customerPolicies
+      policies: customerPolicies,
+      recommendation
     };
   });
 
@@ -69,7 +83,7 @@ const MyCustomers: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-10">
+    <div className="space-y-10 pb-20">
       <SectionHeader 
         title="My Client Portfolio" 
         description="Manage your active customer relationships, track policy renewals, and identify cross-selling opportunities."
@@ -98,7 +112,10 @@ const MyCustomers: React.FC = () => {
         description="Showing all your active customers"
         columns={columns}
         data={myCustomers}
-        onEdit={(customer) => console.log('View Customer', customer)}
+        onEdit={(customer) => {
+            setSelectedCustomer(customer);
+            setIsModalOpen(true);
+        }}
       />
 
       {/* Cross-Sell Suggestions */}
@@ -107,9 +124,12 @@ const MyCustomers: React.FC = () => {
             <div className="max-w-md">
                <h3 className="text-2xl font-black mb-3">AI Cross-Sell Recommendations</h3>
                <p className="text-slate-400 text-sm leading-relaxed mb-6">
-                  Based on current portfolio analysis, <strong>2 clients</strong> have high probability for Life Insurance upsells.
+                  Based on current portfolio analysis, <strong>{myCustomers.length > 2 ? 2 : myCustomers.length} clients</strong> have high probability for Life Insurance upsells.
                </p>
-               <button className="px-6 py-3 bg-teal-500 text-white rounded-xl font-bold text-sm hover:bg-teal-600 transition-all shadow-xl shadow-teal-500/20 w-full sm:w-auto text-center">
+               <button 
+                  onClick={() => navigate('/agent/quote')}
+                  className="px-6 py-3 bg-teal-500 text-white rounded-xl font-bold text-sm hover:bg-teal-600 transition-all shadow-xl shadow-teal-500/20 w-full sm:w-auto text-center"
+               >
                   View Target List
                </button>
             </div>
@@ -122,10 +142,14 @@ const MyCustomers: React.FC = () => {
                         </div>
                         <div>
                            <p className="font-bold text-sm">{c.name}</p>
-                           <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Recommended: Term Life</p>
+                           <p className="text-[10px] text-slate-400 font-bold uppercase mt-0.5">Recommended: {c.recommendation}</p>
                         </div>
                      </div>
-                     <button className="p-2 bg-white/10 text-white rounded-lg hover:bg-teal-500 transition-all">
+                     <button 
+                        onClick={() => navigate('/agent/quote')}
+                        className="p-2 bg-white/10 text-white rounded-lg hover:bg-teal-50 transition-all"
+                        title="Generate Quote"
+                     >
                         <FileText className="w-4 h-4" />
                      </button>
                   </div>
@@ -134,8 +158,59 @@ const MyCustomers: React.FC = () => {
          </div>
          <Users className="absolute -right-20 -top-20 w-80 h-80 text-white/5 pointer-events-none group-hover:scale-110 transition-all duration-1000" />
       </div>
+
+      <PlatformModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Customer Insights"
+      >
+        <div className="space-y-6">
+            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-xl font-black">
+                    {selectedCustomer?.name.charAt(0)}
+                </div>
+                <div>
+                    <h4 className="text-xl font-black text-slate-900">{selectedCustomer?.name}</h4>
+                    <p className="text-xs font-bold text-slate-500">{selectedCustomer?.email}</p>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 rounded-2xl bg-white border border-slate-100">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Active Policies</p>
+                    <p className="text-xl font-black text-slate-900">{selectedCustomer?.totalPolicies}</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-white border border-slate-100">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk Status</p>
+                    <p className={cn(
+                        "text-sm font-black uppercase",
+                        selectedCustomer?.status === 'Stable' ? "text-emerald-600" : "text-orange-600"
+                    )}>{selectedCustomer?.status}</p>
+                </div>
+            </div>
+
+            <div className="space-y-3">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1">Holdings Breakdown</p>
+                {selectedCustomer?.policies.map((p: any) => (
+                    <div key={p.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-100">
+                        <span className="text-sm font-bold text-slate-700">{p.planName}</span>
+                        <span className="text-xs font-black text-slate-900">{p.premium}</span>
+                    </div>
+                ))}
+            </div>
+
+            <button 
+                onClick={() => {
+                    setIsModalOpen(false);
+                    navigate('/agent/quote');
+                }}
+                className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all mt-4 flex items-center justify-center gap-2"
+            >
+                <Search className="w-4 h-4" /> Run Portfolio Quote
+            </button>
+        </div>
+      </PlatformModal>
     </div>
   );
 };
-
 export default MyCustomers;
