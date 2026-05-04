@@ -15,6 +15,16 @@ interface ApiError extends Error {
   };
 }
 
+const handleUnauthorized = () => {
+  localStorage.removeItem("isLoggedIn");
+  localStorage.removeItem("token");
+  localStorage.removeItem("adminToken");
+  localStorage.removeItem("user");
+  if (window.location.pathname !== "/auth") {
+    window.location.href = "/auth";
+  }
+};
+
 // Enhanced fetch-based API client
 const API = {
   async post<T = any>(endpoint: string, data: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
@@ -31,6 +41,10 @@ const API = {
       headers,
       body: JSON.stringify(data),
     });
+
+    if (res.status === 401) {
+      handleUnauthorized();
+    }
 
     const json = await res.json();
 
@@ -54,6 +68,10 @@ const API = {
       ...options,
       headers 
     });
+
+    if (res.status === 401) {
+      handleUnauthorized();
+    }
     
     const json = await res.json();
 
@@ -81,6 +99,10 @@ const API = {
       body: JSON.stringify(data),
     });
 
+    if (res.status === 401) {
+      handleUnauthorized();
+    }
+
     const json = await res.json();
 
     if (!res.ok) {
@@ -104,6 +126,10 @@ const API = {
       method: "DELETE",
       headers 
     });
+
+    if (res.status === 401) {
+      handleUnauthorized();
+    }
     
     const json = await res.json();
 

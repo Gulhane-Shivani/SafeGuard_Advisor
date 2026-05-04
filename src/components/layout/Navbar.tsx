@@ -227,19 +227,35 @@ const Navbar: React.FC = () => {
                     </div>
 
                     <div className="p-2 space-y-1">
-                      {user?.role === 'admin' && (
+                      {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
                         <Link
-                          to="/admin/dashboard"
+                          to={user?.role === 'SUPER_ADMIN' ? "/super-admin" : "/admin"}
                           className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-amber-600 hover:bg-amber-50 rounded-xl transition-all"
                         >
-                          <Shield className="w-4 h-4" /> Admin Panel
+                          <Shield className="w-4 h-4" /> {user?.role === 'SUPER_ADMIN' ? 'Super Admin Panel' : 'Admin Panel'}
+                        </Link>
+                      )}
+                      {user?.role === 'AGENT' && (
+                        <Link
+                          to="/agent"
+                          className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-teal-600 hover:bg-teal-50 rounded-xl transition-all"
+                        >
+                          <Shield className="w-4 h-4" /> Agent Dashboard
+                        </Link>
+                      )}
+                      {user?.role === 'CSR' && (
+                        <Link
+                          to="/csr"
+                          className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                        >
+                          <Shield className="w-4 h-4" /> CSR Dashboard
                         </Link>
                       )}
                       <Link
-                        to="/customer/profile"
+                        to="/customer"
                         className="flex items-center gap-3 px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-all"
                       >
-                        <User className="w-4 h-4" /> My Profile
+                        <User className="w-4 h-4" /> My Portal
                       </Link>
                       <button
                         onClick={handleLogout}
@@ -347,13 +363,31 @@ const Navbar: React.FC = () => {
                 <div className="w-full py-3 bg-teal-50 text-teal-700 rounded-xl font-bold text-center border border-teal-100">
                   Logged in as {user?.name || 'User'}
                 </div>
-                {user?.role === 'admin' && (
+                {(user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN') && (
                   <Link
-                    to="/admin/dashboard"
+                    to={user?.role === 'SUPER_ADMIN' ? "/super-admin" : "/admin"}
                     className="w-full py-3 bg-amber-50 text-amber-600 rounded-xl font-bold text-center border border-amber-100 flex items-center justify-center gap-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    <Shield className="w-4 h-4" /> Admin Panel
+                    <Shield className="w-4 h-4" /> {user?.role === 'SUPER_ADMIN' ? 'Super Admin Panel' : 'Admin Panel'}
+                  </Link>
+                )}
+                {user?.role === 'AGENT' && (
+                  <Link
+                    to="/agent"
+                    className="w-full py-3 bg-teal-50 text-teal-600 rounded-xl font-bold text-center border border-teal-100 flex items-center justify-center gap-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Shield className="w-4 h-4" /> Agent Dashboard
+                  </Link>
+                )}
+                {user?.role === 'CSR' && (
+                  <Link
+                    to="/csr"
+                    className="w-full py-3 bg-blue-50 text-blue-600 rounded-xl font-bold text-center border border-blue-100 flex items-center justify-center gap-2"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Shield className="w-4 h-4" /> CSR Dashboard
                   </Link>
                 )}
                 <button

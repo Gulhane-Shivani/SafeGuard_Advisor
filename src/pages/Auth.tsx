@@ -23,7 +23,17 @@ export const Auth: React.FC = () => {
   useEffect(() => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     if (isLoggedIn) {
-      navigate('/customer');
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        const userData = JSON.parse(savedUser);
+        const role = userData.role?.toUpperCase();
+        let redirectPath = '/customer';
+        if (role === 'SUPER_ADMIN') redirectPath = '/super-admin';
+        else if (role === 'ADMIN') redirectPath = '/admin';
+        else if (role === 'AGENT') redirectPath = '/agent';
+        else if (role === 'CSR') redirectPath = '/csr';
+        navigate(redirectPath);
+      }
     }
   }, [navigate]);
 
@@ -51,20 +61,20 @@ export const Auth: React.FC = () => {
         payload.password = password;
       }
 
+      console.log(`Attempting ${endpoint} for ${payload.email || payload.mobile}`);
       const response = await API.post(endpoint, payload);
+      console.log('Login response received:', response.status);
 
       if (!isLogin) {
-        // Handle Registration Success
         setSuccess('Account created successfully! Please sign in.');
         setIsLogin(true);
-        // Clear password for safety
         setPassword('');
         setIsLoading(false);
         return;
       }
 
-      // Handle Login Success (Role-based redirection)
       const { user: userRes, access_token } = response.data;
+      console.log('Token received:', access_token ? 'Yes (length: ' + access_token.length + ')' : 'No');
 
       if (!userRes) {
         throw new Error('Server did not return user details.');
@@ -73,19 +83,19 @@ export const Auth: React.FC = () => {
       const userData = {
         name: userRes.full_name || userRes.mobile || userRes.email?.split('@')[0] || 'User',
         email: userRes.email || userRes.mobile,
-        role: userRes.role || 'CUSTOMER'
+        role: (userRes.role || 'CUSTOMER').toUpperCase()
       };
 
+      console.log('Storing user data and token:', userData.role);
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('token', access_token);
       localStorage.setItem('user', JSON.stringify(userData));
 
       setUser(userData);
       
-      // Dynamic redirection based on role
       let from = location.state?.from;
-      if (!from || from === '/customer') {
-        const role = userData.role.toUpperCase();
+      if (!from || from === '/customer' || from === '/auth') {
+        const role = userData.role;
         if (role === 'SUPER_ADMIN') from = '/super-admin';
         else if (role === 'ADMIN') from = '/admin';
         else if (role === 'AGENT') from = '/agent';
@@ -93,9 +103,10 @@ export const Auth: React.FC = () => {
         else from = '/customer';
       }
       
-      console.log(`Redirecting ${userData.role} to ${from}`);
+      console.log(`Final redirect to: ${from}`);
       navigate(from);
     } catch (err: any) {
+      console.error('Auth error:', err);
       setError(err.response?.data?.detail || err.message || 'An error occurred. Please try again.');
     } finally {
       setIsLoading(false);

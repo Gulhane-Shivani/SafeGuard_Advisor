@@ -33,6 +33,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const logout = () => {
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     localStorage.removeItem('adminToken');
     localStorage.removeItem('isAdmin');
     setState(prev => ({ ...prev, user: null }));

@@ -7,6 +7,7 @@ import { PaymentGateway } from '../../components/PaymentGateway';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { jsPDF } from 'jspdf';
+import API from '../../api/baseurl';
 
 const CustomerPolicyDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -77,19 +78,12 @@ const CustomerPolicyDetail: React.FC = () => {
 
   const handlePaymentSuccess = async () => {
     try {
-      const response = await fetch('http://localhost:8000/customer/payments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          policy: paymentModal.policyName,
-          amount: paymentModal.amount,
-          method: 'Net Banking'
-        })
+      const response = await API.post('/customer/payments', {
+        policy: paymentModal.policyName,
+        amount: paymentModal.amount,
+        method: 'Net Banking'
       });
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         refresh();
       }
     } catch (err) {

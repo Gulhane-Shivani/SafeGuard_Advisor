@@ -16,10 +16,7 @@ const UserManagement: React.FC = () => {
 
   const fetchUsers = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await API.get('/admin/users', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await API.get('/admin/users');
       setUsers(response.data);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to fetch users');
@@ -86,10 +83,7 @@ const UserManagement: React.FC = () => {
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      await API.post('/admin/users', newUser, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await API.post('/admin/users', newUser);
       setSuccess('User created successfully. Temporary password sent to email.');
       setIsModalOpen(false);
       setNewUser({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });

@@ -10,6 +10,7 @@ import { cn } from '../../utils/helpers';
 import { PaymentGateway } from '../../components/PaymentGateway';
 
 import { LoadingSpinner } from '../../components/LoadingSpinner';
+import API from '../../api/baseurl';
 
 const CustomerHome: React.FC = () => {
   const { data, loading, error, refresh } = useCustomer();
@@ -36,19 +37,12 @@ const CustomerHome: React.FC = () => {
 
   const handlePaymentSuccess = async () => {
     try {
-      const response = await fetch('http://localhost:8000/customer/payments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({
-          policy: paymentModal.policyName,
-          amount: paymentModal.amount,
-          method: 'UPI / QR'
-        })
+      const response = await API.post('/customer/payments', {
+        policy: paymentModal.policyName,
+        amount: paymentModal.amount,
+        method: 'UPI / QR'
       });
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         refresh();
       }
     } catch (err) {

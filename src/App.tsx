@@ -60,6 +60,8 @@ import Renewals from './pages/csr/Renewals';
 import TicketSystem from './pages/csr/TicketSystem';
 import CommunicationLog from './pages/csr/CommunicationLog';
 
+import ProtectedRoute from './components/auth/ProtectedRoute';
+
 const AppContent = () => {
   const location = useLocation();
   const isPlatformPath = ['/super-admin', '/admin', '/agent', '/csr'].some(path => location.pathname.startsWith(path));
@@ -88,81 +90,91 @@ const AppContent = () => {
           
           {/* Platform Routes */}
           <Route path="/super-admin/*" element={
-            <PlatformProvider>
-              <DashboardLayout>
-                <Routes>
-                  <Route path="/" element={<SuperAdminOverview />} />
-                  <Route path="/users" element={<UserManagement />} />
-                  <Route path="/settings" element={<MasterSettings />} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/config" element={<SystemConfig />} />
-                </Routes>
-              </DashboardLayout>
-            </PlatformProvider>
+            <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
+              <PlatformProvider>
+                <DashboardLayout>
+                  <Routes>
+                    <Route path="/" element={<SuperAdminOverview />} />
+                    <Route path="/users" element={<UserManagement />} />
+                    <Route path="/settings" element={<MasterSettings />} />
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/config" element={<SystemConfig />} />
+                  </Routes>
+                </DashboardLayout>
+              </PlatformProvider>
+            </ProtectedRoute>
           } />
 
           <Route path="/admin/*" element={
-            <PlatformProvider>
-              <DashboardLayout>
-                <Routes>
-                  <Route path="/" element={<AdminOverview />} />
-                  <Route path="/leads" element={<LeadManagement />} />
-                  <Route path="/policies" element={<PolicyManagement />} />
-                  <Route path="/team" element={<TeamPerformance />} />
-                  <Route path="/customers" element={<Customer360 />} />
-                  <Route path="/approvals" element={<Approvals />} />
-                  <Route path="/commission" element={<CommissionView />} />
-                </Routes>
-              </DashboardLayout>
-            </PlatformProvider>
+            <ProtectedRoute allowedRoles={['ADMIN', 'SUPER_ADMIN']}>
+              <PlatformProvider>
+                <DashboardLayout>
+                  <Routes>
+                    <Route path="/" element={<AdminOverview />} />
+                    <Route path="/leads" element={<LeadManagement />} />
+                    <Route path="/policies" element={<PolicyManagement />} />
+                    <Route path="/team" element={<TeamPerformance />} />
+                    <Route path="/customers" element={<Customer360 />} />
+                    <Route path="/approvals" element={<Approvals />} />
+                    <Route path="/commission" element={<CommissionView />} />
+                  </Routes>
+                </DashboardLayout>
+              </PlatformProvider>
+            </ProtectedRoute>
           } />
 
           <Route path="/agent/*" element={
-            <PlatformProvider>
-              <DashboardLayout>
-                <Routes>
-                  <Route path="/" element={<AgentOverview />} />
-                  <Route path="/leads" element={<MyLeads />} />
-                  <Route path="/customers" element={<MyCustomers />} />
-                  <Route path="/quote" element={<QuoteGenerator />} />
-                  <Route path="/tasks" element={<Tasks />} />
-                  <Route path="/commission" element={<AgentCommission />} />
-                </Routes>
-              </DashboardLayout>
-            </PlatformProvider>
+            <ProtectedRoute allowedRoles={['AGENT']}>
+              <PlatformProvider>
+                <DashboardLayout>
+                  <Routes>
+                    <Route path="/" element={<AgentOverview />} />
+                    <Route path="/leads" element={<MyLeads />} />
+                    <Route path="/customers" element={<MyCustomers />} />
+                    <Route path="/quote" element={<QuoteGenerator />} />
+                    <Route path="/tasks" element={<Tasks />} />
+                    <Route path="/commission" element={<AgentCommission />} />
+                  </Routes>
+                </DashboardLayout>
+              </PlatformProvider>
+            </ProtectedRoute>
           } />
 
           <Route path="/csr/*" element={
-            <PlatformProvider>
-              <DashboardLayout>
-                <Routes>
-                  <Route path="/" element={<CSROverview />} />
-                  <Route path="/search" element={<CustomerSearch />} />
-                  <Route path="/claims" element={<ClaimsSupport />} />
-                  <Route path="/renewals" element={<Renewals />} />
-                  <Route path="/tickets" element={<TicketSystem />} />
-                  <Route path="/communication" element={<CommunicationLog />} />
-                </Routes>
-              </DashboardLayout>
-            </PlatformProvider>
+            <ProtectedRoute allowedRoles={['CSR']}>
+              <PlatformProvider>
+                <DashboardLayout>
+                  <Routes>
+                    <Route path="/" element={<CSROverview />} />
+                    <Route path="/search" element={<CustomerSearch />} />
+                    <Route path="/claims" element={<ClaimsSupport />} />
+                    <Route path="/renewals" element={<Renewals />} />
+                    <Route path="/tickets" element={<TicketSystem />} />
+                    <Route path="/communication" element={<CommunicationLog />} />
+                  </Routes>
+                </DashboardLayout>
+              </PlatformProvider>
+            </ProtectedRoute>
           } />
 
           {/* Customer Portal Routes */}
           <Route path="/customer/*" element={
-            <CustomerProvider>
-              <Routes>
-                <Route path="/" element={<CustomerHome />} />
-                <Route path="/policies" element={<CustomerPolicies />} />
-                <Route path="/policies/:id" element={<CustomerPolicyDetail />} />
-                <Route path="/payments" element={<CustomerPayments />} />
-                <Route path="/claims" element={<CustomerClaims />} />
-                <Route path="/requests" element={<CustomerServiceRequests />} />
-                <Route path="/vault" element={<CustomerDocumentVault />} />
-                <Route path="/profile" element={<CustomerProfile />} />
-                <Route path="/loan" element={<CustomerPolicyLoan />} />
-                <Route path="/support" element={<CustomerSupport />} />
-              </Routes>
-            </CustomerProvider>
+            <ProtectedRoute allowedRoles={['CUSTOMER']}>
+              <CustomerProvider>
+                <Routes>
+                  <Route path="/" element={<CustomerHome />} />
+                  <Route path="/policies" element={<CustomerPolicies />} />
+                  <Route path="/policies/:id" element={<CustomerPolicyDetail />} />
+                  <Route path="/payments" element={<CustomerPayments />} />
+                  <Route path="/claims" element={<CustomerClaims />} />
+                  <Route path="/requests" element={<CustomerServiceRequests />} />
+                  <Route path="/vault" element={<CustomerDocumentVault />} />
+                  <Route path="/profile" element={<CustomerProfile />} />
+                  <Route path="/loan" element={<CustomerPolicyLoan />} />
+                  <Route path="/support" element={<CustomerSupport />} />
+                </Routes>
+              </CustomerProvider>
+            </ProtectedRoute>
           } />
         </Routes>
       </main>
