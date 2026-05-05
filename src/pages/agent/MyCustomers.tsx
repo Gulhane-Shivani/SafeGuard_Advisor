@@ -116,6 +116,8 @@ const MyCustomers: React.FC = () => {
             setSelectedCustomer(customer);
             setIsModalOpen(true);
         }}
+        filterKey="status"
+        filterOptions={['Stable', 'Attention Needed']}
       />
 
       {/* Cross-Sell Suggestions */}

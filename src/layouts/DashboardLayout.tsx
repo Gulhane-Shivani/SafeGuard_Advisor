@@ -6,7 +6,7 @@ import {
   BarChart3, LogOut, Menu, X, Bell, 
   Search, IndianRupee, 
   TrendingUp, Layers, CheckSquare, MessageSquare,
-  Clock, PhoneCall
+  Clock, PhoneCall, UserCircle2
 } from 'lucide-react';
 import { usePlatform } from '../store/PlatformContext';
 import { useAppStore } from '../store';
@@ -66,6 +66,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           { id: 'agt-quote', label: 'Quote Generator', icon: FileText, path: '/agent/quote' },
           { id: 'agt-tasks', label: 'Tasks & Calendar', icon: CheckSquare, path: '/agent/tasks' },
           { id: 'agt-commission', label: 'Commission', icon: IndianRupee, path: '/agent/commission' },
+          { id: 'agt-profile', label: 'My Profile', icon: UserCircle2, path: '/agent/profile' },
         ];
       case PLATFORM_ROLES.CSR:
         return [

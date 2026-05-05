@@ -52,6 +52,7 @@ import MyCustomers from './pages/agent/MyCustomers';
 import QuoteGenerator from './pages/agent/QuoteGenerator';
 import Tasks from './pages/agent/Tasks';
 import AgentCommission from './pages/agent/AgentCommission';
+import AgentProfile from './pages/agent/AgentProfile';
 
 import CSROverview from './pages/csr/CSROverview';
 import CustomerSearch from './pages/csr/CustomerSearch';
@@ -134,6 +135,7 @@ const AppContent = () => {
                     <Route path="/quote" element={<QuoteGenerator />} />
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/commission" element={<AgentCommission />} />
+                    <Route path="/profile" element={<AgentProfile />} />
                   </Routes>
                 </DashboardLayout>
               </PlatformProvider>

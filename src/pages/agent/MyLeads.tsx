@@ -79,6 +79,8 @@ const MyLeads: React.FC = () => {
         columns={columns}
         data={myLeads}
         onEdit={(lead) => setSelectedLead(lead)}
+        filterKey="status"
+        filterOptions={['Hot', 'Warm', 'Cold']}
       />
 
       <PlatformModal 

@@ -17,6 +17,9 @@ export const INITIAL_DATA = {
     { id: 1, name: 'Amit Sharma', email: 'amit@email.com', phone: '+91 98765-43210', status: 'Hot', type: 'Life Insurance', source: 'Website', assignedTo: 2, createdAt: '2024-05-01' },
     { id: 2, name: 'Priya Patel', email: 'priya@email.com', phone: '+91 98765-43211', status: 'Warm', type: 'Health Insurance', source: 'Referral', assignedTo: 2, createdAt: '2024-05-02' },
     { id: 3, name: 'Rajesh Kumar', email: 'rajesh@email.com', phone: '+91 98765-43212', status: 'Cold', type: 'Motor Insurance', source: 'LinkedIn', assignedTo: null, createdAt: '2024-05-03' },
+    { id: 4, name: 'Sanjay Dutt', email: 'sanjay.d@email.com', phone: '+91 98765-43213', status: 'Hot', type: 'Health Insurance', source: 'Website', assignedTo: 2, createdAt: '2024-05-04' },
+    { id: 5, name: 'Alia Bhatt', email: 'alia.b@email.com', phone: '+91 98765-43214', status: 'Warm', type: 'Life Insurance', source: 'Referral', assignedTo: 2, createdAt: '2024-05-05' },
+    { id: 6, name: 'Ranbir Kapoor', email: 'ranbir.k@email.com', phone: '+91 98765-43215', status: 'Cold', type: 'Motor Insurance', source: 'Social Media', assignedTo: 2, createdAt: '2024-05-06' },
   ],
   policies: [
     { id: 1, policyNumber: 'SG-LIFE-001', customerName: 'Sunita Rao', type: 'Life Insurance', status: 'Active', premium: '₹1,20,000', startDate: '2023-01-15', endDate: '2024-01-15', agentId: 2 },
@@ -50,6 +53,8 @@ export const INITIAL_DATA = {
     { id: 2, title: 'Send quote to Priya', date: '2024-05-04', type: 'Email', completed: true, agentId: 2 },
     { id: 3, title: 'Follow up on Claim CLM-2024-001', date: '2024-05-05', type: 'Call', completed: false, agentId: 4 },
     { id: 4, title: 'Verify documents for Kunal', date: '2024-05-05', type: 'Review', completed: false, agentId: 4 },
+    { id: 5, title: 'Schedule meeting with Sanjay', date: '2024-05-06', type: 'Meeting', completed: false, agentId: 2 },
+    { id: 6, title: 'Send renewal reminder to Vijay', date: '2024-05-06', type: 'Email', completed: false, agentId: 2 },
   ],
   activityLogs: [
     { id: 1, user: 'Karan Agent', action: 'Called Lead: Amit Sharma', time: '2 hours ago' },
@@ -60,5 +65,8 @@ export const INITIAL_DATA = {
   commissions: [
     { id: 1, agentName: 'Karan Agent', amount: '₹37,500', status: 'Paid', date: '2024-04-30' },
     { id: 2, agentName: 'Karan Agent', amount: '₹23,000', status: 'Pending', date: '2024-05-02' },
+    { id: 3, agentName: 'Karan Agent', amount: '₹12,500', status: 'Pending', date: '2024-05-05' },
+    { id: 4, agentName: 'Karan Agent', amount: '₹45,000', status: 'Paid', date: '2024-03-31' },
+    { id: 5, agentName: 'Karan Agent', amount: '₹18,000', status: 'Paid', date: '2024-02-28' },
   ]
 };

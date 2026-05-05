@@ -9,7 +9,7 @@ import { cn } from '../../utils/helpers';
 
 const AgentCommission: React.FC = () => {
   const { data } = usePlatform();
-  const agentName = 'John Agent';
+  const agentName = 'Karan Agent';
   const myCommissions = data.commissions.filter(c => c.agentName === agentName);
 
   const columns = [
@@ -121,6 +121,8 @@ const AgentCommission: React.FC = () => {
         title="Transaction Ledger"
         columns={columns}
         data={myCommissions}
+        filterKey="status"
+        filterOptions={['Paid', 'Pending']}
       />
     </div>
   );
