@@ -180,6 +180,8 @@ const PolicyManagement: React.FC = () => {
         description={`Showing ${filter} policies for the current branch`}
         columns={columns}
         data={filteredPolicies}
+        filterKey="status"
+        filterOptions={['Active', 'Renewal Due', 'Reminder Sent']}
         onEdit={(policy) => {
           setEditingPolicy(policy);
           setIsModalOpen(true);

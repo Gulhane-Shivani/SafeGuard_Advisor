@@ -117,6 +117,8 @@ const Approvals: React.FC = () => {
            <PlatformTable 
              columns={historyColumns}
              data={history}
+             filterKey="status"
+             filterOptions={['Approved', 'Rejected']}
              searchPlaceholder="Search history by customer or agent..."
            />
         </div>

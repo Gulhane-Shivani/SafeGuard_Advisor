@@ -123,6 +123,8 @@ const LeadManagement: React.FC = () => {
         description="Manage all incoming leads and agent distribution"
         columns={columns}
         data={data.leads}
+        filterKey="status"
+        filterOptions={['Hot', 'Warm', 'Cold']}
         onEdit={(lead) => {
           setSelectedLead(lead);
           setIsAssignModalOpen(true);

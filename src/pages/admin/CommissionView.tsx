@@ -104,6 +104,8 @@ const CommissionView: React.FC = () => {
         title="Payout History"
         columns={columns}
         data={data.commissions}
+        filterKey="status"
+        filterOptions={['Paid', 'Pending']}
         actions={
            <button 
             onClick={handleExportLedger}
