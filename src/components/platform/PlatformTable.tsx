@@ -38,7 +38,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
   });
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+    <div className="bg-white rounded-3xl border border-slate-100 shadow-sm">
       {(title || search) && (
         <div className="p-8 border-b border-slate-100 space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -58,7 +58,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                 />
               </div>
               {(filterOptions && filterOptions.length > 0) ? (
-                <div className="relative">
+                <div className="relative z-[60]">
                   <button 
                     onClick={() => setShowFilters(!showFilters)}
                     className={`p-2.5 bg-white border border-slate-200 rounded-xl transition-all ${filterValue !== 'All' ? 'text-teal-600 border-teal-200 bg-teal-50' : 'text-slate-600 hover:bg-slate-50'}`}
@@ -66,7 +66,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                     <Filter className="w-4 h-4" />
                   </button>
                   {showFilters && (
-                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-2xl overflow-hidden z-20">
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden z-[70] animate-in fade-in zoom-in-95 duration-200">
                       <button 
                         onClick={() => { setFilterValue('All'); setShowFilters(false); }}
                         className={`w-full text-left px-4 py-3 text-sm font-bold border-b border-slate-50 ${filterValue === 'All' ? 'bg-teal-50 text-teal-600' : 'text-slate-600 hover:bg-slate-50'}`}
@@ -96,7 +96,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
         </div>
       )}
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto rounded-b-3xl">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/50">

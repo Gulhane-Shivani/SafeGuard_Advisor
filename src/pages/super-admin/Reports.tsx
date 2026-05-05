@@ -16,8 +16,8 @@ const Reports: React.FC = () => {
     { header: 'Type', accessor: 'type' },
     { header: 'Premium', accessor: 'premium' },
     { header: 'Date', accessor: 'startDate' },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'status',
       render: (val: string) => (
         <span className={cn(
@@ -35,8 +35,8 @@ const Reports: React.FC = () => {
     { header: 'Policy #', accessor: 'policyNumber' },
     { header: 'Amount', accessor: 'amount' },
     { header: 'Date', accessor: 'date' },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'status',
       render: (val: string) => (
         <span className={cn(
@@ -49,23 +49,44 @@ const Reports: React.FC = () => {
     }
   ];
 
+  const [timeFilter, setTimeFilter] = useState('All');
+
+  const filterDataByTime = (items: any[], dateKey: string) => {
+    if (timeFilter === 'All') return items;
+    
+    const now = new Date();
+    return items.filter(item => {
+      const itemDate = new Date(item[dateKey]);
+      if (isNaN(itemDate.getTime())) return true;
+
+      const diffDays = Math.floor((now.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24));
+
+      if (timeFilter === 'Last 7 Days') return diffDays <= 7 && diffDays >= 0;
+      if (timeFilter === 'Last 30 Days') return diffDays <= 30 && diffDays >= 0;
+      if (timeFilter === 'This Month') {
+        return itemDate.getMonth() === now.getMonth() && itemDate.getFullYear() === now.getFullYear();
+      }
+      return true;
+    });
+  };
+
   const handleExport = () => {
     let exportData: any[] = [];
     if (reportType === 'sales') {
-      exportData = data.policies;
+      exportData = filterDataByTime(data.policies, 'startDate');
     } else if (reportType === 'claims') {
-      exportData = data.claims;
+      exportData = filterDataByTime(data.claims, 'date');
     } else if (reportType === 'renewals') {
-      exportData = data.policies.filter((p: any) => p.status === 'Renewal Due');
+      exportData = filterDataByTime(data.policies.filter((p: any) => p.status === 'Renewal Due'), 'startDate');
     }
 
     if (exportData.length === 0) return;
 
     const headers = Object.keys(exportData[0]).join(',');
-    const rows = exportData.map(row => 
+    const rows = exportData.map(row =>
       Object.values(row).map(val => `"${val}"`).join(',')
     ).join('\n');
-    
+
     const csvContent = `${headers}\n${rows}`;
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -81,8 +102,8 @@ const Reports: React.FC = () => {
 
   return (
     <div className="space-y-10">
-      <SectionHeader 
-        title="Enterprise Reporting" 
+      <SectionHeader
+        title="Enterprise Reporting"
         description="Generate and export comprehensive data reports for audit, business analysis, and regulatory compliance."
       />
 
@@ -97,8 +118,8 @@ const Reports: React.FC = () => {
             onClick={() => setReportType(card.id)}
             className={cn(
               "p-8 rounded-[2.5rem] border text-left transition-all relative overflow-hidden group",
-              reportType === card.id 
-                ? "bg-slate-900 text-white border-slate-900 shadow-2xl" 
+              reportType === card.id
+                ? "bg-slate-900 text-white border-slate-900 shadow-2xl"
                 : "bg-white text-slate-900 border-slate-100 hover:border-teal-200"
             )}
           >
@@ -121,43 +142,58 @@ const Reports: React.FC = () => {
 
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-           <div className="flex items-center gap-3">
-              <Calendar className="w-5 h-5 text-slate-400" />
-              <div className="flex bg-white border border-slate-200 rounded-xl p-1">
-                 {['Last 7 Days', 'Last 30 Days', 'This Month', 'Custom'].map(f => (
-                    <button key={f} className="px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight text-slate-400 hover:text-slate-900 transition-colors">{f}</button>
-                 ))}
-              </div>
-           </div>
-           <button 
-             onClick={handleExport}
-             className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-2 shadow-xl shadow-teal-600/20"
-           >
-             <Download className="w-4 h-4" /> Export to CSV
-           </button>
+          <div className="flex items-center gap-3">
+            <Calendar className="w-5 h-5 text-slate-400" />
+            <div className="flex bg-white border border-slate-200 rounded-xl p-1">
+              {['All', 'Last 7 Days', 'Last 30 Days', 'This Month'].map(f => (
+                <button 
+                  key={f} 
+                  onClick={() => setTimeFilter(f)}
+                  className={cn(
+                    "px-4 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all",
+                    timeFilter === f ? "bg-teal-600 text-white shadow-lg shadow-teal-600/20" : "text-slate-400 hover:text-slate-900"
+                  )}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            onClick={handleExport}
+            className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all flex items-center gap-2 shadow-xl shadow-teal-600/20"
+          >
+            <Download className="w-4 h-4" /> Export to CSV
+          </button>
         </div>
 
         {reportType === 'sales' && (
-          <PlatformTable 
+          <PlatformTable
             title="Sales Transaction Report"
             columns={salesColumns}
-            data={data.policies}
+            data={filterDataByTime(data.policies, 'startDate')}
+            filterKey="status"
+            filterOptions={['Active', 'Renewal Due', 'Reminder Sent']}
           />
         )}
 
         {reportType === 'claims' && (
-          <PlatformTable 
+          <PlatformTable
             title="Claims Processing Report"
             columns={claimColumns}
-            data={data.claims}
+            data={filterDataByTime(data.claims, 'date')}
+            filterKey="status"
+            filterOptions={['Pending', 'Under Review', 'Approved', 'Rejected']}
           />
         )}
 
         {reportType === 'renewals' && (
-          <PlatformTable 
+          <PlatformTable
             title="Renewal Pipeline"
             columns={salesColumns}
-            data={data.policies.filter(p => p.status === 'Renewal Due')}
+            data={filterDataByTime(data.policies.filter(p => p.status === 'Renewal Due'), 'startDate')}
+            filterKey="status"
+            filterOptions={['Renewal Due', 'Reminder Sent']}
           />
         )}
       </div>

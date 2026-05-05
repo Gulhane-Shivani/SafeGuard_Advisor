@@ -79,18 +79,51 @@ const AgentOverview: React.FC = () => {
          </div>
 
          <div className="lg:col-span-1 space-y-8">
-            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center flex flex-col items-center">
-               <div className="w-24 h-24 rounded-full border-8 border-teal-50 flex items-center justify-center mb-4 relative">
-                  <svg className="absolute inset-0 w-full h-full -rotate-90">
-                     <circle cx="40" cy="40" r="40" fill="transparent" stroke="currentColor" strokeWidth="8" className="text-teal-500" strokeDasharray="251.2" strokeDashoffset={251.2 * (1 - 0.65)} />
+            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm text-center flex flex-col items-center relative overflow-hidden group">
+               <div className="relative w-32 h-32 mb-6">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                     {/* Background Circle */}
+                     <circle 
+                        cx="50" cy="50" r="42" 
+                        fill="transparent" 
+                        stroke="#f1f5f9" 
+                        strokeWidth="8" 
+                     />
+                     {/* Progress Circle with Gradient */}
+                     <circle 
+                        cx="50" cy="50" r="42" 
+                        fill="transparent" 
+                        stroke="url(#progressGradient)" 
+                        strokeWidth="8" 
+                        strokeDasharray="263.89" 
+                        strokeDashoffset={263.89 * (1 - 0.65)} 
+                        strokeLinecap="round"
+                        className="transition-all duration-1000 ease-out"
+                     />
+                     <defs>
+                        <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                           <stop offset="0%" stopColor="#0d9488" />
+                           <stop offset="100%" stopColor="#2dd4bf" />
+                        </linearGradient>
+                     </defs>
                   </svg>
-                  <span className="text-xl font-black text-slate-900">65%</span>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                     <span className="text-2xl font-black text-slate-900 leading-none">65%</span>
+                     <span className="text-[8px] font-black text-teal-600 uppercase tracking-widest mt-1">Achieved</span>
+                  </div>
                </div>
-               <h3 className="font-bold text-slate-900">Monthly Target</h3>
-               <p className="text-xs text-slate-500 font-medium mt-1 mb-6">13 of 20 Policies Sold</p>
-               <button className="w-full py-3 bg-teal-50 text-teal-600 rounded-xl font-bold text-xs hover:bg-teal-100 transition-all">
+               
+               <div className="space-y-1 mb-8">
+                  <h3 className="font-black text-slate-900 text-lg">Monthly Target</h3>
+                  <p className="text-xs text-slate-400 font-bold uppercase tracking-tight">13 of 20 Policies Sold</p>
+               </div>
+
+               <button className="w-full py-3.5 bg-slate-900 text-white rounded-2xl font-bold text-[10px] uppercase tracking-[0.2em] hover:bg-teal-600 transition-all shadow-lg shadow-slate-900/10 hover:shadow-teal-600/20">
                   View Commission Tier
                </button>
+               
+               {/* Decorative background element */}
+               <Target className="absolute -right-4 -bottom-4 w-24 h-24 text-slate-50 opacity-50 group-hover:scale-110 transition-transform duration-700" />
             </div>
 
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">

@@ -128,6 +128,8 @@ const UserManagement: React.FC = () => {
             avatar: displayName.charAt(0).toUpperCase() || 'U'
           };
         })}
+        filterKey="role"
+        filterOptions={['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR', 'CUSTOMER']}
         onEdit={(user) => console.log('Edit', user)}
         onDelete={(user) => console.log('Delete', user.id)}
       />

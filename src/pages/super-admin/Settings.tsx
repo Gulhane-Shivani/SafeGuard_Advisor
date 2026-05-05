@@ -268,6 +268,8 @@ SafeGuard Advisor Claims Team` },
             data={data.products}
             onEdit={handleOpenEdit}
             onDelete={handleDeleteProduct}
+            filterKey="category"
+            filterOptions={['Life', 'Health', 'Motor', 'Investment']}
             actions={
               <button 
                 onClick={handleOpenAdd}
@@ -287,6 +289,8 @@ SafeGuard Advisor Claims Team` },
             data={insurers}
             onEdit={handleOpenEditPartner}
             onDelete={handleDeletePartner}
+            filterKey="status"
+            filterOptions={['Active', 'Inactive']}
             actions={
               <button 
                 onClick={handleOpenAddPartner}
