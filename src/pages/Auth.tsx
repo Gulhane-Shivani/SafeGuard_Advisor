@@ -61,9 +61,9 @@ export const Auth: React.FC = () => {
         payload.password = password;
       }
 
-      console.log(`Attempting ${endpoint} for ${payload.email || payload.mobile}`);
+      // console.log(`Attempting ${endpoint} for ${payload.email || payload.mobile}`);
       const response = await API.post(endpoint, payload);
-      console.log('Login response received:', response.status);
+      // console.log('Login response received:', response.status);
 
       if (!isLogin) {
         setSuccess('Account created successfully! Please sign in.');
@@ -74,7 +74,7 @@ export const Auth: React.FC = () => {
       }
 
       const { user: userRes, access_token } = response.data;
-      console.log('Token received:', access_token ? 'Yes (length: ' + access_token.length + ')' : 'No');
+      // console.log('Token received:', access_token ? 'Yes (length: ' + access_token.length + ')' : 'No');
 
       if (!userRes) {
         throw new Error('Server did not return user details.');
@@ -90,7 +90,7 @@ export const Auth: React.FC = () => {
         role: (userRes.role || 'CUSTOMER').toUpperCase()
       };
 
-      console.log('Storing user data and token:', userData.role);
+      // console.log('Storing user data and token:', userData.role);
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('token', access_token);
       localStorage.setItem('user', JSON.stringify(userData));
@@ -107,7 +107,7 @@ export const Auth: React.FC = () => {
         else from = '/customer';
       }
       
-      console.log(`Final redirect to: ${from}`);
+      // console.log(`Final redirect to: ${from}`);
       navigate(from, { replace: true });
     } catch (err: any) {
       console.error('Auth error:', err);

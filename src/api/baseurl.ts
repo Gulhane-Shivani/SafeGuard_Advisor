@@ -35,7 +35,7 @@ const API = {
       ...(options.headers as Record<string, string> || {})
     };
 
-    console.log(`API POST: ${endpoint}`, headers);
+   
     const res = await fetch(`${BASE_URL}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`, {
       ...options,
       method: "POST",
@@ -65,7 +65,7 @@ const API = {
       ...(options.headers as Record<string, string> || {})
     };
 
-    console.log(`API GET: ${endpoint}`, headers);
+    
     const res = await fetch(`${BASE_URL}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`, { 
       ...options,
       headers 
