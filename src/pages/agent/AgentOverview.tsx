@@ -7,9 +7,11 @@ import {
 import { KPICard } from '../../components/platform/KPICard';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { usePlatform } from '../../store/PlatformContext';
+import { useNavigate } from 'react-router-dom';
 
 const AgentOverview: React.FC = () => {
   const { data } = usePlatform();
+  const navigate = useNavigate();
   const agentId = 2; // Assuming logged in as John Agent
   const myLeads = data.leads.filter(l => l.assignedTo === agentId);
   const myPolicies = data.policies.filter(p => p.agentId === agentId);
@@ -33,7 +35,7 @@ const AgentOverview: React.FC = () => {
             <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
                <div className="flex items-center justify-between mb-8">
                   <h3 className="font-bold text-slate-900 text-lg">Lead Pipeline</h3>
-                  <button className="text-teal-600 text-[10px] font-black uppercase tracking-widest hover:underline">View All Leads</button>
+                  <button onClick={() => navigate('/agent/leads')} className="text-teal-600 text-[10px] font-black uppercase tracking-widest hover:underline">View All Leads</button>
                </div>
                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-center">
@@ -57,14 +59,18 @@ const AgentOverview: React.FC = () => {
                   <Target className="w-5 h-5 text-teal-400" />
                </div>
                <div className="space-y-6">
-                  {data.activityLogs.filter(a => a.user === 'John Agent').map((log, i) => (
+                  {data.activityLogs.map((log, i) => (
                      <div key={i} className="flex items-start gap-4">
                         <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/5">
                            <CheckCircle2 className="w-4 h-4 text-teal-400" />
                         </div>
                         <div>
                            <p className="text-sm font-bold leading-tight">{log.action}</p>
-                           <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-1">{log.time}</p>
+                           <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[10px] text-teal-400 font-black uppercase tracking-tight">{log.user}</span>
+                              <span className="text-slate-600 text-[10px]">·</span>
+                              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">{log.time}</span>
+                           </div>
                         </div>
                      </div>
                   ))}
@@ -110,3 +116,4 @@ const AgentOverview: React.FC = () => {
 };
 
 export default AgentOverview;
+
