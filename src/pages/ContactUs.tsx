@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { Mail, Phone, MapPin, Send, MessageSquare, Clock } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageSquare, Clock, ShieldAlert } from 'lucide-react';
+import { cn } from '../utils/helpers';
 import API from '../api/baseurl';
 
 export const ContactUs: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  const userJson = localStorage.getItem('user');
+  const user = userJson ? JSON.parse(userJson) : null;
+  const isLoggedIn = !!localStorage.getItem('isLoggedIn');
   return (
     <div className="pt-32 pb-20 px-6 bg-slate-50 min-h-screen">
       <div className="container mx-auto max-w-6xl">
@@ -121,13 +126,22 @@ export const ContactUs: React.FC = () => {
                   </div>
                 )}
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {!isLoggedIn && (
+                  <div className="p-6 bg-slate-900 rounded-[2rem] text-center space-y-4">
+                    <p className="text-white font-bold">Please sign in to send us a message</p>
+                    <a href="/auth" className="inline-block px-8 py-3 bg-teal-500 text-white rounded-xl font-bold hover:bg-teal-600 transition-all">Sign In Now</a>
+                  </div>
+                )}
+
+                <div className={cn("grid grid-cols-1 md:grid-cols-2 gap-6", !isLoggedIn && "opacity-50 pointer-events-none")}>
                   <div className="space-y-2">
                     <label className="text-sm font-bold text-slate-700 ml-1">Full Name</label>
                     <input 
                       type="text" 
                       name="name"
                       required
+                      defaultValue={user?.full_name || ''}
+                      readOnly={!!user}
                       placeholder="Enter your name"
                       className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
                     />
@@ -138,51 +152,57 @@ export const ContactUs: React.FC = () => {
                       type="email" 
                       name="email"
                       required
+                      defaultValue={user?.email || ''}
+                      readOnly={!!user}
                       placeholder="your@email.com"
                       className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
                     />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Subject</label>
-                  <select 
-                    name="subject"
-                    required
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
+                <div className={cn("space-y-6", !isLoggedIn && "opacity-50 pointer-events-none")}>
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 ml-1">Subject</label>
+                    <select 
+                      name="subject"
+                      required
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all"
+                    >
+                      <option>General Inquiry</option>
+                      <option>Claims Assistance</option>
+                      <option>Partnership Interest</option>
+                      <option>Report an Issue</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-bold text-slate-700 ml-1">Message</label>
+                    <textarea 
+                      name="message"
+                      required
+                      rows={5}
+                      placeholder="How can we help you?"
+                      className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all resize-none"
+                    ></textarea>
+                  </div>
+                </div>
+
+                {isLoggedIn && (
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className={`w-full py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                   >
-                    <option>General Inquiry</option>
-                    <option>Claims Assistance</option>
-                    <option>Partnership Interest</option>
-                    <option>Report an Issue</option>
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-bold text-slate-700 ml-1">Message</label>
-                  <textarea 
-                    name="message"
-                    required
-                    rows={5}
-                    placeholder="How can we help you?"
-                    className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:outline-none focus:ring-2 focus:ring-teal-600/20 focus:border-teal-600 transition-all resize-none"
-                  ></textarea>
-                </div>
-
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`w-full py-5 bg-slate-900 text-white rounded-2xl font-bold shadow-xl shadow-slate-900/20 hover:bg-slate-800 hover:-translate-y-1 transition-all flex items-center justify-center gap-3 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
-                >
-                  {isSubmitting ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <>
-                      Send Message
-                      <Send className="w-5 h-5" />
-                    </>
-                  )}
-                </button>
+                    {isSubmitting ? (
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        Send Message
+                        <Send className="w-5 h-5" />
+                      </>
+                    )}
+                  </button>
+                )}
               </form>
             </div>
           </div>

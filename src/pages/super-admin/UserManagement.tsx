@@ -9,9 +9,7 @@ import API from '../../api/baseurl';
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });
-  const [editingUser, setEditingUser] = useState<any>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -96,22 +94,15 @@ const UserManagement: React.FC = () => {
     }
   };
 
-  const handleUpdateUser = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const toggleStatus = async (user: any) => {
+    const newStatus = user.status === 'Active' ? 'Inactive' : 'Active';
     try {
-      await API.put(`/admin/users/${editingUser.id}`, {
-        full_name: editingUser.name,
-        email: editingUser.email,
-        role: editingUser.role,
-        primary_branch: editingUser.branch
-      });
-      setSuccess('User updated successfully.');
-      setIsEditModalOpen(false);
-      setEditingUser(null);
+      await API.put(`/admin/users/${user.id}`, { status: newStatus });
+      setSuccess(`User ${newStatus === 'Active' ? 'activated' : 'deactivated'} successfully.`);
       fetchUsers();
       setTimeout(() => setSuccess(''), 5000);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to update user');
+      setError(err.response?.data?.detail || 'Failed to update user status');
       setTimeout(() => setError(''), 5000);
     }
   };
@@ -165,10 +156,7 @@ const UserManagement: React.FC = () => {
         })}
         filterKey="role"
         filterOptions={['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR', 'CUSTOMER']}
-        onEdit={(user) => {
-          setEditingUser(user);
-          setIsEditModalOpen(true);
-        }}
+        onToggle={(user) => toggleStatus(user)}
         onDelete={(user) => handleDeleteUser(user.id)}
       />
 
@@ -241,70 +229,6 @@ const UserManagement: React.FC = () => {
             </div>
           </div>
         </form>
-      </PlatformModal>
-
-      <PlatformModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        title="Edit User Account"
-        footer={
-          <>
-            <button onClick={() => setIsEditModalOpen(false)} className="px-6 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Cancel</button>
-            <button onClick={handleUpdateUser} className="px-8 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 uppercase tracking-widest">Save Changes</button>
-          </>
-        }
-      >
-        {editingUser && (
-          <form className="space-y-6">
-            <div className="grid grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-                <input
-                  type="text"
-                  value={editingUser.name}
-                  onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-                <input
-                  type="email"
-                  value={editingUser.email}
-                  onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign Role</label>
-                <select
-                  value={editingUser.role}
-                  onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
-                >
-                  <option value="AGENT">Agent</option>
-                  <option value="ADMIN">Admin</option>
-                  <option value="CSR">CSR</option>
-                  <option value="SUPER_ADMIN">Super Admin</option>
-                  <option value="CUSTOMER">Customer</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Branch</label>
-                <select
-                  value={editingUser.branch}
-                  onChange={(e) => setEditingUser({ ...editingUser, branch: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
-                >
-                  <option value="Main Branch">Main Branch</option>
-                  <option value="New York">New York</option>
-                  <option value="London">London</option>
-                  <option value="Singapore">Singapore</option>
-                </select>
-              </div>
-            </div>
-          </form>
-        )}
       </PlatformModal>
     </div>
   );

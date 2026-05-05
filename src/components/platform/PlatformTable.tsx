@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, Edit2, Trash2, Eye } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, Eye, Power } from 'lucide-react';
 
 interface Column {
   header: string;
@@ -16,6 +16,7 @@ interface PlatformTableProps {
   onEdit?: (row: any) => void;
   onView?: (row: any) => void;
   onDelete?: (row: any) => void;
+  onToggle?: (row: any) => void;
   searchPlaceholder?: string;
   actions?: React.ReactNode;
   filterKey?: string;
@@ -23,7 +24,7 @@ interface PlatformTableProps {
 }
 
 export const PlatformTable: React.FC<PlatformTableProps> = ({ 
-  columns, data, title, description, onEdit, onView, onDelete, searchPlaceholder = "Search records...", actions, filterKey, filterOptions 
+  columns, data, title, description, onEdit, onView, onDelete, onToggle, searchPlaceholder = "Search records...", actions, filterKey, filterOptions 
 }) => {
   const [search, setSearch] = useState('');
   const [filterValue, setFilterValue] = useState('All');
@@ -105,7 +106,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                   {col.header}
                 </th>
               ))}
-              {(onEdit || onView || onDelete) && <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>}
+              {(onEdit || onView || onDelete || onToggle) && <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -130,7 +131,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                       )}
                     </td>
                   ))}
-                  {(onEdit || onView || onDelete) && (
+                  {(onEdit || onView || onDelete || onToggle) && (
                     <td className="px-8 py-5 text-right">
                       <div className="flex items-center justify-end gap-2 transition-all">
                         {onView && (
@@ -147,6 +148,15 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                             className="p-2 bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white rounded-lg transition-all"
                           >
                             <Edit2 className="w-4 h-4" />
+                          </button>
+                        )}
+                        {onToggle && (
+                          <button 
+                            onClick={() => onToggle(row)}
+                            className={`p-2 rounded-lg transition-all ${row.status === 'Active' ? 'bg-orange-50 text-orange-600 hover:bg-orange-600 hover:text-white' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white'}`}
+                            title={row.status === 'Active' ? 'Deactivate User' : 'Activate User'}
+                          >
+                            <Power className="w-4 h-4" />
                           </button>
                         )}
                         {onDelete && (
