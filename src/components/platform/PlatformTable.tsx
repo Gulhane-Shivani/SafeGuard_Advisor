@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Search, Filter, Edit2, Trash2 } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, Eye } from 'lucide-react';
 
 interface Column {
   header: string;
@@ -14,21 +14,28 @@ interface PlatformTableProps {
   title?: string;
   description?: string;
   onEdit?: (row: any) => void;
+  onView?: (row: any) => void;
   onDelete?: (row: any) => void;
   searchPlaceholder?: string;
   actions?: React.ReactNode;
+  filterKey?: string;
+  filterOptions?: string[];
 }
 
 export const PlatformTable: React.FC<PlatformTableProps> = ({ 
-  columns, data, title, description, onEdit, onDelete, searchPlaceholder = "Search records...", actions 
+  columns, data, title, description, onEdit, onView, onDelete, searchPlaceholder = "Search records...", actions, filterKey, filterOptions 
 }) => {
   const [search, setSearch] = useState('');
+  const [filterValue, setFilterValue] = useState('All');
+  const [showFilters, setShowFilters] = useState(false);
 
-  const filteredData = data.filter(row => 
-    Object.values(row).some(val => 
+  const filteredData = data.filter(row => {
+    const matchesSearch = Object.values(row).some(val => 
       String(val).toLowerCase().includes(search.toLowerCase())
-    )
-  );
+    );
+    const matchesFilter = filterValue === 'All' || (filterKey && row[filterKey] === filterValue);
+    return matchesSearch && matchesFilter;
+  });
 
   return (
     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
@@ -50,9 +57,39 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                   className="pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all w-full text-xs font-bold"
                 />
               </div>
-              <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all">
-                <Filter className="w-4 h-4" />
-              </button>
+              {(filterOptions && filterOptions.length > 0) ? (
+                <div className="relative">
+                  <button 
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`p-2.5 bg-white border border-slate-200 rounded-xl transition-all ${filterValue !== 'All' ? 'text-teal-600 border-teal-200 bg-teal-50' : 'text-slate-600 hover:bg-slate-50'}`}
+                  >
+                    <Filter className="w-4 h-4" />
+                  </button>
+                  {showFilters && (
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-100 shadow-xl rounded-2xl overflow-hidden z-20">
+                      <button 
+                        onClick={() => { setFilterValue('All'); setShowFilters(false); }}
+                        className={`w-full text-left px-4 py-3 text-sm font-bold border-b border-slate-50 ${filterValue === 'All' ? 'bg-teal-50 text-teal-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                      >
+                        All
+                      </button>
+                      {filterOptions.map(opt => (
+                        <button 
+                          key={opt}
+                          onClick={() => { setFilterValue(opt); setShowFilters(false); }}
+                          className={`w-full text-left px-4 py-3 text-sm font-bold border-b border-slate-50 last:border-0 ${filterValue === opt ? 'bg-teal-50 text-teal-600' : 'text-slate-600 hover:bg-slate-50'}`}
+                        >
+                          {opt}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all">
+                  <Filter className="w-4 h-4" />
+                </button>
+              )}
               {actions}
             </div>
           </div>
@@ -68,7 +105,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                   {col.header}
                 </th>
               ))}
-              {(onEdit || onDelete) && <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>}
+              {(onEdit || onView || onDelete) && <th className="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Actions</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -93,9 +130,17 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                       )}
                     </td>
                   ))}
-                  {(onEdit || onDelete) && (
+                  {(onEdit || onView || onDelete) && (
                     <td className="px-8 py-5 text-right">
                       <div className="flex items-center justify-end gap-2 transition-all">
+                        {onView && (
+                          <button 
+                            onClick={() => onView(row)}
+                            className="p-2 bg-teal-50 text-teal-600 hover:bg-teal-600 hover:text-white rounded-lg transition-all"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </button>
+                        )}
                         {onEdit && (
                           <button 
                             onClick={() => onEdit(row)}

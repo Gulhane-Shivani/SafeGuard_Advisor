@@ -78,8 +78,10 @@ const Customer360: React.FC = () => {
         title="Customer Database"
         columns={columns}
         data={uniqueCustomers}
-        onEdit={(row) => setSelectedCustomer(getCustomerDetails(row))}
+        onView={(row) => setSelectedCustomer(getCustomerDetails(row))}
         searchPlaceholder="Search by name, email, or policy..."
+        filterKey="status"
+        filterOptions={['Active', 'Renewal Due']}
       />
 
       <PlatformModal 

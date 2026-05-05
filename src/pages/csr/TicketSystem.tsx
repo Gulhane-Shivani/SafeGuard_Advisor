@@ -77,6 +77,8 @@ const TicketSystem: React.FC = () => {
         columns={columns}
         data={data.tickets}
         onEdit={(ticket) => setSelectedTicket(ticket)}
+        filterKey="status"
+        filterOptions={['Open', 'In Progress', 'Resolved', 'Closed']}
       />
 
       <PlatformModal 

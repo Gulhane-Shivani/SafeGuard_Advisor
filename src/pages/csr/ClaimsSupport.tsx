@@ -83,6 +83,8 @@ const ClaimsSupport: React.FC = () => {
         columns={columns}
         data={data.claims.filter(c => c.status !== 'Settled')}
         onEdit={(claim) => setSelectedClaim(claim)}
+        filterKey="status"
+        filterOptions={['Pending', 'Under Review', 'Approved', 'Rejected']}
       />
 
       <PlatformModal 

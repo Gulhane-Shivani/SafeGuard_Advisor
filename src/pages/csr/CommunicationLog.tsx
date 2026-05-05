@@ -84,6 +84,8 @@ const CommunicationLog: React.FC = () => {
         title="Interaction History"
         columns={columns}
         data={commLogs}
+        filterKey="type"
+        filterOptions={['Phone', 'Email', 'System']}
       />
     </div>
   );
