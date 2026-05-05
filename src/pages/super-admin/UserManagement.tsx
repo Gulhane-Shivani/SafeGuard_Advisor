@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserPlus, Shield, MapPin } from 'lucide-react';
+import { UserPlus, Shield, MapPin, Edit } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
@@ -9,7 +9,9 @@ import API from '../../api/baseurl';
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });
+  const [editingUser, setEditingUser] = useState<any>(null);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -29,8 +31,8 @@ const UserManagement: React.FC = () => {
   }, []);
 
   const columns = [
-    { 
-      header: 'User', 
+    {
+      header: 'User',
       accessor: 'name',
       render: (val: string, row: any) => (
         <div className="flex items-center gap-3">
@@ -44,22 +46,22 @@ const UserManagement: React.FC = () => {
         </div>
       )
     },
-    { 
-      header: 'Role', 
+    {
+      header: 'Role',
       accessor: 'role',
       render: (val: string) => (
         <span className={cn(
           "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
           val === 'SUPER_ADMIN' ? "bg-purple-50 text-purple-600 border-purple-100" :
-          val === 'ADMIN' ? "bg-blue-50 text-blue-600 border-blue-100" :
-          val === 'AGENT' ? "bg-teal-50 text-teal-600 border-teal-100" : "bg-orange-50 text-orange-600 border-orange-100"
+            val === 'ADMIN' ? "bg-blue-50 text-blue-600 border-blue-100" :
+              val === 'AGENT' ? "bg-teal-50 text-teal-600 border-teal-100" : "bg-orange-50 text-orange-600 border-orange-100"
         )}>
           {val.replace('_', ' ')}
         </span>
       )
     },
-    { 
-      header: 'Branch', 
+    {
+      header: 'Branch',
       accessor: 'branch',
       render: (val: string) => (
         <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600">
@@ -67,8 +69,8 @@ const UserManagement: React.FC = () => {
         </div>
       )
     },
-    { 
-      header: 'Status', 
+    {
+      header: 'Status',
       accessor: 'status',
       render: (val: string) => (
         <div className="flex items-center gap-1.5">
@@ -94,13 +96,46 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await API.put(`/admin/users/${editingUser.id}`, {
+        full_name: editingUser.name,
+        email: editingUser.email,
+        role: editingUser.role,
+        primary_branch: editingUser.branch
+      });
+      setSuccess('User updated successfully.');
+      setIsEditModalOpen(false);
+      setEditingUser(null);
+      fetchUsers();
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to update user');
+      setTimeout(() => setError(''), 5000);
+    }
+  };
+
+  const handleDeleteUser = async (id: number) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+    try {
+      await API.delete(`/admin/users/${id}`);
+      setSuccess('User deleted successfully.');
+      fetchUsers();
+      setTimeout(() => setSuccess(''), 5000);
+    } catch (err: any) {
+      setError(err.response?.data?.detail || 'Failed to delete user');
+      setTimeout(() => setError(''), 5000);
+    }
+  };
+
   return (
     <div className="space-y-10">
-      <SectionHeader 
-        title="User & Access Control" 
+      <SectionHeader
+        title="User & Access Control"
         description="Manage organizational hierarchy, assign roles, and control system access permissions for all staff members."
         actions={
-          <button 
+          <button
             onClick={() => setIsModalOpen(true)}
             className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-xl shadow-teal-600/20 flex items-center gap-2"
           >
@@ -112,7 +147,7 @@ const UserManagement: React.FC = () => {
       {error && <div className="p-4 bg-red-50 text-red-600 rounded-xl font-bold text-xs">{error}</div>}
       {success && <div className="p-4 bg-teal-50 text-teal-600 rounded-xl font-bold text-xs">{success}</div>}
 
-      <PlatformTable 
+      <PlatformTable
         title="Active Users"
         description="Showing all registered staff and administrators"
         columns={columns}
@@ -130,13 +165,16 @@ const UserManagement: React.FC = () => {
         })}
         filterKey="role"
         filterOptions={['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR', 'CUSTOMER']}
-        onEdit={(user) => console.log('Edit', user)}
-        onDelete={(user) => console.log('Delete', user.id)}
+        onEdit={(user) => {
+          setEditingUser(user);
+          setIsEditModalOpen(true);
+        }}
+        onDelete={(user) => handleDeleteUser(user.id)}
       />
 
-      <PlatformModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+      <PlatformModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
         title="Create New User Account"
         footer={
           <>
@@ -149,42 +187,43 @@ const UserManagement: React.FC = () => {
           <div className="grid grid-cols-2 gap-6">
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={newUser.full_name}
-                onChange={(e) => setNewUser({...newUser, full_name: e.target.value})}
-                placeholder="John Doe" 
+                onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
+                placeholder="John Doe"
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
               />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 value={newUser.email}
-                onChange={(e) => setNewUser({...newUser, email: e.target.value})}
-                placeholder="john@safeguard.com" 
+                onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                placeholder="john@safeguard.com"
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
               />
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign Role</label>
-              <select 
+              <select
                 value={newUser.role}
-                onChange={(e) => setNewUser({...newUser, role: e.target.value})}
+                onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
               >
                 <option value="AGENT">Agent</option>
                 <option value="ADMIN">Admin</option>
                 <option value="CSR">CSR</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
+                <option value="CUSTOMER">Customer</option>
               </select>
             </div>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Branch</label>
-              <select 
+              <select
                 value={newUser.primary_branch}
-                onChange={(e) => setNewUser({...newUser, primary_branch: e.target.value})}
+                onChange={(e) => setNewUser({ ...newUser, primary_branch: e.target.value })}
                 className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
               >
                 <option value="Main Branch">Main Branch</option>
@@ -195,13 +234,77 @@ const UserManagement: React.FC = () => {
             </div>
           </div>
           <div className="bg-amber-50 border border-amber-100 p-6 rounded-[2rem] flex gap-4">
-             <Shield className="w-6 h-6 text-amber-600 shrink-0" />
-             <div>
-               <p className="text-xs font-black text-amber-900 mb-1 uppercase tracking-tight">Security Note</p>
-               <p className="text-xs text-amber-700 font-medium leading-relaxed">Temporary password will be sent to the user's email. They will be required to change it upon first login.</p>
-             </div>
+            <Shield className="w-6 h-6 text-amber-600 shrink-0" />
+            <div>
+              <p className="text-xs font-black text-amber-900 mb-1 uppercase tracking-tight">Security Note</p>
+              <p className="text-xs text-amber-700 font-medium leading-relaxed">Temporary password will be sent to the user's email. They will be required to change it upon first login.</p>
+            </div>
           </div>
         </form>
+      </PlatformModal>
+
+      <PlatformModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        title="Edit User Account"
+        footer={
+          <>
+            <button onClick={() => setIsEditModalOpen(false)} className="px-6 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Cancel</button>
+            <button onClick={handleUpdateUser} className="px-8 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 uppercase tracking-widest">Save Changes</button>
+          </>
+        }
+      >
+        {editingUser && (
+          <form className="space-y-6">
+            <div className="grid grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Full Name</label>
+                <input
+                  type="text"
+                  value={editingUser.name}
+                  onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Email Address</label>
+                <input
+                  type="email"
+                  value={editingUser.email}
+                  onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Assign Role</label>
+                <select
+                  value={editingUser.role}
+                  onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
+                >
+                  <option value="AGENT">Agent</option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="CSR">CSR</option>
+                  <option value="SUPER_ADMIN">Super Admin</option>
+                  <option value="CUSTOMER">Customer</option>
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Primary Branch</label>
+                <select
+                  value={editingUser.branch}
+                  onChange={(e) => setEditingUser({ ...editingUser, branch: e.target.value })}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-5 py-3 text-sm font-bold focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all"
+                >
+                  <option value="Main Branch">Main Branch</option>
+                  <option value="New York">New York</option>
+                  <option value="London">London</option>
+                  <option value="Singapore">Singapore</option>
+                </select>
+              </div>
+            </div>
+          </form>
+        )}
       </PlatformModal>
     </div>
   );
