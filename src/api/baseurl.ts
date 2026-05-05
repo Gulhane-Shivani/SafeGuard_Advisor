@@ -116,6 +116,36 @@ const API = {
     return { data: json, status: res.status };
   },
 
+  async put<T = any>(endpoint: string, data: any, options: RequestInit = {}): Promise<ApiResponse<T>> {
+    const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
+    const headers: Record<string, string> = { 
+      "Content-Type": "application/json",
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+      ...(options.headers as Record<string, string> || {})
+    };
+
+    const res = await fetch(`${BASE_URL}${endpoint.startsWith('/') ? endpoint.slice(1) : endpoint}`, {
+      ...options,
+      method: "PUT",
+      headers,
+      body: JSON.stringify(data),
+    });
+
+    if (res.status === 401) {
+      handleUnauthorized();
+    }
+
+    const json = await res.json();
+
+    if (!res.ok) {
+      const error = new Error(json.detail || "Update failed") as ApiError;
+      error.response = { data: json, status: res.status };
+      throw error;
+    }
+
+    return { data: json, status: res.status };
+  },
+
   async delete<T = any>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
     const token = localStorage.getItem("token") || localStorage.getItem("adminToken");
     const headers: Record<string, string> = {

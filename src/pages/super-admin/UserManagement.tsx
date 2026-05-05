@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserPlus, Shield, MapPin, Edit } from 'lucide-react';
+import { UserPlus, Shield, MapPin } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
