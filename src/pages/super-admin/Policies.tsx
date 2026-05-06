@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Plus, Eye, Edit3, Clock, AlertCircle, Activity } from 'lucide-react';
+import { Shield, Plus, Eye, Edit3, Clock, AlertCircle, Activity, RefreshCw } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { useNavigate } from 'react-router-dom';
@@ -29,7 +29,7 @@ const DEFAULT_POLICIES = [
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
 
-  const [policies] = useState(() => {
+  const [policies, setPolicies] = useState(() => {
     const saved = localStorage.getItem('safeguard_policies');
     const baseData = saved ? JSON.parse(saved) : DEFAULT_POLICIES;
     // Map with auto-calculated status
@@ -42,6 +42,21 @@ const AdminPolicies: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('safeguard_policies', JSON.stringify(policies));
   }, [policies]);
+
+  const handleRenew = (id: string) => {
+    const updatedPolicies = policies.map((p: any) => {
+      if (p.id === id) {
+        const currentExpiry = new Date(p.expiry);
+        const baseDate = currentExpiry > new Date() ? currentExpiry : new Date();
+        const nextExpiry = new Date(baseDate);
+        nextExpiry.setFullYear(nextExpiry.getFullYear() + 1);
+        const nextExpiryStr = nextExpiry.toISOString().split('T')[0];
+        return { ...p, expiry: nextExpiryStr, status: getAutoStatus(nextExpiryStr) };
+      }
+      return p;
+    });
+    setPolicies(updatedPolicies);
+  };
 
   const columns = [
     {
@@ -84,8 +99,11 @@ const AdminPolicies: React.FC = () => {
       accessor: 'id',
       render: (_: string, row: any) => (
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(`/super-admin/policies/${row.id}`)} className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all"><Eye className="w-4 h-4" /></button>
-          <button onClick={() => navigate(`/super-admin/policies/${row.id}/edit`)} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all"><Edit3 className="w-4 h-4" /></button>
+          <button onClick={() => navigate(`/super-admin/policies/${row.id}`)} className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all" title="View Details"><Eye className="w-4 h-4" /></button>
+          <button onClick={() => navigate(`/super-admin/policies/${row.id}/edit`)} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all" title="Edit Records"><Edit3 className="w-4 h-4" /></button>
+          {row.status !== 'ACTIVE' && (
+            <button onClick={() => handleRenew(row.id)} className="p-1.5 hover:bg-emerald-50 rounded-lg text-slate-400 hover:text-emerald-600 transition-all" title="Instant Renewal"><RefreshCw className="w-4 h-4" /></button>
+          )}
         </div>
       )
     }
