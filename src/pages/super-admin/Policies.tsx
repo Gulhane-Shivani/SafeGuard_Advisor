@@ -1,79 +1,75 @@
-import React, { useState } from 'react';
-import { Shield, Plus, Eye, Edit3, Power, Clock, AlertCircle, Activity, Download } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Shield, Plus, Eye, Edit3, Power, Clock, AlertCircle, Activity, Download, CheckCircle2, List } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../../utils/helpers';
 
+// Helper to determine status from expiry date
+const getAutoStatus = (expiryDate: string) => {
+  const today = new Date();
+  const expiry = new Date(expiryDate);
+  if (expiry < today) return 'EXPIRED';
+  
+  // If expiry is within 30 days, it's Renewal Due
+  const thirtyDaysFromNow = new Date();
+  thirtyDaysFromNow.setDate(today.getDate() + 30);
+  if (expiry <= thirtyDaysFromNow) return 'RENEWAL DUE';
+  
+  return 'ACTIVE';
+};
+
+const PLAN_CATALOG = [
+  { id: 'p1', name: 'Star Comprehensive Health', type: 'HEALTH INSURANCE', provider: 'Star Health', premium: '₹80,000', coverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'], benefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup'] },
+  { id: 'p2', name: 'LIC Tech Term', type: 'LIFE INSURANCE', provider: 'LIC of India', premium: '₹45,000', coverage: ['Death Benefit', 'Critical Illness Cover', 'Terminal Illness'], benefits: ['Tax Savings U/S 80C', 'Accidental Death Rider', 'Flexible Payouts'] },
+  { id: 'p3', name: 'Bajaj Car Insurance', type: 'MOTOR INSURANCE', provider: 'Bajaj Allianz', premium: '₹12,500', coverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'], benefits: ['Zero Depreciation', 'Roadside Assistance', 'Engine Protector'] },
+];
+
+const DEFAULT_POLICIES = [
+  { id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', premium: '₹80,000', expiry: '2027-05-02' },
+  { id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE', premium: '₹12,500', expiry: '2027-08-15' },
+  { id: 'SG-LIFE-001', name: 'LIC Tech Term', customer: 'Sneh Lata', email: 'sneh.lata@example.com', phone: '+91 77665 44332', type: 'LIFE INSURANCE', premium: '₹45,000', expiry: '2023-12-20' }, // Expired
+  { id: 'SG-HLTH-005', name: 'HDFC Optima Restore', customer: 'Rahul Verma', email: 'rahul.v@example.com', phone: '+91 99887 77665', type: 'HEALTH INSURANCE', premium: '₹65,000', expiry: '2026-11-10' },
+  { id: 'SG-MOTR-009', name: 'TATA AIG Motor', customer: 'Arun Jha', email: 'arun.jha@example.com', phone: '+91 66554 44332', type: 'MOTOR INSURANCE', premium: '₹18,000', expiry: '2024-01-15' }, // Expired
+];
+
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
-  const [policies, setPolicies] = useState([
-    { id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', type: 'HEALTH INSURANCE', premium: '₹80,000', status: 'RENEWAL DUE', expiry: '2027-05-02' },
-    { id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', type: 'MOTOR INSURANCE', premium: '₹12,500', status: 'ACTIVE', expiry: '2027-08-15' },
-    { id: 'SG-LIFE-001', name: 'LIC Tech Term', customer: 'Sneh Lata', type: 'LIFE INSURANCE', premium: '₹45,000', status: 'ACTIVE', expiry: '2027-12-20' },
-    { id: 'SG-HLTH-005', name: 'HDFC Optima Restore', customer: 'Rahul Verma', type: 'HEALTH INSURANCE', premium: '₹65,000', status: 'INACTIVE', expiry: '2026-11-10' },
-    { id: 'SG-MOTR-009', name: 'TATA AIG Motor', customer: 'Arun Jha', type: 'MOTOR INSURANCE', premium: '₹18,000', status: 'EXPIRED', expiry: '2024-01-15' },
-  ]);
+  
+  const [policies, setPolicies] = useState(() => {
+    const saved = localStorage.getItem('safeguard_policies');
+    const baseData = saved ? JSON.parse(saved) : DEFAULT_POLICIES;
+    // Map with auto-calculated status
+    return baseData.map((p: any) => ({
+      ...p,
+      status: getAutoStatus(p.expiry)
+    }));
+  });
+
+  useEffect(() => {
+    localStorage.setItem('safeguard_policies', JSON.stringify(policies));
+  }, [policies]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
+  
   const [formData, setFormData] = useState({
-    name: '',
+    customer: '',
+    email: '',
+    phone: '',
+    startDate: '',
+    endDate: '',
+    planId: '',
+    type: '',
     provider: '',
-    category: 'Health',
+    name: '',
     premium: '',
-    coverage: '',
-    status: 'Active'
+    nomineeName: '',
+    nomineeRelation: '',
+    status: ''
   });
-
-  const handleOpenModal = (mode: 'add' | 'edit' | 'view', policy?: any) => {
-    if (mode === 'view') {
-      navigate(`/super-admin/policies/${policy.id}`);
-      return;
-    }
-    setModalMode(mode as 'add' | 'edit');
-    if (policy) {
-      setSelectedPolicy(policy);
-      setFormData({
-        name: policy.name,
-        provider: policy.provider || '',
-        category: policy.category || 'Health',
-        premium: policy.premium,
-        coverage: policy.coverage || '',
-        status: policy.status
-      });
-    } else {
-      setSelectedPolicy(null);
-      setFormData({ name: '', provider: '', category: 'Health', premium: '', coverage: '', status: 'Active' });
-    }
-    setIsModalOpen(true);
-  };
-
-  const handleToggleStatus = (id: string) => {
-    setPolicies(prev => prev.map(p => 
-      p.id === id ? { ...p, status: (p.status === 'ACTIVE' || p.status === 'RENEWAL DUE') ? 'INACTIVE' : 'ACTIVE' } : p
-    ));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (modalMode === 'add') {
-      const newPolicy = {
-        id: `SG-NEW-00${policies.length + 1}`,
-        customer: 'New Customer',
-        type: 'GENERAL INSURANCE',
-        ...formData
-      };
-      setPolicies([...policies, newPolicy as any]);
-    } else if (modalMode === 'edit' && selectedPolicy) {
-      setPolicies(prev => prev.map(p => 
-        p.id === selectedPolicy.id ? { ...p, ...formData } : p
-      ));
-    }
-    setIsModalOpen(false);
-  };
 
   const columns = [
     { 
@@ -86,16 +82,8 @@ const AdminPolicies: React.FC = () => {
         </div>
       )
     },
-    { 
-      header: 'CUSTOMER', 
-      accessor: 'customer',
-      render: (val: string) => <span className="font-bold text-slate-600">{val}</span>
-    },
-    { 
-      header: 'PREMIUM', 
-      accessor: 'premium',
-      render: (val: string) => <span className="font-black text-slate-900">{val}</span>
-    },
+    { header: 'CUSTOMER', accessor: 'customer' },
+    { header: 'PREMIUM', accessor: 'premium' },
     { 
       header: 'STATUS', 
       accessor: 'status',
@@ -104,7 +92,7 @@ const AdminPolicies: React.FC = () => {
           "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
           val === 'ACTIVE' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
           val === 'RENEWAL DUE' ? "bg-orange-50 text-orange-600 border-orange-100" :
-          "bg-slate-50 text-slate-400 border-slate-100"
+          "bg-red-50 text-red-600 border-red-100"
         )}>
           {val}
         </span>
@@ -124,32 +112,8 @@ const AdminPolicies: React.FC = () => {
       accessor: 'id',
       render: (_: string, row: any) => (
         <div className="flex items-center gap-2">
-          <button 
-            onClick={() => navigate(`/super-admin/policies/${row.id}`)}
-            className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all shadow-sm"
-            title="View Details"
-          >
-            <Eye className="w-4 h-4" />
-          </button>
-          <button 
-            onClick={() => handleOpenModal('edit', row)}
-            className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all shadow-sm"
-            title="Edit Policy"
-          >
-            <Edit3 className="w-4 h-4" />
-          </button>
-          <button 
-            onClick={() => handleToggleStatus(row.id)}
-            className={cn(
-              "p-1.5 rounded-lg transition-all shadow-sm",
-              row.status === 'ACTIVE' || row.status === 'RENEWAL DUE'
-                ? "bg-red-50 text-red-400 hover:bg-red-100" 
-                : "bg-emerald-50 text-emerald-400 hover:bg-emerald-100"
-            )}
-            title={row.status === 'ACTIVE' ? "Deactivate" : "Activate"}
-          >
-            <Power className="w-4 h-4" />
-          </button>
+          <button onClick={() => navigate(`/super-admin/policies/${row.id}`)} className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all"><Eye className="w-4 h-4" /></button>
+          <button onClick={() => { setSelectedPolicy(row); setModalMode('edit'); setIsModalOpen(true); }} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all"><Edit3 className="w-4 h-4" /></button>
         </div>
       )
     }
@@ -161,23 +125,20 @@ const AdminPolicies: React.FC = () => {
         title="Policy Lifecycle Management"
         description="Monitor active policies, track upcoming renewals, and manage policy servicing operations for all customers."
         actions={
-          <div className="flex gap-3">
-            <button 
-              onClick={() => handleOpenModal('add')}
-              className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 flex items-center gap-2"
-            >
-              <Plus className="w-4 h-4" /> New Policy
-            </button>
-          </div>
+          <button 
+            onClick={() => navigate('/super-admin/policies/issue')}
+            className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 flex items-center gap-2"
+          >
+            <Plus className="w-4 h-4" /> New Policy
+          </button>
         }
       />
 
-      {/* Metric Cards */}
       <div className="grid grid-cols-4 gap-6">
         {[
-          { label: 'Active Policies', count: '1,284', icon: Shield, color: 'text-teal-600', bg: 'bg-teal-50' },
-          { label: 'Renewals Pending', count: '45', icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
-          { label: 'Lapsed Policies', count: '12', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
+          { label: 'Active Policies', count: policies.filter((p:any) => p.status === 'ACTIVE').length, icon: Shield, color: 'text-teal-600', bg: 'bg-teal-50' },
+          { label: 'Renewals Pending', count: policies.filter((p:any) => p.status === 'RENEWAL DUE').length, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
+          { label: 'Expired Policies', count: policies.filter((p:any) => p.status === 'EXPIRED').length, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
           { label: 'Retention Rate', count: '98.2%', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-all group">
@@ -198,47 +159,21 @@ const AdminPolicies: React.FC = () => {
         columns={columns}
         data={policies}
         filterKey="status"
-        filterOptions={['ACTIVE', 'RENEWAL DUE', 'EXPIRED', 'INACTIVE']}
+        filterOptions={['ACTIVE', 'RENEWAL DUE', 'EXPIRED']}
       />
 
+      {/* Edit Modal kept simple for now */}
       <PlatformModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title={modalMode === 'add' ? 'Add New Insurance Product' : 'Edit Policy Details'}
-        maxWidth="max-w-2xl"
+        title="Edit Policy Details"
+        maxWidth="max-w-xl"
       >
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2 col-span-2">
-              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Plan Name</label>
-              <input 
-                type="text" 
-                value={formData.name}
-                onChange={e => setFormData({ ...formData, name: e.target.value })}
-                className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-teal-500/20 outline-none transition-all font-bold"
-                placeholder="e.g. Star Comprehensive Health"
-                required
-              />
-            </div>
-            {/* Additional form fields would go here, kept brief for this tool call */}
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <button 
-              type="button" 
-              onClick={() => setIsModalOpen(false)}
-              className="flex-1 px-6 py-3 border border-slate-200 text-slate-500 rounded-xl font-bold text-xs hover:bg-slate-50 transition-all uppercase tracking-widest"
-            >
-              Cancel
-            </button>
-            <button 
-              type="submit" 
-              className="flex-1 px-6 py-3 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20 uppercase tracking-widest"
-            >
-              {modalMode === 'add' ? 'Create Policy' : 'Save Changes'}
-            </button>
-          </div>
-        </form>
+        <p className="text-sm font-bold text-slate-500 mb-6">Updating policy information for {selectedPolicy?.customer}</p>
+        <div className="space-y-4">
+           {/* Form fields here */}
+           <button onClick={() => setIsModalOpen(false)} className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest">Update Policy</button>
+        </div>
       </PlatformModal>
     </div>
   );

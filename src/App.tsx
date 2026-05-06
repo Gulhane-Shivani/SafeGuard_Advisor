@@ -38,6 +38,7 @@ import MasterSettings from './pages/super-admin/Settings';
 import Reports from './pages/super-admin/Reports';
 import SystemConfig from './pages/super-admin/Config';
 import AdminPolicies from './pages/super-admin/Policies';
+import { IssuePolicy } from './pages/super-admin/IssuePolicy';
 import { PolicyDetailView } from './pages/super-admin/PolicyDetailView';
 import AdminRenewals from './pages/super-admin/Renewals';
 import AdminPayments from './pages/super-admin/Payments';
@@ -106,6 +107,7 @@ const AppContent = () => {
                     <Route path="/reports" element={<Reports />} />
                     <Route path="/config" element={<SystemConfig />} />
                     <Route path="/policies" element={<AdminPolicies />} />
+                    <Route path="/policies/issue" element={<IssuePolicy />} />
                     <Route path="/policies/:id" element={<PolicyDetailView />} />
                     <Route path="/renewals" element={<AdminRenewals />} />
                     <Route path="/payments" element={<AdminPayments />} />

@@ -1,201 +1,314 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   Shield, CheckCircle2, Download, CreditCard, 
   User, Calendar, Heart, LayoutGrid, Briefcase,
-  ArrowLeft, Mail, Phone, MapPin, ExternalLink
+  ArrowLeft, Mail, Phone, MapPin, ExternalLink,
+  History, Receipt, FileText, AlertCircle,
+  TrendingUp, Star
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
+
+const DEFAULT_POLICIES = [
+  { 
+    id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', 
+    email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', 
+    premium: '₹80,000', expiry: '2027-05-02', startDate: '2022-05-02',
+    nomineeName: 'Anita Mehta', nomineeRelation: 'Spouse',
+    customCoverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'],
+    customBenefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup']
+  },
+  { 
+    id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', 
+    email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE', 
+    premium: '₹12,500', expiry: '2027-08-15', startDate: '2023-08-15',
+    nomineeName: 'Karan Singh', nomineeRelation: 'Child',
+    customCoverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'],
+    customBenefits: ['Zero Depreciation', 'Roadside Assistance']
+  },
+];
+
+// Helper to generate realistic history based on dates
+const generateOfficialHistory = (startDate: string, expiryDate: string, premium: string) => {
+  const history: any[] = [];
+  const start = new Date(startDate);
+  const end = new Date(); // Only show history up to today
+  const expiry = new Date(expiryDate);
+  
+  let currentYearDate = new Date(start);
+  
+  while (currentYearDate <= end && currentYearDate <= expiry) {
+    const yearStr = currentYearDate.getFullYear();
+    const dateStr = currentYearDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+    
+    // Add Payment Record
+    history.push({
+      date: dateStr,
+      type: currentYearDate.getTime() === start.getTime() ? 'NEW ISSUANCE PAYMENT' : 'RENEWAL PREMIUM',
+      amount: premium,
+      status: 'SUCCESS',
+      id: `TXN-${yearStr}-00${Math.floor(Math.random() * 90) + 10}`
+    });
+
+    // Add Renewal Record (if not the first year)
+    if (currentYearDate.getTime() !== start.getTime()) {
+      history.push({
+        date: dateStr,
+        type: 'POLICY RENEWAL',
+        amount: premium,
+        status: 'COMPLETED',
+        details: `Policy extended until ${new Date(currentYearDate.getFullYear() + 1, currentYearDate.getMonth(), currentYearDate.getDate()).toLocaleDateString()}`
+      });
+    }
+
+    currentYearDate.setFullYear(currentYearDate.getFullYear() + 1);
+  }
+
+  return history.reverse(); // Newest first
+};
 
 export const PolicyDetailView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Mock data fetching based on ID
-  const policy = {
-    id: id || 'SG-HLTH-002',
-    name: 'Star Comprehensive Health',
-    customer: 'Vijay Mehta',
-    email: 'vijay.mehta@example.com',
-    phone: '+91 98765 43210',
-    address: 'Sector 42, Gurgaon, Haryana - 122001',
-    type: 'HEALTH INSURANCE',
-    premium: '₹80,000',
-    status: 'RENEWAL DUE',
-    expiry: '05 Aug 2024'
+  const [policies] = useState(() => {
+    const saved = localStorage.getItem('safeguard_policies');
+    return saved ? JSON.parse(saved) : DEFAULT_POLICIES;
+  });
+
+  const policy = policies.find((p: any) => p.id === id) || policies[0];
+  
+  // Calculate status dynamically for the UI
+  const getStatus = (expiryDate: string) => {
+    const today = new Date();
+    const exp = new Date(expiryDate);
+    if (exp < today) return 'EXPIRED';
+    const thirtyDays = new Date();
+    thirtyDays.setDate(today.getDate() + 30);
+    if (exp <= thirtyDays) return 'RENEWAL DUE';
+    return 'ACTIVE';
   };
 
-  const isExpired = policy.status?.toUpperCase() === 'EXPIRED' || policy.status?.toUpperCase() === 'INACTIVE' || policy.status?.toUpperCase() === 'RENEWAL DUE';
-  
+  const status = getStatus(policy.expiry);
+  const officialHistory = generateOfficialHistory(policy.startDate || '2023-01-01', policy.expiry, policy.premium);
+  const hasHistory = officialHistory.length > 0;
+
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto">
-      {/* Compact Back Button & Title */}
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-20">
+      {/* Header */}
       <div className="flex items-center gap-3">
-        <button 
-          onClick={() => navigate('/super-admin/policies')}
-          className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 hover:border-teal-100 transition-all shadow-sm"
-        >
+        <button onClick={() => navigate('/super-admin/policies')} className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 transition-all shadow-sm">
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>
           <h1 className="text-xl font-black text-slate-900 tracking-tight">Policy Insights</h1>
-          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Portfolio / {policy.id}</p>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Servicing / {policy.id}</p>
         </div>
       </div>
 
-      {/* Slimmer Header Card */}
-      <div className="bg-[#0F172A] rounded-[1.5rem] p-6 text-white flex items-center justify-between shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-teal-500/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl" />
-        
-        <div className="flex items-center gap-6 relative z-10">
-          <div className="w-14 h-14 bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700 shadow-inner">
-            <Heart className="w-7 h-7 text-white" />
+      {/* Hero Card */}
+      <div className="bg-[#0F172A] rounded-[2rem] p-8 text-white flex items-center justify-between shadow-2xl relative overflow-hidden border border-slate-800">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px]" />
+        <div className="flex items-center gap-8 relative z-10">
+          <div className="w-16 h-16 bg-slate-800 rounded-2xl flex items-center justify-center border border-slate-700 shadow-inner">
+            <Heart className="w-8 h-8 text-teal-400" />
           </div>
           <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h2 className="text-xl font-black tracking-tight">{policy.name}</h2>
+            <div className="flex items-center gap-4 mb-1.5">
+              <h2 className="text-2xl font-black tracking-tight">{policy.name}</h2>
               <span className={cn(
-                "px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest border",
-                isExpired 
-                  ? "bg-orange-500/10 text-orange-400 border-orange-500/30" 
-                  : "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+                "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
+                status === 'ACTIVE' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" :
+                status === 'RENEWAL DUE' ? "bg-orange-500/10 text-orange-400 border-orange-500/30" :
+                "bg-red-500/10 text-red-400 border-red-500/30"
               )}>
-                {policy.status}
+                {status}
               </span>
             </div>
-            <p className="text-slate-400 font-bold text-xs">{policy.id} • Star Health Insurance</p>
+            <p className="text-slate-400 font-bold text-xs flex items-center gap-2">
+              <Shield className="w-3.5 h-3.5" /> {policy.id} • Registered Portfolio
+            </p>
           </div>
         </div>
-
-        
+        <button onClick={() => alert('Generating Export...')} className="relative z-10 flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all">
+          <Download className="w-4 h-4" /> Export Statement
+        </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
-        {/* Left Column (Customer & Coverage) */}
-        <div className="col-span-2 space-y-6">
-          {/* Customer Details Card (New Section) */}
-          <section className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-[#0F172A]">
-                <div className="p-2 bg-blue-50 rounded-xl text-blue-600">
-                  <User className="w-5 h-5" />
-                </div>
-                <h3 className="text-lg font-black">Customer Information</h3>
+      <div className="grid grid-cols-12 gap-8">
+        {/* Left: Main Content */}
+        <div className="col-span-8 space-y-8">
+          {/* Customer Card */}
+          <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-8">
+            <div className="flex items-center gap-3 text-slate-900">
+              <div className="p-2 bg-teal-50 rounded-xl text-teal-600">
+                <User className="w-5 h-5" />
               </div>
-             
+              <h3 className="text-lg font-black uppercase tracking-widest">Customer Profile</h3>
             </div>
-            <div className="grid grid-cols-3 gap-6">
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Full Name</p>
+            <div className="grid grid-cols-3 gap-8">
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Full Legal Name</p>
                 <p className="text-sm font-black text-slate-900">{policy.customer}</p>
               </div>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Address</p>
-                <p className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                  <Mail className="w-3.5 h-3.5 text-slate-300" /> {policy.email}
-                </p>
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Official Email</p>
+                <p className="text-sm font-bold text-slate-600 truncate">{policy.email}</p>
               </div>
-              <div className="space-y-1">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Phone Number</p>
-                <p className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                  <Phone className="w-3.5 h-3.5 text-slate-300" /> {policy.phone}
-                </p>
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Contact Number</p>
+                <p className="text-sm font-bold text-slate-600">{policy.phone}</p>
               </div>
-              <div className="col-span-3 pt-3 border-t border-slate-50">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Registered Address</p>
-                <p className="text-sm font-bold text-slate-600 flex items-center gap-2">
-                  <MapPin className="w-3.5 h-3.5 text-slate-300" /> {policy.address}
-                </p>
-              </div>
-            </div>
-          </section>
-
-          {/* Coverage Details (Smaller) */}
-          <section className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm space-y-6">
-            <div className="flex items-center gap-3 text-[#0F172A]">
-              <div className="p-2 bg-teal-50 rounded-xl text-teal-600">
-                <LayoutGrid className="w-5 h-5" />
-              </div>
-              <h3 className="text-lg font-black">Coverage Details</h3>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {['Hospitalization', 'Day Care Procedures', 'Pre/Post Hospitalization', 'Organ Donor Support'].map((item, i) => (
-                <div key={i} className="flex items-center gap-3 p-3.5 bg-slate-50/50 border border-slate-100 rounded-xl hover:bg-white hover:shadow-sm transition-all group">
-                  <div className="w-6 h-6 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
+              <div className="col-span-3 pt-6 border-t border-slate-50">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-4 h-4 text-slate-300 mt-0.5" />
+                  <div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Residential Address</p>
+                    <p className="text-sm font-bold text-slate-600">Sector 42, Golf Course Road, Gurgaon, Haryana - 122001, India</p>
                   </div>
-                  <span className="text-sm font-bold text-slate-700">{item}</span>
                 </div>
-              ))}
+              </div>
             </div>
           </section>
 
-          {/* Benefits & History (Combined/Smaller) */}
-          <div className="grid grid-cols-2 gap-6">
-            <section className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-center gap-3 text-[#0F172A]">
-                <Briefcase className="w-5 h-5 text-blue-600" />
-                <h3 className="text-sm font-black uppercase tracking-widest">Key Benefits</h3>
+          {/* History Sections */}
+          <div className="grid grid-cols-2 gap-8">
+            <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-orange-600">
+                  <CreditCard className="w-5 h-5" />
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em]">Payment History</h3>
+                </div>
+                <span className="text-[9px] font-black text-slate-400 uppercase">Yearly Ledger</span>
               </div>
-              <ul className="space-y-3">
-                {['Cashless treatment', 'No claim bonus', 'Restore benefit'].map((benefit, i) => (
-                  <li key={i} className="flex items-center gap-2 text-xs font-bold text-slate-500">
-                    <div className="w-1.5 h-1.5 rounded-full bg-teal-500 shrink-0" />
-                    {benefit}
-                  </li>
+              <div className="space-y-3">
+                {officialHistory.filter(h => h.type.includes('PAYMENT')).map((h, i) => (
+                  <div key={i} className="flex items-center justify-between p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:bg-white hover:shadow-md transition-all group">
+                    <div>
+                      <p className="text-sm font-black text-slate-900 group-hover:text-orange-600 transition-colors">{h.amount}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase mt-0.5">{h.type}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[10px] font-black text-slate-900 uppercase">{h.date}</p>
+                      <p className="text-[9px] font-black text-emerald-500 uppercase tracking-widest mt-0.5">● {h.status}</p>
+                    </div>
+                  </div>
                 ))}
-              </ul>
-            </section>
-            
-            <section className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm space-y-4">
-              <div className="flex items-center gap-3 text-[#0F172A]">
-                <CreditCard className="w-5 h-5 text-orange-600" />
-                <h3 className="text-sm font-black uppercase tracking-widest">Recent Payment</h3>
               </div>
-              <div className="p-3 bg-slate-50 rounded-xl">
-                <p className="text-sm font-black text-slate-900">₹80,000</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">05 Aug 2024 • UPI PAY</p>
+            </section>
+
+            <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-blue-600">
+                  <History className="w-5 h-5" />
+                  <h3 className="text-xs font-black uppercase tracking-[0.2em]">Renewal Logs</h3>
+                </div>
+                <TrendingUp className="w-4 h-4 text-slate-200" />
+              </div>
+              <div className="space-y-3">
+                {officialHistory.filter(h => h.type === 'POLICY RENEWAL').length === 0 ? (
+                  <div className="flex flex-col items-center py-10 text-center bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                    <AlertCircle className="w-8 h-8 text-slate-200 mb-2" />
+                    <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">No renewals yet</p>
+                  </div>
+                ) : (
+                  officialHistory.filter(h => h.type === 'POLICY RENEWAL').map((h, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 bg-blue-50/30 rounded-2xl border border-blue-100">
+                      <div>
+                        <p className="text-[11px] font-black text-blue-900">RENEWAL COMPLETED</p>
+                        <p className="text-[9px] font-bold text-blue-400 uppercase mt-0.5">Verified on {h.date}</p>
+                      </div>
+                      <CheckCircle2 className="w-5 h-5 text-blue-500" />
+                    </div>
+                  ))
+                )}
+              </div>
+            </section>
+          </div>
+
+          {/* Coverage & Benefits */}
+          <div className="grid grid-cols-2 gap-8">
+            <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6">
+              <div className="flex items-center gap-3 text-teal-600">
+                <LayoutGrid className="w-5 h-5" />
+                <h3 className="text-xs font-black uppercase tracking-widest">Coverage Items</h3>
+              </div>
+              <div className="grid grid-cols-1 gap-2.5">
+                {(policy.customCoverage || ['Hospitalization']).map((c: string, i: number) => (
+                  <div key={i} className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl">
+                    <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center">
+                       <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
+                    </div>
+                    <span className="text-xs font-bold text-slate-600">{c}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6">
+              <div className="flex items-center gap-3 text-blue-600">
+                <Star className="w-5 h-5" />
+                <h3 className="text-xs font-black uppercase tracking-widest">Plan Benefits</h3>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {(policy.customBenefits || ['Basic Plan']).map((b: string, i: number) => (
+                  <span key={i} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-tight border border-blue-100">
+                    {b}
+                  </span>
+                ))}
               </div>
             </section>
           </div>
         </div>
 
-        {/* Right Column (Sidebar Cards - Smaller) */}
-        <div className="space-y-6">
-          <div className="bg-white p-6 rounded-[1.5rem] border border-slate-100 shadow-sm space-y-6">
-            <h4 className="text-sm font-black text-[#0F172A] uppercase tracking-[0.2em]">Policy Period</h4>
-            <div className="space-y-3">
+        {/* Right Sidebar */}
+        <div className="col-span-4 space-y-8">
+          <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6 sticky top-8">
+            <div className="flex items-center gap-3 border-b border-slate-50 pb-6">
+               <Calendar className="w-5 h-5 text-teal-600" />
+               <h4 className="text-sm font-black uppercase tracking-[0.2em]">Policy Period</h4>
+            </div>
+            
+            <div className="space-y-5">
               {[
-                { label: 'Start Date', value: '05 Aug 2023' },
-                { label: 'End Date', value: '05 Aug 2024' },
-                { label: 'Premium', value: policy.premium },
-                { label: 'Due Date', value: '05 Aug 2025' },
+                { label: 'Issuance Date', value: new Date(policy.startDate || '2023-01-01').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                { label: 'Expiry Date', value: new Date(policy.expiry).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                { label: 'Base Premium', value: policy.premium },
+                { label: 'Next Due Date', value: new Date(policy.expiry).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
               ].map((row, i) => (
-                <div key={i} className="flex justify-between items-center py-2 border-b border-slate-50 last:border-0">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{row.label}</span>
-                  <span className="text-xs font-black text-[#0F172A]">{row.value}</span>
+                <div key={i} className="flex justify-between items-center py-1.5 group">
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-teal-600 transition-colors">{row.label}</span>
+                  <span className="text-xs font-black text-slate-900">{row.value}</span>
                 </div>
               ))}
             </div>
-          </div>
 
-          <div className="bg-[#F0FDFD] p-6 rounded-[1.5rem] border border-teal-100 shadow-sm">
-            <div className="flex items-center gap-2 mb-4 text-teal-900">
-              <User className="w-4 h-4" />
-              <h4 className="text-xs font-black uppercase tracking-widest">Active Nominee</h4>
+            <div className="pt-6 border-t border-slate-50 space-y-4">
+               <div className="bg-teal-50/50 p-4 rounded-2xl flex items-center gap-4">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-teal-600 shadow-sm font-black text-xs">
+                    {policy.nomineeName ? policy.nomineeName.split(' ').map((n:any) => n[0]).join('') : 'CU'}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest leading-none mb-1">Active Nominee</p>
+                    <p className="text-xs font-black text-slate-900">{policy.nomineeName || 'Not Assigned'}</p>
+                  </div>
+               </div>
+               
+               <div className="bg-slate-900 p-6 rounded-[1.5rem] text-white space-y-3">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</p>
+                  <button className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Raise Support Ticket</button>
+                  <button className="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Cancel Enrollment</button>
+               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-teal-600 shadow-sm font-black text-xs">SK</div>
-              <div>
-                <p className="text-sm font-black text-[#0F172A]">Sneha Kumar</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Spouse</p>
-              </div>
-            </div>
-          </div>
-
-          
+          </section>
         </div>
       </div>
     </div>
   );
 };
+
+const Check = ({ className }: { className?: string }) => (
+  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+  </svg>
+);
