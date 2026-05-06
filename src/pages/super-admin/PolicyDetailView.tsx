@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  Shield, CheckCircle2, Download, CreditCard, 
+import {
+  Shield, CheckCircle2, Download, CreditCard,
   User, Calendar, Heart, LayoutGrid, Briefcase,
   ArrowLeft, Mail, Phone, MapPin, ExternalLink,
   History, Receipt, FileText, AlertCircle,
@@ -10,17 +10,17 @@ import {
 import { cn } from '../../utils/helpers';
 
 const DEFAULT_POLICIES = [
-  { 
-    id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', 
-    email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', 
+  {
+    id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta',
+    email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE',
     premium: '₹80,000', expiry: '2027-05-02', startDate: '2022-05-02',
     nomineeName: 'Anita Mehta', nomineeRelation: 'Spouse',
     customCoverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'],
     customBenefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup']
   },
-  { 
-    id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', 
-    email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE', 
+  {
+    id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh',
+    email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE',
     premium: '₹12,500', expiry: '2027-08-15', startDate: '2023-08-15',
     nomineeName: 'Karan Singh', nomineeRelation: 'Child',
     customCoverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'],
@@ -32,15 +32,15 @@ const DEFAULT_POLICIES = [
 const generateOfficialHistory = (startDate: string, expiryDate: string, premium: string) => {
   const history: any[] = [];
   const start = new Date(startDate);
-  const end = new Date(); // Only show history up to today
+  const end = new Date();
   const expiry = new Date(expiryDate);
-  
+
   let currentYearDate = new Date(start);
-  
+
   while (currentYearDate <= end && currentYearDate <= expiry) {
     const yearStr = currentYearDate.getFullYear();
     const dateStr = currentYearDate.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-    
+
     // Add Payment Record
     history.push({
       date: dateStr,
@@ -56,8 +56,7 @@ const generateOfficialHistory = (startDate: string, expiryDate: string, premium:
         date: dateStr,
         type: 'POLICY RENEWAL',
         amount: premium,
-        status: 'COMPLETED',
-        details: `Policy extended until ${new Date(currentYearDate.getFullYear() + 1, currentYearDate.getMonth(), currentYearDate.getDate()).toLocaleDateString()}`
+        status: 'COMPLETED'
       });
     }
 
@@ -77,7 +76,7 @@ export const PolicyDetailView: React.FC = () => {
   });
 
   const policy = policies.find((p: any) => p.id === id) || policies[0];
-  
+
   // Calculate status dynamically for the UI
   const getStatus = (expiryDate: string) => {
     const today = new Date();
@@ -91,7 +90,55 @@ export const PolicyDetailView: React.FC = () => {
 
   const status = getStatus(policy.expiry);
   const officialHistory = generateOfficialHistory(policy.startDate || '2023-01-01', policy.expiry, policy.premium);
-  const hasHistory = officialHistory.length > 0;
+
+  const handleExport = () => {
+    // FIXED: Changed to .txt extension and text/plain MIME type to prevent "Failed to load PDF" error.
+    // Real PDF generation requires a library like jsPDF.
+    const filename = `Policy_Statement_${policy.id}.txt`;
+    const content = `
+SAFEGUARD ADVISOR - OFFICIAL POLICY STATEMENT
+============================================
+
+CUSTOMER INFORMATION
+--------------------
+Policy ID: ${policy.id}
+Customer Name: ${policy.customer}
+Email: ${policy.email}
+Phone: ${policy.phone}
+
+POLICY INFORMATION
+------------------
+Insurance Plan: ${policy.name}
+Coverage Type: ${policy.type}
+Status: ${status}
+Issuance Date: ${policy.startDate}
+Expiry Date: ${policy.expiry}
+Base Premium: ${policy.premium}
+
+COVERAGE DETAILS
+----------------
+${(policy.customCoverage || []).join(', ')}
+
+PLAN BENEFITS
+-------------
+${(policy.customBenefits || []).join(', ')}
+
+TRANSACTION LEDGER
+------------------
+${officialHistory.filter(h => h.type.includes('PAYMENT')).map(h => `- ${h.date}: ${h.amount} [${h.type}] - ${h.status} (ID: ${h.id || 'N/A'})`).join('\n')}
+
+--------------------------------------------
+Generated on: ${new Date().toLocaleString()}
+SafeGuard Advisor Global Portfolio Management
+    `;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.download = filename;
+    link.click();
+    window.URL.revokeObjectURL(link.href);
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-20">
@@ -119,8 +166,8 @@ export const PolicyDetailView: React.FC = () => {
               <span className={cn(
                 "px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border",
                 status === 'ACTIVE' ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30" :
-                status === 'RENEWAL DUE' ? "bg-orange-500/10 text-orange-400 border-orange-500/30" :
-                "bg-red-500/10 text-red-400 border-red-500/30"
+                  status === 'RENEWAL DUE' ? "bg-orange-500/10 text-orange-400 border-orange-500/30" :
+                    "bg-red-500/10 text-red-400 border-red-500/30"
               )}>
                 {status}
               </span>
@@ -130,8 +177,8 @@ export const PolicyDetailView: React.FC = () => {
             </p>
           </div>
         </div>
-        <button onClick={() => alert('Generating Export...')} className="relative z-10 flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] transition-all">
-          <Download className="w-4 h-4" /> Export Statement
+        <button onClick={handleExport} className="relative z-10 flex items-center gap-3 px-8 py-3.5 bg-teal-500 text-slate-900 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-teal-400 transition-all shadow-xl shadow-teal-500/30">
+          <Download className="w-4 h-4" /> Export Policy Statement
         </button>
       </div>
 
@@ -229,16 +276,14 @@ export const PolicyDetailView: React.FC = () => {
           {/* Coverage & Benefits */}
           <div className="grid grid-cols-2 gap-8">
             <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6">
-              <div className="flex items-center gap-3 text-teal-600">
+              <div className="flex items-center gap-3 text-teal-600 pb-4 border-b border-slate-50">
                 <LayoutGrid className="w-5 h-5" />
-                <h3 className="text-xs font-black uppercase tracking-widest">Coverage Items</h3>
+                <h3 className="text-xs font-black uppercase tracking-widest">Included Coverage</h3>
               </div>
-              <div className="grid grid-cols-1 gap-2.5">
+              <div className="space-y-3">
                 {(policy.customCoverage || ['Hospitalization']).map((c: string, i: number) => (
-                  <div key={i} className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl">
-                    <div className="w-5 h-5 bg-emerald-100 rounded-full flex items-center justify-center">
-                       <Check className="w-3 h-3 text-emerald-600 stroke-[3]" />
-                    </div>
+                  <div key={i} className="flex items-center gap-3 p-3 bg-slate-50/50 rounded-xl border border-slate-100">
+                    <CheckIcon className="w-4 h-4 text-emerald-500 stroke-[3]" />
                     <span className="text-xs font-bold text-slate-600">{c}</span>
                   </div>
                 ))}
@@ -246,13 +291,13 @@ export const PolicyDetailView: React.FC = () => {
             </section>
 
             <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6">
-              <div className="flex items-center gap-3 text-blue-600">
+              <div className="flex items-center gap-3 text-blue-600 pb-4 border-b border-slate-50">
                 <Star className="w-5 h-5" />
                 <h3 className="text-xs font-black uppercase tracking-widest">Plan Benefits</h3>
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {(policy.customBenefits || ['Basic Plan']).map((b: string, i: number) => (
-                  <span key={i} className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-tight border border-blue-100">
+                  <span key={i} className="px-4 py-2 bg-blue-50/50 text-blue-700 rounded-xl text-[10px] font-black uppercase tracking-tight border border-blue-100">
                     {b}
                   </span>
                 ))}
@@ -263,42 +308,49 @@ export const PolicyDetailView: React.FC = () => {
 
         {/* Right Sidebar */}
         <div className="col-span-4 space-y-8">
-          <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-6 sticky top-8">
-            <div className="flex items-center gap-3 border-b border-slate-50 pb-6">
-               <Calendar className="w-5 h-5 text-teal-600" />
-               <h4 className="text-sm font-black uppercase tracking-[0.2em]">Policy Period</h4>
-            </div>
-            
-            <div className="space-y-5">
-              {[
-                { label: 'Issuance Date', value: new Date(policy.startDate || '2023-01-01').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
-                { label: 'Expiry Date', value: new Date(policy.expiry).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
-                { label: 'Base Premium', value: policy.premium },
-                { label: 'Next Due Date', value: new Date(policy.expiry).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
-              ].map((row, i) => (
-                <div key={i} className="flex justify-between items-center py-1.5 group">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-teal-600 transition-colors">{row.label}</span>
-                  <span className="text-xs font-black text-slate-900">{row.value}</span>
-                </div>
-              ))}
+          <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-8 sticky top-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                <Calendar className="w-5 h-5 text-teal-600" />
+                <h4 className="text-sm font-black uppercase tracking-[0.2em]">Policy Period</h4>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { label: 'Issue Date', value: new Date(policy.startDate || '2023-01-01').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                  { label: 'Expiry Date', value: new Date(policy.expiry).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                  { label: 'Premium', value: policy.premium },
+                  { label: 'Due Date', value: new Date(policy.expiry).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) },
+                ].map((row, i) => (
+                  <div key={i} className="flex justify-between items-center group">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-teal-600 transition-colors">{row.label}</span>
+                    <span className="text-xs font-black text-slate-900">{row.value}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div className="pt-6 border-t border-slate-50 space-y-4">
-               <div className="bg-teal-50/50 p-4 rounded-2xl flex items-center gap-4">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-teal-600 shadow-sm font-black text-xs">
-                    {policy.nomineeName ? policy.nomineeName.split(' ').map((n:any) => n[0]).join('') : 'CU'}
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest leading-none mb-1">Active Nominee</p>
-                    <p className="text-xs font-black text-slate-900">{policy.nomineeName || 'Not Assigned'}</p>
-                  </div>
-               </div>
-               
-               <div className="bg-slate-900 p-6 rounded-[1.5rem] text-white space-y-3">
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</p>
-                  <button className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Raise Support Ticket</button>
-                  <button className="w-full py-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all">Cancel Enrollment</button>
-               </div>
+            <div className="bg-teal-50/50 p-6 rounded-[1.5rem] border border-teal-100 space-y-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-teal-600 shadow-sm font-black text-sm border border-teal-50">
+                  {policy.nomineeName ? policy.nomineeName.split(' ').map((n: any) => n[0]).join('') : 'CU'}
+                </div>
+                <div>
+                  <p className="text-[10px] font-black text-teal-600 uppercase tracking-widest leading-none mb-1.5">Policy Nominee</p>
+                  <p className="text-sm font-black text-slate-900">{policy.nomineeName || 'Not Assigned'}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{policy.nomineeRelation || 'Beneficiary'}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 space-y-3">
+              <div className="flex items-center gap-2 mb-2">
+                <Shield className="w-4 h-4 text-slate-400" />
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Policy Protection</span>
+              </div>
+              <p className="text-[10px] font-bold text-slate-400 leading-relaxed">
+                This policy is active and secured under the SafeGuard Advisor global portfolio. All terms and conditions apply.
+              </p>
             </div>
           </section>
         </div>
@@ -307,7 +359,7 @@ export const PolicyDetailView: React.FC = () => {
   );
 };
 
-const Check = ({ className }: { className?: string }) => (
+const CheckIcon = ({ className }: { className?: string }) => (
   <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
   </svg>
