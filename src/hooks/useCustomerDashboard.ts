@@ -72,6 +72,21 @@ const MOCK_DATA = {
       coverage: ["Third Party Liability", "Own Damage", "Personal Accident"],
       benefits: ["Cashless garages", "24x7 roadside assistance", "Easy claim settlement"],
       nominee: "Sneha Kumar"
+    },
+    {
+      id: "10",
+      policy_number: "HDFC-1122-3344",
+      title: "HDFC ERGO Health Optima",
+      provider: "HDFC ERGO",
+      type: "Health Insurance",
+      status: "Active",
+      premium: "₹1,250",
+      due_date: "25 May 2026",
+      start_date: "25 May 2025",
+      end_date: "25 May 2026",
+      coverage: ["In-patient Hospitalization", "Mental Healthcare", "Home Treatment"],
+      benefits: ["Restore benefit", "No claim bonus", "Free health check-up"],
+      nominee: "Sneha Kumar"
     }
   ],
   claims: [
