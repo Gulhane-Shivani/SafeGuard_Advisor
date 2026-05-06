@@ -276,10 +276,54 @@ export const useCustomerDashboard = () => {
       supportTickets: [newTicket, ...(prev.supportTickets || [])]
     }));
   };
+  
+  const renewPolicy = (policyId: string) => {
+    setData((prev: any) => {
+      if (!prev) return prev;
+      const updatedPolicies = prev.policies.map((p: any) => {
+        if (p.id === policyId) {
+          // Parse existing end date
+          const oldEndDate = new Date(p.end_date);
+          
+          // Extend by 1 year
+          const newEndDate = new Date(oldEndDate);
+          newEndDate.setFullYear(oldEndDate.getFullYear() + 1);
+          
+          // Format: "25 May 2027"
+          const day = String(newEndDate.getDate()).padStart(2, '0');
+          const month = newEndDate.toLocaleString('en-GB', { month: 'short' });
+          const year = newEndDate.getFullYear();
+          const formattedDate = `${day} ${month} ${year}`;
+          
+          return {
+            ...p,
+            end_date: formattedDate,
+            due_date: formattedDate,
+            status: 'Active'
+          };
+        }
+        return p;
+      });
+      return { ...prev, policies: updatedPolicies };
+    });
+  };
 
   useEffect(() => {
     fetchDashboard();
   }, []);
 
-  return { data, loading, error, refresh: fetchDashboard, addClaim, addServiceRequest, addLoan, updateProfile, updateNominee, updateBankDetails, addSupportTicket };
+  return { 
+    data, 
+    loading, 
+    error, 
+    refresh: fetchDashboard, 
+    addClaim, 
+    addServiceRequest, 
+    addLoan, 
+    updateProfile, 
+    updateNominee, 
+    updateBankDetails, 
+    addSupportTicket,
+    renewPolicy
+  };
 };

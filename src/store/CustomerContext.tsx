@@ -13,6 +13,7 @@ interface CustomerContextType {
   updateNominee: (updatedNominee: any) => void;
   updateBankDetails: (updatedBank: any) => void;
   addSupportTicket: (newTicket: any) => void;
+  renewPolicy: (policyId: string) => void;
 }
 
 const CustomerContext = createContext<CustomerContextType | undefined>(undefined);

@@ -10,10 +10,10 @@ import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { jsPDF } from 'jspdf';
 
 const CustomerPolicies: React.FC = () => {
-  const { data, loading, error } = useCustomer();
+  const { data, loading, error, renewPolicy } = useCustomer();
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState('All');
-  const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
+  const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '', policyId: '' });
   const navigate = useNavigate();
 
   if (loading || !data) return <LoadingSpinner />;
@@ -58,7 +58,8 @@ const CustomerPolicies: React.FC = () => {
     setPaymentModal({
       isOpen: true,
       amount: policy.premium,
-      policyName: policy.title
+      policyName: policy.title,
+      policyId: policy.id
     });
   };
 
@@ -203,7 +204,9 @@ const CustomerPolicies: React.FC = () => {
         policyName={paymentModal.policyName}
         onClose={() => setPaymentModal({ ...paymentModal, isOpen: false })}
         onSuccess={() => {
-          // Success handled in gateway, maybe trigger a toast or refresh here
+          if (paymentModal.policyId) {
+            renewPolicy(paymentModal.policyId);
+          }
         }}
       />
     </CustomerLayout>
