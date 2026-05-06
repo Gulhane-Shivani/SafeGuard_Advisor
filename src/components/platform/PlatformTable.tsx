@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Search, Filter, Edit2, Trash2, Eye, Power } from 'lucide-react';
+import { Search, Filter, Edit2, Trash2, Eye, Power, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Column {
   header: string;
@@ -21,14 +20,16 @@ interface PlatformTableProps {
   actions?: React.ReactNode;
   filterKey?: string;
   filterOptions?: string[];
+  pageSize?: number;
 }
 
 export const PlatformTable: React.FC<PlatformTableProps> = ({ 
-  columns, data, title, description, onEdit, onView, onDelete, onToggle, searchPlaceholder = "Search records...", actions, filterKey, filterOptions 
+  columns, data, title, description, onEdit, onView, onDelete, onToggle, searchPlaceholder = "Search records...", actions, filterKey, filterOptions, pageSize = 5 
 }) => {
   const [search, setSearch] = useState('');
   const [filterValue, setFilterValue] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredData = data.filter(row => {
     const matchesSearch = Object.values(row).some(val => 
@@ -38,9 +39,16 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
     return matchesSearch && matchesFilter;
   });
 
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  const paginatedData = filteredData.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="bg-white rounded-3xl border border-slate-100 shadow-sm">
-      {(title || search) && (
+      {(title || filterOptions || searchPlaceholder) && (
         <div className="p-8 border-b border-slate-100 space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div>
@@ -54,7 +62,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                   type="text" 
                   placeholder={searchPlaceholder}
                   value={search}
-                  onChange={(e) => setSearch(e.target.value)}
+                  onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                   className="pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-teal-600/5 focus:border-teal-600 transition-all w-full text-xs font-bold"
                 />
               </div>
@@ -69,7 +77,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                   {showFilters && (
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-slate-200 shadow-2xl rounded-2xl overflow-hidden z-[70] animate-in fade-in zoom-in-95 duration-200">
                       <button 
-                        onClick={() => { setFilterValue('All'); setShowFilters(false); }}
+                        onClick={() => { setFilterValue('All'); setShowFilters(false); setCurrentPage(1); }}
                         className={`w-full text-left px-4 py-3 text-sm font-bold border-b border-slate-50 ${filterValue === 'All' ? 'bg-teal-50 text-teal-600' : 'text-slate-600 hover:bg-slate-50'}`}
                       >
                         All
@@ -77,7 +85,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                       {filterOptions.map(opt => (
                         <button 
                           key={opt}
-                          onClick={() => { setFilterValue(opt); setShowFilters(false); }}
+                          onClick={() => { setFilterValue(opt); setShowFilters(false); setCurrentPage(1); }}
                           className={`w-full text-left px-4 py-3 text-sm font-bold border-b border-slate-50 last:border-0 ${filterValue === opt ? 'bg-teal-50 text-teal-600' : 'text-slate-600 hover:bg-slate-50'}`}
                         >
                           {opt}
@@ -86,18 +94,14 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                     </div>
                   )}
                 </div>
-              ) : (
-                <button className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-50 transition-all">
-                  <Filter className="w-4 h-4" />
-                </button>
-              )}
+              ) : null}
               {actions}
             </div>
           </div>
         </div>
       )}
 
-      <div className="overflow-x-auto rounded-b-3xl">
+      <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50/50">
@@ -110,7 +114,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
-            {filteredData.length === 0 ? (
+            {paginatedData.length === 0 ? (
               <tr>
                 <td colSpan={columns.length + 1} className="px-8 py-20 text-center">
                   <div className="flex flex-col items-center gap-4">
@@ -122,7 +126,7 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
                 </td>
               </tr>
             ) : (
-              filteredData.map((row, i) => (
+              paginatedData.map((row, i) => (
                 <tr key={i} className="hover:bg-slate-50/50 transition-colors group/row">
                   {columns.map((col, j) => (
                     <td key={j} className="px-8 py-5">
@@ -176,6 +180,42 @@ export const PlatformTable: React.FC<PlatformTableProps> = ({
           </tbody>
         </table>
       </div>
+
+      {/* Pagination Footer */}
+      {totalPages > 1 && (
+        <div className="p-6 border-t border-slate-50 flex items-center justify-between">
+          <p className="text-xs text-slate-400 font-bold">
+            Showing <span className="text-slate-900">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-slate-900">{Math.min(currentPage * pageSize, filteredData.length)}</span> of <span className="text-slate-900">{filteredData.length}</span> results
+          </p>
+          <div className="flex items-center gap-2">
+            <button 
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-all"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }).map((_, i) => (
+                <button 
+                  key={i}
+                  onClick={() => handlePageChange(i + 1)}
+                  className={`w-8 h-8 rounded-lg text-xs font-black transition-all ${currentPage === i + 1 ? 'bg-teal-600 text-white shadow-lg shadow-teal-600/20' : 'bg-white text-slate-400 hover:bg-slate-50'}`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+            <button 
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-400 hover:text-teal-600 hover:border-teal-200 disabled:opacity-50 transition-all"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -43,6 +43,8 @@ import { PolicyDetailView } from './pages/super-admin/PolicyDetailView';
 import AdminRenewals from './pages/super-admin/Renewals';
 import AdminPayments from './pages/super-admin/Payments';
 import AdminNotifications from './pages/super-admin/Notifications';
+import { CustomerDetailView } from './pages/super-admin/CustomerDetailView';
+import { StaffDetailView } from './pages/super-admin/StaffDetailView';
 
 import AdminOverview from './pages/admin/AdminOverview';
 import LeadManagement from './pages/admin/LeadManagement';
@@ -112,6 +114,8 @@ const AppContent = () => {
                     <Route path="/renewals" element={<AdminRenewals />} />
                     <Route path="/payments" element={<AdminPayments />} />
                     <Route path="/notifications" element={<AdminNotifications />} />
+                    <Route path="/users/customers/:id" element={<CustomerDetailView />} />
+                    <Route path="/users/staff/:id" element={<StaffDetailView />} />
                   </Routes>
                 </DashboardLayout>
               </PlatformProvider>
