@@ -11,12 +11,12 @@ const getAutoStatus = (expiryDate: string) => {
   const today = new Date();
   const expiry = new Date(expiryDate);
   if (expiry < today) return 'EXPIRED';
-  
+
   // If expiry is within 30 days, it's Renewal Due
   const thirtyDaysFromNow = new Date();
   thirtyDaysFromNow.setDate(today.getDate() + 30);
   if (expiry <= thirtyDaysFromNow) return 'RENEWAL DUE';
-  
+
   return 'ACTIVE';
 };
 
@@ -36,7 +36,7 @@ const DEFAULT_POLICIES = [
 
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
-  
+
   const [policies, setPolicies] = useState(() => {
     const saved = localStorage.getItem('safeguard_policies');
     const baseData = saved ? JSON.parse(saved) : DEFAULT_POLICIES;
@@ -54,7 +54,7 @@ const AdminPolicies: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
-  
+
   const [formData, setFormData] = useState({
     customer: '',
     email: '',
@@ -72,8 +72,8 @@ const AdminPolicies: React.FC = () => {
   });
 
   const columns = [
-    { 
-      header: 'POLICY DETAILS', 
+    {
+      header: 'POLICY DETAILS',
       accessor: 'id',
       render: (val: string, row: any) => (
         <div className="group cursor-pointer" onClick={() => navigate(`/super-admin/policies/${row.id}`)}>
@@ -84,22 +84,22 @@ const AdminPolicies: React.FC = () => {
     },
     { header: 'CUSTOMER', accessor: 'customer' },
     { header: 'PREMIUM', accessor: 'premium' },
-    { 
-      header: 'STATUS', 
+    {
+      header: 'STATUS',
       accessor: 'status',
       render: (val: string) => (
         <span className={cn(
           "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
           val === 'ACTIVE' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-          val === 'RENEWAL DUE' ? "bg-orange-50 text-orange-600 border-orange-100" :
-          "bg-red-50 text-red-600 border-red-100"
+            val === 'RENEWAL DUE' ? "bg-orange-50 text-orange-600 border-orange-100" :
+              "bg-red-50 text-red-600 border-red-100"
         )}>
           {val}
         </span>
       )
     },
-    { 
-      header: 'EXPIRY DATE', 
+    {
+      header: 'EXPIRY DATE',
       accessor: 'expiry',
       render: (val: string) => (
         <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500">
@@ -125,7 +125,7 @@ const AdminPolicies: React.FC = () => {
         title="Policy Lifecycle Management"
         description="Monitor active policies, track upcoming renewals, and manage policy servicing operations for all customers."
         actions={
-          <button 
+          <button
             onClick={() => navigate('/super-admin/policies/issue')}
             className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 flex items-center gap-2"
           >
@@ -136,9 +136,9 @@ const AdminPolicies: React.FC = () => {
 
       <div className="grid grid-cols-4 gap-6">
         {[
-          { label: 'Active Policies', count: policies.filter((p:any) => p.status === 'ACTIVE').length, icon: Shield, color: 'text-teal-600', bg: 'bg-teal-50' },
-          { label: 'Renewals Pending', count: policies.filter((p:any) => p.status === 'RENEWAL DUE').length, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
-          { label: 'Expired Policies', count: policies.filter((p:any) => p.status === 'EXPIRED').length, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
+          { label: 'Active Policies', count: policies.filter((p: any) => p.status === 'ACTIVE').length, icon: Shield, color: 'text-teal-600', bg: 'bg-teal-50' },
+          { label: 'Renewals Pending', count: policies.filter((p: any) => p.status === 'RENEWAL DUE').length, icon: Clock, color: 'text-orange-600', bg: 'bg-orange-50' },
+          { label: 'Expired Policies', count: policies.filter((p: any) => p.status === 'EXPIRED').length, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
           { label: 'Retention Rate', count: '98.2%', icon: Activity, color: 'text-blue-600', bg: 'bg-blue-50' },
         ].map((stat, i) => (
           <div key={i} className="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-all group">
@@ -171,8 +171,8 @@ const AdminPolicies: React.FC = () => {
       >
         <p className="text-sm font-bold text-slate-500 mb-6">Updating policy information for {selectedPolicy?.customer}</p>
         <div className="space-y-4">
-           {/* Form fields here */}
-           <button onClick={() => setIsModalOpen(false)} className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest">Update Policy</button>
+          {/* Form fields here */}
+          <button onClick={() => setIsModalOpen(false)} className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest">Update Policy</button>
         </div>
       </PlatformModal>
     </div>
