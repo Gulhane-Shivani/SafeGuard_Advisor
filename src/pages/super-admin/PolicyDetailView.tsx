@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Shield, CheckCircle2, Download, CreditCard,
-  User, Calendar, Heart, LayoutGrid, Briefcase,
-  ArrowLeft, Mail, Phone, MapPin, ExternalLink,
-  History, Receipt, FileText, AlertCircle,
+  User, Calendar, Heart, LayoutGrid,
+  ArrowLeft, MapPin,
+  History, AlertCircle,
   TrendingUp, Star
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';

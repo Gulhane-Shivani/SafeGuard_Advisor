@@ -1,5 +1,5 @@
 import React from 'react';
-import { IndianRupee, ArrowDownLeft, ArrowUpRight, CheckCircle2, XCircle, Filter, Download } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, CheckCircle2, XCircle, Filter, Download } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { cn } from '../../utils/helpers';

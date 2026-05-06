@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Shield, Users, Info, Clock, CheckCircle2 } from 'lucide-react';
+import { Shield, Users, Clock } from 'lucide-react';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { cn } from '../../utils/helpers';
 

@@ -11,7 +11,7 @@ import { usePlatform } from '../../store/PlatformContext';
 import { cn } from '../../utils/helpers';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, BarChart, Bar, 
+  Tooltip, ResponsiveContainer, 
   Cell, PieChart, Pie
 } from 'recharts';
 import jsPDF from 'jspdf';

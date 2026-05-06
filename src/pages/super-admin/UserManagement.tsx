@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { UserPlus, Shield, MapPin, Eye, Briefcase } from 'lucide-react';
+import { UserPlus, Shield, MapPin } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
@@ -87,7 +87,7 @@ const UserManagement: React.FC = () => {
     ...(activeTab === 'staff' ? [{
       header: 'Managed Portfolio',
       accessor: 'handledPolicies',
-      render: (val: number, row: any) => (
+      render: (val: number, _row: any) => (
         <div className="flex items-center gap-2 text-xs font-black text-slate-700">
           <div className={cn(
             "px-2 py-0.5 rounded-md text-[10px]",

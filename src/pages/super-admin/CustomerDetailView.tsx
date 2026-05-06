@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Shield, CheckCircle2, 
-  Download, History, Receipt,
-  TrendingUp, Star, Users, MapPin, Mail, Phone,
-  ExternalLink, Zap, Briefcase
+  ArrowLeft, Receipt,
+  TrendingUp, Star, Users,
+  Zap
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
@@ -15,7 +14,7 @@ import API from '../../api/baseurl';
 export const CustomerDetailView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: platformData } = usePlatform();
+  usePlatform();
   const [customer, setCustomer] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 

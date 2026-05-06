@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
-  ArrowLeft, Shield, CheckCircle2, 
-  Download, History, Briefcase,
-  TrendingUp, Users, MapPin, Mail, Phone,
-  ExternalLink, Zap, PieChart, BarChart3
+  ArrowLeft, History, Briefcase,
+  TrendingUp, MapPin, Mail, Phone,
+  Zap
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { PlatformTable } from '../../components/platform/PlatformTable';
@@ -79,7 +78,10 @@ export const StaffDetailView: React.FC = () => {
       customerName: ['Sunita Rao', 'Vijay Mehta', 'Ramesh Patel', 'Anjali Desai', 'Kunal Kapoor', 'Simran Singh'][i % 6],
       type: ['Life Insurance', 'Health Insurance', 'Motor Insurance', 'Investment'][i % 4],
       premium: `₹${(15 + (i % 10)) * 1000}`,
-      status: i % 5 === 0 ? 'Renewal Due' : 'Active'
+      status: i % 5 === 0 ? 'Renewal Due' : 'Active',
+      startDate: '2026-01-01',
+      endDate: '2027-01-01',
+      agentId: num
     }));
   }
 

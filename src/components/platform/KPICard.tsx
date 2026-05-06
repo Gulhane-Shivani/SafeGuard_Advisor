@@ -8,7 +8,7 @@ interface KPICardProps {
   icon: any;
   trend?: string;
   trendUp?: boolean;
-  color?: 'teal' | 'blue' | 'purple' | 'orange' | 'emerald' | 'amber';
+  color?: 'teal' | 'blue' | 'purple' | 'orange' | 'emerald' | 'amber' | 'red' | 'indigo';
 }
 
 export const KPICard: React.FC<KPICardProps> = ({ label, value, icon: Icon, trend, trendUp, color = 'teal' }) => {
@@ -19,6 +19,8 @@ export const KPICard: React.FC<KPICardProps> = ({ label, value, icon: Icon, tren
     orange: 'bg-orange-50 text-orange-600 shadow-orange-100',
     emerald: 'bg-emerald-50 text-emerald-600 shadow-emerald-100',
     amber: 'bg-amber-50 text-amber-600 shadow-amber-100',
+    red: 'bg-red-50 text-red-600 shadow-red-100',
+    indigo: 'bg-indigo-50 text-indigo-600 shadow-indigo-100',
   };
 
   return (

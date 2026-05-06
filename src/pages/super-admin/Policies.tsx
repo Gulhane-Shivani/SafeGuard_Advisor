@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Plus, Eye, Edit3, Power, Clock, AlertCircle, Activity, Download, CheckCircle2, List } from 'lucide-react';
+import { Shield, Plus, Eye, Edit3, Clock, AlertCircle, Activity } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
@@ -20,11 +20,7 @@ const getAutoStatus = (expiryDate: string) => {
   return 'ACTIVE';
 };
 
-const PLAN_CATALOG = [
-  { id: 'p1', name: 'Star Comprehensive Health', type: 'HEALTH INSURANCE', provider: 'Star Health', premium: '₹80,000', coverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'], benefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup'] },
-  { id: 'p2', name: 'LIC Tech Term', type: 'LIFE INSURANCE', provider: 'LIC of India', premium: '₹45,000', coverage: ['Death Benefit', 'Critical Illness Cover', 'Terminal Illness'], benefits: ['Tax Savings U/S 80C', 'Accidental Death Rider', 'Flexible Payouts'] },
-  { id: 'p3', name: 'Bajaj Car Insurance', type: 'MOTOR INSURANCE', provider: 'Bajaj Allianz', premium: '₹12,500', coverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'], benefits: ['Zero Depreciation', 'Roadside Assistance', 'Engine Protector'] },
-];
+
 
 const DEFAULT_POLICIES = [
   { id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', premium: '₹80,000', expiry: '2027-05-02' },
@@ -37,7 +33,7 @@ const DEFAULT_POLICIES = [
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
 
-  const [policies, setPolicies] = useState(() => {
+  const [policies] = useState(() => {
     const saved = localStorage.getItem('safeguard_policies');
     const baseData = saved ? JSON.parse(saved) : DEFAULT_POLICIES;
     // Map with auto-calculated status
@@ -52,24 +48,10 @@ const AdminPolicies: React.FC = () => {
   }, [policies]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<'add' | 'edit'>('add');
+  const [, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
 
-  const [formData, setFormData] = useState({
-    customer: '',
-    email: '',
-    phone: '',
-    startDate: '',
-    endDate: '',
-    planId: '',
-    type: '',
-    provider: '',
-    name: '',
-    premium: '',
-    nomineeName: '',
-    nomineeRelation: '',
-    status: ''
-  });
+
 
   const columns = [
     {
@@ -167,7 +149,7 @@ const AdminPolicies: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title="Edit Policy Details"
-        maxWidth="max-w-xl"
+        size="md"
       >
         <p className="text-sm font-bold text-slate-500 mb-6">Updating policy information for {selectedPolicy?.customer}</p>
         <div className="space-y-4">

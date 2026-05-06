@@ -1,5 +1,5 @@
 import React from 'react';
-import { Clock, Phone, Mail, ArrowUpRight, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Clock, Phone, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { cn } from '../../utils/helpers';
@@ -51,7 +51,7 @@ const AdminRenewals: React.FC = () => {
     {
       header: 'Actions',
       accessor: 'id',
-      render: (val: number) => (
+      render: (_val: number) => (
         <div className="flex items-center gap-3">
           <button className="p-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-teal-50 hover:text-teal-600 transition-all shadow-sm" title="Send Reminder">
             <Mail className="w-4 h-4" />

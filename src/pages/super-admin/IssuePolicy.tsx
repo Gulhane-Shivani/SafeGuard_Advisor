@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Shield, CheckCircle2, User, Calendar, 
+  Shield, CheckCircle2, User, 
   Heart, LayoutGrid, Briefcase, ArrowLeft, 
-  Mail, Phone, Activity, List, Check,
+  Check,
   ChevronRight, Info
 } from 'lucide-react';
-import { cn } from '../../utils/helpers';
+
 
 const PLAN_CATALOG = [
   { id: 'p1', name: 'Star Comprehensive Health', type: 'HEALTH INSURANCE', provider: 'Star Health', premium: '₹80,000', coverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment', 'Pre-Post Hospitalization'], benefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup', 'Restore Sum Insured'] },
