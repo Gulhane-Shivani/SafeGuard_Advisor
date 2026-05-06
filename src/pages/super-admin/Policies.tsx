@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, Plus, Eye, Edit3, Clock, AlertCircle, Activity, Check, LayoutGrid, Heart, User } from 'lucide-react';
+import { Shield, Plus, Eye, Edit3, Clock, AlertCircle, Activity, Check, LayoutGrid, Heart, User, IndianRupee } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
@@ -22,9 +22,9 @@ const getAutoStatus = (expiryDate: string) => {
 
 
 const PLAN_CATALOG = [
-  { id: 'p1', name: 'Star Comprehensive Health', type: 'HEALTH INSURANCE', provider: 'Star Health', premium: '₹80,000', coverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'], benefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup'] },
-  { id: 'p2', name: 'LIC Tech Term', type: 'LIFE INSURANCE', provider: 'LIC of India', premium: '₹45,000', coverage: ['Death Benefit', 'Critical Illness Cover', 'Terminal Illness'], benefits: ['Tax Savings U/S 80C', 'Accidental Death Rider', 'Flexible Payouts'] },
-  { id: 'p3', name: 'Bajaj Car Insurance', type: 'MOTOR INSURANCE', provider: 'Bajaj Allianz', premium: '₹12,500', coverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'], benefits: ['Zero Depreciation', 'Roadside Assistance', 'Engine Protector'] },
+  { id: 'p1', name: 'Star Comprehensive Health', type: 'HEALTH INSURANCE', provider: 'Star Health', premium: '₹80,000', coverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment', 'Pre-Post Hospitalization'], benefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup', 'Restore Sum Insured'] },
+  { id: 'p2', name: 'LIC Tech Term', type: 'LIFE INSURANCE', provider: 'LIC of India', premium: '₹45,000', coverage: ['Death Benefit', 'Critical Illness Cover', 'Terminal Illness', 'Accidental Death'], benefits: ['Tax Savings U/S 80C', 'Accidental Death Rider', 'Flexible Payouts', 'Level Premium'] },
+  { id: 'p3', name: 'Bajaj Car Insurance', type: 'MOTOR INSURANCE', provider: 'Bajaj Allianz', premium: '₹12,500', coverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire', 'Natural Calamities'], benefits: ['Zero Depreciation', 'Roadside Assistance', 'Engine Protector', 'Consumables Cover'] },
 ];
 
 const DEFAULT_POLICIES = [
@@ -99,9 +99,11 @@ const AdminPolicies: React.FC = () => {
     const updatedPolicies = policies.map((p: any) => 
       p.id === selectedPolicy.id ? { 
         ...p, 
+        premium: formData.premium,
         expiry: formData.endDate,
         customCoverage: formData.customCoverage,
-        customBenefits: formData.customBenefits
+        customBenefits: formData.customBenefits,
+        status: getAutoStatus(formData.endDate)
       } : p
     );
     setPolicies(updatedPolicies);
@@ -214,8 +216,8 @@ const AdminPolicies: React.FC = () => {
       <PlatformModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Edit Policy Records"
-        size="lg"
+        title="Edit Policy Details"
+        size="md"
       >
         <div className="space-y-8 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
           {/* Policy Hero Section - View Style */}
@@ -308,13 +310,26 @@ const AdminPolicies: React.FC = () => {
             </div>
 
             <div className="col-span-5 space-y-6">
-              {/* Expiry Editing */}
+              {/* Premium & Expiry Editing */}
               <section className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
                 <div className="flex items-center gap-2 text-orange-600 pb-3 border-b border-slate-50">
                   <Clock className="w-4 h-4" />
-                  <h3 className="text-[10px] font-black uppercase tracking-widest">Policy Period</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest">Financials & Dates</h3>
                 </div>
                 <div className="space-y-4">
+                  <div className="space-y-2">
+                    <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest ml-1">Premium Amount</label>
+                    <div className="relative">
+                      <IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                      <input 
+                        type="text" 
+                        value={formData.premium}
+                        onChange={e => setFormData({ ...formData, premium: e.target.value })}
+                        className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm font-black text-teal-600 outline-none focus:border-orange-500 transition-all shadow-inner"
+                        placeholder="e.g. ₹80,000"
+                      />
+                    </div>
+                  </div>
                   <div className="flex justify-between items-center">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Start Date</span>
                     <span className="text-xs font-black text-slate-900">{selectedPolicy?.startDate}</span>
@@ -328,10 +343,6 @@ const AdminPolicies: React.FC = () => {
                       className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-orange-500 transition-all shadow-inner"
                     />
                   </div>
-                  <div className="flex justify-between items-center pt-2">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Premium</span>
-                    <span className="text-xs font-black text-teal-600">{selectedPolicy?.premium}</span>
-                  </div>
                 </div>
               </section>
 
@@ -339,9 +350,9 @@ const AdminPolicies: React.FC = () => {
               <div className="p-4 bg-slate-900 rounded-2xl flex items-center justify-between text-white">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Current Status</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest">Live Status</span>
                 </div>
-                <span className="text-[10px] font-black uppercase text-emerald-400">{selectedPolicy?.status}</span>
+                <span className="text-[10px] font-black uppercase text-emerald-400">{getAutoStatus(formData.endDate)}</span>
               </div>
             </div>
           </div>
@@ -357,7 +368,7 @@ const AdminPolicies: React.FC = () => {
               onClick={handleUpdatePolicy}
               className="flex-[2] py-4 bg-teal-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-teal-700 transition-all shadow-xl shadow-teal-600/20 flex items-center justify-center gap-2"
             >
-              <Check className="w-4 h-4" /> Save Updated Records
+              <Check className="w-4 h-4" /> Save & Synchronize
             </button>
           </div>
         </div>
