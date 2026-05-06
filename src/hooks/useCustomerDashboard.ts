@@ -135,7 +135,7 @@ const MOCK_DATA = {
   ]
 };
 
-const getDynamicStatus = (endDateStr: string, currentStatus: string) => {
+const getDynamicStatus = (endDateStr: string) => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -183,7 +183,7 @@ export const useCustomerDashboard = () => {
       
       const processedMockPolicies = MOCK_DATA.policies.map(p => ({
         ...p,
-        status: getDynamicStatus(p.end_date, p.status)
+        status: getDynamicStatus(p.end_date)
       }));
 
       const allPolicies = [...storedPolicies, ...processedMockPolicies];
