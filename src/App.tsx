@@ -45,6 +45,7 @@ import AdminPayments from './pages/super-admin/Payments';
 import AdminNotifications from './pages/super-admin/Notifications';
 import { CustomerDetailView } from './pages/super-admin/CustomerDetailView';
 import { StaffDetailView } from './pages/super-admin/StaffDetailView';
+import { EditPolicy } from './pages/super-admin/EditPolicy';
 
 import AdminOverview from './pages/admin/AdminOverview';
 import LeadManagement from './pages/admin/LeadManagement';
@@ -111,6 +112,7 @@ const AppContent = () => {
                     <Route path="/policies" element={<AdminPolicies />} />
                     <Route path="/policies/issue" element={<IssuePolicy />} />
                     <Route path="/policies/:id" element={<PolicyDetailView />} />
+                    <Route path="/policies/:id/edit" element={<EditPolicy />} />
                     <Route path="/renewals" element={<AdminRenewals />} />
                     <Route path="/payments" element={<AdminPayments />} />
                     <Route path="/notifications" element={<AdminNotifications />} />
