@@ -21,19 +21,24 @@ const getAutoStatus = (expiryDate: string) => {
 };
 
 
+const PLAN_CATALOG = [
+  { id: 'p1', name: 'Star Comprehensive Health', type: 'HEALTH INSURANCE', provider: 'Star Health', premium: '₹80,000', coverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'], benefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup'] },
+  { id: 'p2', name: 'LIC Tech Term', type: 'LIFE INSURANCE', provider: 'LIC of India', premium: '₹45,000', coverage: ['Death Benefit', 'Critical Illness Cover', 'Terminal Illness'], benefits: ['Tax Savings U/S 80C', 'Accidental Death Rider', 'Flexible Payouts'] },
+  { id: 'p3', name: 'Bajaj Car Insurance', type: 'MOTOR INSURANCE', provider: 'Bajaj Allianz', premium: '₹12,500', coverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'], benefits: ['Zero Depreciation', 'Roadside Assistance', 'Engine Protector'] },
+];
 
 const DEFAULT_POLICIES = [
-  { id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', premium: '₹80,000', expiry: '2027-05-02' },
-  { id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE', premium: '₹12,500', expiry: '2027-08-15' },
-  { id: 'SG-LIFE-001', name: 'LIC Tech Term', customer: 'Sneh Lata', email: 'sneh.lata@example.com', phone: '+91 77665 44332', type: 'LIFE INSURANCE', premium: '₹45,000', expiry: '2023-12-20' }, // Expired
-  { id: 'SG-HLTH-005', name: 'HDFC Optima Restore', customer: 'Rahul Verma', email: 'rahul.v@example.com', phone: '+91 99887 77665', type: 'HEALTH INSURANCE', premium: '₹65,000', expiry: '2026-11-10' },
-  { id: 'SG-MOTR-009', name: 'TATA AIG Motor', customer: 'Arun Jha', email: 'arun.jha@example.com', phone: '+91 66554 44332', type: 'MOTOR INSURANCE', premium: '₹18,000', expiry: '2024-01-15' }, // Expired
+  { id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', premium: '₹80,000', expiry: '2027-05-02', startDate: '2022-05-02', nomineeName: 'Anita Mehta', nomineeRelation: 'Spouse' },
+  { id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE', premium: '₹12,500', expiry: '2027-08-15', startDate: '2023-08-15', nomineeName: 'Karan Singh', nomineeRelation: 'Child' },
+  { id: 'SG-LIFE-001', name: 'LIC Tech Term', customer: 'Sneh Lata', email: 'sneh.lata@example.com', phone: '+91 77665 44332', type: 'LIFE INSURANCE', premium: '₹45,000', expiry: '2023-12-20', startDate: '2019-12-20', nomineeName: 'Madan Lal', nomineeRelation: 'Parent' },
+  { id: 'SG-HLTH-005', name: 'HDFC Optima Restore', customer: 'Rahul Verma', email: 'rahul.v@example.com', phone: '+91 99887 77665', type: 'HEALTH INSURANCE', premium: '₹65,000', expiry: '2026-11-10', startDate: '2021-11-10', nomineeName: 'Seema Verma', nomineeRelation: 'Spouse' },
+  { id: 'SG-MOTR-009', name: 'TATA AIG Motor', customer: 'Arun Jha', email: 'arun.jha@example.com', phone: '+91 66554 44332', type: 'MOTOR INSURANCE', premium: '₹18,000', expiry: '2024-01-15', startDate: '2020-01-15', nomineeName: 'Priya Jha', nomineeRelation: 'Spouse' },
 ];
 
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
 
-  const [policies] = useState(() => {
+  const [policies, setPolicies] = useState(() => {
     const saved = localStorage.getItem('safeguard_policies');
     const baseData = saved ? JSON.parse(saved) : DEFAULT_POLICIES;
     // Map with auto-calculated status
@@ -48,8 +53,51 @@ const AdminPolicies: React.FC = () => {
   }, [policies]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [, setModalMode] = useState<'add' | 'edit'>('add');
   const [selectedPolicy, setSelectedPolicy] = useState<any>(null);
+
+  const [formData, setFormData] = useState({
+    customer: '',
+    email: '',
+    phone: '',
+    startDate: '',
+    endDate: '',
+    planId: '',
+    type: '',
+    provider: '',
+    name: '',
+    premium: '',
+    nomineeName: '',
+    nomineeRelation: '',
+    status: 'ACTIVE'
+  });
+
+  const handleEdit = (policy: any) => {
+    setSelectedPolicy(policy);
+    setFormData({
+      customer: policy.customer || '',
+      email: policy.email || '',
+      phone: policy.phone || '',
+      startDate: policy.startDate || '',
+      endDate: policy.expiry || '',
+      planId: policy.planId || '',
+      type: policy.type || '',
+      provider: policy.provider || '',
+      name: policy.name || '',
+      premium: policy.premium || '',
+      nomineeName: policy.nomineeName || '',
+      nomineeRelation: policy.nomineeRelation || '',
+      status: policy.status || 'ACTIVE'
+    });
+    setIsModalOpen(true);
+  };
+
+  const handleUpdatePolicy = () => {
+    const updatedPolicies = policies.map((p: any) => 
+      p.id === selectedPolicy.id ? { ...p, ...formData, expiry: formData.endDate } : p
+    );
+    setPolicies(updatedPolicies);
+    setIsModalOpen(false);
+  };
 
 
 
@@ -95,7 +143,7 @@ const AdminPolicies: React.FC = () => {
       render: (_: string, row: any) => (
         <div className="flex items-center gap-2">
           <button onClick={() => navigate(`/super-admin/policies/${row.id}`)} className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all"><Eye className="w-4 h-4" /></button>
-          <button onClick={() => { setSelectedPolicy(row); setModalMode('edit'); setIsModalOpen(true); }} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all"><Edit3 className="w-4 h-4" /></button>
+          <button onClick={() => handleEdit(row)} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all"><Edit3 className="w-4 h-4" /></button>
         </div>
       )
     }
@@ -152,9 +200,108 @@ const AdminPolicies: React.FC = () => {
         size="md"
       >
         <p className="text-sm font-bold text-slate-500 mb-6">Updating policy information for {selectedPolicy?.customer}</p>
-        <div className="space-y-4">
-          {/* Form fields here */}
-          <button onClick={() => setIsModalOpen(false)} className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest">Update Policy</button>
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Customer Name</label>
+              <input 
+                type="text" 
+                value={formData.customer}
+                onChange={e => setFormData({ ...formData, customer: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Contact Phone</label>
+              <input 
+                type="text" 
+                value={formData.phone}
+                onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Plan Selection</label>
+            <select 
+              value={formData.planId}
+              onChange={e => {
+                const plan = PLAN_CATALOG.find(p => p.id === e.target.value);
+                if (plan) {
+                  setFormData({
+                    ...formData,
+                    planId: plan.id,
+                    name: plan.name,
+                    type: plan.type,
+                    premium: plan.premium
+                  });
+                }
+              }}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all appearance-none"
+            >
+              <option value="">Select Plan...</option>
+              {PLAN_CATALOG.map(p => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Issuance Date</label>
+              <input 
+                type="date" 
+                value={formData.startDate}
+                onChange={e => setFormData({ ...formData, startDate: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Expiry Date</label>
+              <input 
+                type="date" 
+                value={formData.endDate}
+                onChange={e => setFormData({ ...formData, endDate: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Nominee Name</label>
+              <input 
+                type="text" 
+                value={formData.nomineeName}
+                onChange={e => setFormData({ ...formData, nomineeName: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all"
+              />
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Relationship</label>
+              <select 
+                value={formData.nomineeRelation}
+                onChange={e => setFormData({ ...formData, nomineeRelation: e.target.value })}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-teal-500 transition-all appearance-none"
+              >
+                <option value="">Select...</option>
+                <option value="Spouse">Spouse</option>
+                <option value="Child">Child</option>
+                <option value="Parent">Parent</option>
+                <option value="Sibling">Sibling</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="pt-4">
+            <button 
+              onClick={handleUpdatePolicy}
+              className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10"
+            >
+              Update Policy Records
+            </button>
+          </div>
         </div>
       </PlatformModal>
     </div>
