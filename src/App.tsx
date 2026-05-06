@@ -37,6 +37,10 @@ import UserManagement from './pages/super-admin/UserManagement';
 import MasterSettings from './pages/super-admin/Settings';
 import Reports from './pages/super-admin/Reports';
 import SystemConfig from './pages/super-admin/Config';
+import AdminPolicies from './pages/super-admin/Policies';
+import AdminRenewals from './pages/super-admin/Renewals';
+import AdminPayments from './pages/super-admin/Payments';
+import AdminNotifications from './pages/super-admin/Notifications';
 
 import AdminOverview from './pages/admin/AdminOverview';
 import LeadManagement from './pages/admin/LeadManagement';
@@ -100,6 +104,10 @@ const AppContent = () => {
                     <Route path="/settings" element={<MasterSettings />} />
                     <Route path="/reports" element={<Reports />} />
                     <Route path="/config" element={<SystemConfig />} />
+                    <Route path="/policies" element={<AdminPolicies />} />
+                    <Route path="/renewals" element={<AdminRenewals />} />
+                    <Route path="/payments" element={<AdminPayments />} />
+                    <Route path="/notifications" element={<AdminNotifications />} />
                   </Routes>
                 </DashboardLayout>
               </PlatformProvider>

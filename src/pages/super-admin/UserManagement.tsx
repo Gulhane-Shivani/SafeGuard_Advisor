@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { UserPlus, Shield, MapPin } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
@@ -7,6 +8,9 @@ import { cn } from '../../utils/helpers';
 import API from '../../api/baseurl';
 
 const UserManagement: React.FC = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentTab = searchParams.get('tab') as 'staff' | 'customers' || 'staff';
+  const [activeTab, setActiveTab] = useState<'staff' | 'customers'>(currentTab);
   const [users, setUsers] = useState<any[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newUser, setNewUser] = useState({ full_name: '', email: '', role: 'AGENT', primary_branch: 'Main Branch' });
@@ -19,14 +23,23 @@ const UserManagement: React.FC = () => {
       setUsers(response.data);
     } catch (err: any) {
       setError(err.response?.data?.detail || 'Failed to fetch users');
-    } finally {
-      // Fetch complete
     }
   };
 
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useEffect(() => {
+    if (currentTab !== activeTab) {
+      setActiveTab(currentTab);
+    }
+  }, [currentTab]);
+
+  const handleTabChange = (tab: 'staff' | 'customers') => {
+    setActiveTab(tab);
+    setSearchParams({ tab });
+  };
 
   const columns = [
     {
@@ -52,7 +65,9 @@ const UserManagement: React.FC = () => {
           "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
           val === 'SUPER_ADMIN' ? "bg-purple-50 text-purple-600 border-purple-100" :
             val === 'ADMIN' ? "bg-blue-50 text-blue-600 border-blue-100" :
-              val === 'AGENT' ? "bg-teal-50 text-teal-600 border-teal-100" : "bg-orange-50 text-orange-600 border-orange-100"
+              val === 'AGENT' ? "bg-teal-50 text-teal-600 border-teal-100" :
+                val === 'CSR' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                  "bg-indigo-50 text-indigo-600 border-indigo-100"
         )}>
           {val.replace('_', ' ')}
         </span>
@@ -120,29 +135,65 @@ const UserManagement: React.FC = () => {
     }
   };
 
+  const filteredUsers = users.filter(u => {
+    const role = u.role?.toUpperCase();
+    if (activeTab === 'staff') {
+      return ['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR'].includes(role);
+    }
+    return role === 'CUSTOMER';
+  });
+
   return (
     <div className="space-y-10">
       <SectionHeader
         title="User & Access Control"
         description="Manage organizational hierarchy, assign roles, and control system access permissions for all staff members."
         actions={
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-xl shadow-teal-600/20 flex items-center gap-2"
-          >
-            <UserPlus className="w-4 h-4" /> Add New User
-          </button>
+          activeTab === 'staff' && (
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-xl shadow-teal-600/20 flex items-center gap-2"
+            >
+              <UserPlus className="w-4 h-4" /> Add New Staff
+            </button>
+          )
         }
       />
 
       {error && <div className="p-4 bg-red-50 text-red-600 rounded-xl font-bold text-xs">{error}</div>}
       {success && <div className="p-4 bg-teal-50 text-teal-600 rounded-xl font-bold text-xs">{success}</div>}
 
+      {/* Tab Switcher */}
+      <div className="flex bg-white p-1 rounded-2xl border border-slate-100 w-fit">
+        <button
+          onClick={() => handleTabChange('staff')}
+          className={cn(
+            "px-8 py-2.5 rounded-xl text-xs font-black transition-all",
+            activeTab === 'staff' 
+              ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20" 
+              : "text-slate-400 hover:text-slate-900 hover:bg-slate-50"
+          )}
+        >
+          Staff Members
+        </button>
+        <button
+          onClick={() => handleTabChange('customers')}
+          className={cn(
+            "px-8 py-2.5 rounded-xl text-xs font-black transition-all",
+            activeTab === 'customers' 
+              ? "bg-slate-900 text-white shadow-lg shadow-slate-900/20" 
+              : "text-slate-400 hover:text-slate-900 hover:bg-slate-50"
+          )}
+        >
+          Customers
+        </button>
+      </div>
+
       <PlatformTable
-        title="Active Users"
-        description="Showing all registered staff and administrators"
+        title={activeTab === 'staff' ? "Staff Directory" : "Customer Database"}
+        description={activeTab === 'staff' ? "Showing all registered staff and administrators" : "Showing all registered customers"}
         columns={columns}
-        data={users.map(u => {
+        data={filteredUsers.map(u => {
           const displayName = (u.full_name && u.full_name !== 'Anonymous') ? u.full_name : (u.email || u.mobile || 'Unknown User');
           return {
             id: u.id,
@@ -155,7 +206,7 @@ const UserManagement: React.FC = () => {
           };
         })}
         filterKey="role"
-        filterOptions={['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR', 'CUSTOMER']}
+        filterOptions={activeTab === 'staff' ? ['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR'] : ['CUSTOMER']}
         onToggle={(user) => toggleStatus(user)}
         onDelete={(user) => handleDeleteUser(user.id)}
       />
@@ -163,7 +214,7 @@ const UserManagement: React.FC = () => {
       <PlatformModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="Create New User Account"
+        title="Create New Staff Account"
         footer={
           <>
             <button onClick={() => setIsModalOpen(false)} className="px-6 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 transition-all uppercase tracking-widest">Cancel</button>
@@ -204,7 +255,6 @@ const UserManagement: React.FC = () => {
                 <option value="ADMIN">Admin</option>
                 <option value="CSR">CSR</option>
                 <option value="SUPER_ADMIN">Super Admin</option>
-                <option value="CUSTOMER">Customer</option>
               </select>
             </div>
             <div className="space-y-2">
