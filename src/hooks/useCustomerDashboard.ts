@@ -135,6 +135,27 @@ const MOCK_DATA = {
   ]
 };
 
+const getDynamicStatus = (endDateStr: string, currentStatus: string) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const end = new Date(endDateStr);
+  end.setHours(0, 0, 0, 0);
+
+  if (end < today) {
+    return 'Expired';
+  }
+  
+  const diffTime = end.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays <= 30 && diffDays >= 0) {
+    return 'Renewal Due';
+  }
+
+  return 'Active';
+};
+
 export const useCustomerDashboard = () => {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -160,6 +181,14 @@ export const useCustomerDashboard = () => {
         totalCoverageVal += 1000000; // Adding 10 Lakh per new policy for demo
       });
       
+      const processedMockPolicies = MOCK_DATA.policies.map(p => ({
+        ...p,
+        status: getDynamicStatus(p.end_date, p.status)
+      }));
+
+      const allPolicies = [...storedPolicies, ...processedMockPolicies];
+      const activePoliciesCount = allPolicies.filter(p => p.status === 'Active' || p.status === 'Renewal Due').length;
+
       setData({
         ...MOCK_DATA,
         profile: {
@@ -167,9 +196,10 @@ export const useCustomerDashboard = () => {
           name: user?.name || MOCK_DATA.profile.name,
           email: user?.email || MOCK_DATA.profile.email,
         },
-        policies: [...storedPolicies, ...MOCK_DATA.policies],
+        policies: allPolicies,
         stats: {
-          totalPolicies: MOCK_DATA.stats.activePolicies + storedPolicies.length,
+          totalPolicies: allPolicies.length,
+          activePolicies: activePoliciesCount,
           totalSumAssured: `₹${totalCoverageVal.toLocaleString('en-IN')}`,
           totalPremium: `₹${totalPremiumVal.toLocaleString('en-IN')}`,
           pendingClaims: MOCK_DATA.stats.pendingClaims
