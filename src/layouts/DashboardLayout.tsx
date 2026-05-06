@@ -25,7 +25,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const { role, setRole } = usePlatform();
   const { state, logout } = useAppStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['sa-users']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const location = useLocation();
 
   React.useEffect(() => {
