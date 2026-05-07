@@ -169,7 +169,6 @@ const AdminPolicies: React.FC = () => {
         data={policies}
         filterKey="status"
         filterOptions={['ACTIVE', 'RENEWAL DUE', 'EXPIRED']}
-        onView={handleViewCustomer}
       />
 
       {/* Profile Modal */}
