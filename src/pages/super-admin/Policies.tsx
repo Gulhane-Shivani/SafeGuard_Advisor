@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Shield, Plus, Eye, Edit3, Clock, AlertCircle, Activity, RefreshCw } from 'lucide-react';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
-import { useNavigate } from 'react-router-dom';
+import { PlatformModal } from '../../components/platform/PlatformModal';
+import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/helpers';
 
 // Helper to determine status from expiry date
@@ -18,6 +20,7 @@ const getAutoStatus = (expiryDate: string) => {
 
   return 'ACTIVE';
 };
+
 const DEFAULT_POLICIES = [
   { id: 'SG-HLTH-002', name: 'Star Comprehensive Health', customer: 'Vijay Mehta', email: 'vijay.mehta@example.com', phone: '+91 98765 43210', type: 'HEALTH INSURANCE', premium: '₹80,000', expiry: '2027-05-02', startDate: '2022-05-02', nomineeName: 'Anita Mehta', nomineeRelation: 'Spouse', customCoverage: ['In-patient Hospitalization', 'Day Care Procedures', 'AYUSH Treatment'], customBenefits: ['Cashless Treatment', 'No Claim Bonus', 'Free Health Checkup'] },
   { id: 'SG-MOTR-003', name: 'Bajaj Car Insurance', customer: 'Deepak Singh', email: 'deepak.s@example.com', phone: '+91 88776 55443', type: 'MOTOR INSURANCE', premium: '₹12,500', expiry: '2027-08-15', startDate: '2023-08-15', nomineeName: 'Karan Singh', nomineeRelation: 'Child', customCoverage: ['Third Party Liability', 'Own Damage', 'Theft & Fire'], customBenefits: ['Zero Depreciation', 'Roadside Assistance'] },
@@ -28,6 +31,8 @@ const DEFAULT_POLICIES = [
 
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/super-admin') ? '/super-admin' : '/admin';
 
   const [policies, setPolicies] = useState(() => {
     const saved = localStorage.getItem('safeguard_policies');
@@ -39,9 +44,23 @@ const AdminPolicies: React.FC = () => {
     }));
   });
 
+  const [viewingCustomer, setViewingCustomer] = useState<any>(null);
+
   useEffect(() => {
     localStorage.setItem('safeguard_policies', JSON.stringify(policies));
   }, [policies]);
+
+  const handleViewCustomer = (policy: any) => {
+    setViewingCustomer({
+      name: policy.customer,
+      email: policy.email || `${policy.customer.toLowerCase().replace(' ', '.')}@email.com`,
+      phone: policy.phone || '+91 98765 43210',
+      avatar: policy.customer.charAt(0).toUpperCase(),
+      address: 'Sector 42, Golf Course Road, Gurgaon, Haryana - 122001',
+      dob: '15 Aug 1985',
+      status: 'Active'
+    });
+  };
 
   const handleRenew = (id: string) => {
     const updatedPolicies = policies.map((p: any) => {
@@ -63,7 +82,7 @@ const AdminPolicies: React.FC = () => {
       header: 'POLICY DETAILS',
       accessor: 'id',
       render: (val: string, row: any) => (
-        <div className="group cursor-pointer" onClick={() => navigate(`/super-admin/policies/${row.id}`)}>
+        <div className="group cursor-pointer" onClick={() => navigate(`${basePath}/policies/${row.id}`)}>
           <p className="font-black text-slate-900 leading-none group-hover:text-teal-600 transition-colors">{val}</p>
           <p className="text-[10px] text-slate-400 font-bold uppercase mt-1 tracking-wider">{row.type}</p>
         </div>
@@ -99,8 +118,8 @@ const AdminPolicies: React.FC = () => {
       accessor: 'id',
       render: (_: string, row: any) => (
         <div className="flex items-center gap-2">
-          <button onClick={() => navigate(`/super-admin/policies/${row.id}`)} className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all" title="View Details"><Eye className="w-4 h-4" /></button>
-          <button onClick={() => navigate(`/super-admin/policies/${row.id}/edit`)} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all" title="Edit Records"><Edit3 className="w-4 h-4" /></button>
+          <button onClick={() => navigate(`${basePath}/policies/${row.id}`)} className="p-1.5 hover:bg-teal-50 rounded-lg text-slate-400 hover:text-teal-600 transition-all" title="View Details"><Eye className="w-4 h-4" /></button>
+          <button onClick={() => navigate(`${basePath}/policies/${row.id}/edit`)} className="p-1.5 hover:bg-blue-50 rounded-lg text-slate-400 hover:text-blue-600 transition-all" title="Edit Records"><Edit3 className="w-4 h-4" /></button>
           {row.status !== 'ACTIVE' && (
             <button onClick={() => handleRenew(row.id)} className="p-1.5 hover:bg-emerald-50 rounded-lg text-slate-400 hover:text-emerald-600 transition-all" title="Instant Renewal"><RefreshCw className="w-4 h-4" /></button>
           )}
@@ -116,7 +135,7 @@ const AdminPolicies: React.FC = () => {
         description="Monitor active policies, track upcoming renewals, and manage policy servicing operations for all customers."
         actions={
           <button
-            onClick={() => navigate('/super-admin/policies/issue')}
+            onClick={() => navigate(`${basePath}/policies/issue`)}
             className="px-6 py-2.5 bg-teal-600 text-white rounded-xl font-bold text-xs hover:bg-teal-700 transition-all shadow-lg shadow-teal-600/20 flex items-center gap-2"
           >
             <Plus className="w-4 h-4" /> New Policy
@@ -150,7 +169,23 @@ const AdminPolicies: React.FC = () => {
         data={policies}
         filterKey="status"
         filterOptions={['ACTIVE', 'RENEWAL DUE', 'EXPIRED']}
+        onView={handleViewCustomer}
       />
+
+      {/* Profile Modal */}
+      <PlatformModal
+        isOpen={!!viewingCustomer}
+        onClose={() => setViewingCustomer(null)}
+        title="Customer Profile View"
+        size="lg"
+      >
+        {viewingCustomer && (
+          <CustomerProfileDetail 
+            user={viewingCustomer}
+            showBankDetails={false}
+          />
+        )}
+      </PlatformModal>
     </div>
   );
 };

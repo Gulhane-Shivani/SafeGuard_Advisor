@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import {
   Shield, CheckCircle2, Download, CreditCard,
   User, Calendar, Heart, LayoutGrid,
@@ -69,6 +69,8 @@ const generateOfficialHistory = (startDate: string, expiryDate: string, premium:
 export const PolicyDetailView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/super-admin') ? '/super-admin' : '/admin';
 
   const [policies] = useState(() => {
     const saved = localStorage.getItem('safeguard_policies');
@@ -144,7 +146,7 @@ SafeGuard Advisor Global Portfolio Management
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-20">
       {/* Header */}
       <div className="flex items-center gap-3">
-        <button onClick={() => navigate('/super-admin/policies')} className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 transition-all shadow-sm">
+        <button onClick={() => navigate(`${basePath}/policies`)} className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 transition-all shadow-sm">
           <ArrowLeft className="w-4 h-4" />
         </button>
         <div>

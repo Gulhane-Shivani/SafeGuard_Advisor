@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Shield, CheckCircle2, User, 
   Heart, LayoutGrid, Briefcase, ArrowLeft, 
@@ -16,6 +16,8 @@ const PLAN_CATALOG = [
 
 export const IssuePolicy: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/super-admin') ? '/super-admin' : '/admin';
   const [showSuccess, setShowSuccess] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -85,7 +87,7 @@ export const IssuePolicy: React.FC = () => {
         <div className="flex items-center justify-between pt-8 pb-4">
           <div className="flex items-center gap-5">
             <button 
-              onClick={() => navigate('/super-admin/policies')}
+              onClick={() => navigate(`${basePath}/policies`)}
               className="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-400 hover:text-teal-600 hover:border-teal-200 transition-all shadow-sm"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -319,7 +321,7 @@ export const IssuePolicy: React.FC = () => {
                       </button>
                       <button 
                         type="button"
-                        onClick={() => navigate('/super-admin/policies')}
+                        onClick={() => navigate(`${basePath}/policies`)}
                         className="w-full py-4 bg-white border border-slate-200 text-slate-400 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-slate-50 transition-all"
                       >
                         Cancel
@@ -347,7 +349,7 @@ export const IssuePolicy: React.FC = () => {
               The insurance policy has been issued successfully and added to the global portfolio.
             </p>
             <button 
-              onClick={() => navigate('/super-admin/policies')}
+              onClick={() => navigate(`${basePath}/policies`)}
               className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/20"
             >
               Go to Dashboard

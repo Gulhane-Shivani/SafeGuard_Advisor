@@ -10,6 +10,7 @@ import autoTable from 'jspdf-autotable';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
+import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
 import { usePlatform } from '../../store/PlatformContext';
 import { cn } from '../../utils/helpers';
 
@@ -19,6 +20,7 @@ const PolicyManagement: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<any>(null);
+  const [viewingCustomer, setViewingCustomer] = useState<any>(null);
   const [newPolicy, setNewPolicy] = useState({
     policyNumber: '',
     customerName: '',
@@ -27,6 +29,18 @@ const PolicyManagement: React.FC = () => {
     status: 'Active',
     endDate: '2024-12-31'
   });
+
+  const handleViewCustomer = (policy: any) => {
+    setViewingCustomer({
+      name: policy.customerName,
+      email: `${policy.customerName.toLowerCase().replace(' ', '.')}@email.com`,
+      phone: '+91 98765 43210',
+      avatar: policy.customerName.charAt(0).toUpperCase(),
+      address: 'Sector 42, Golf Course Road, Gurgaon, Haryana - 122001',
+      dob: '15 Aug 1985',
+      status: 'Active'
+    });
+  };
 
   const columns = [
     { 
@@ -182,6 +196,7 @@ const PolicyManagement: React.FC = () => {
         data={filteredPolicies}
         filterKey="status"
         filterOptions={['Active', 'Renewal Due', 'Reminder Sent']}
+        onView={handleViewCustomer}
         onEdit={(policy) => {
           setEditingPolicy(policy);
           setIsModalOpen(true);
@@ -222,6 +237,21 @@ const PolicyManagement: React.FC = () => {
          </div>
          <Clock className="absolute -right-10 -bottom-10 w-64 h-64 text-white/5 pointer-events-none group-hover:scale-110 transition-all duration-1000" />
       </div>
+
+      {/* Profile Modal */}
+      <PlatformModal
+        isOpen={!!viewingCustomer}
+        onClose={() => setViewingCustomer(null)}
+        title="Customer Profile View"
+        size="lg"
+      >
+        {viewingCustomer && (
+          <CustomerProfileDetail 
+            user={viewingCustomer}
+            showBankDetails={false}
+          />
+        )}
+      </PlatformModal>
 
       {/* Policy Modal */}
       <PlatformModal

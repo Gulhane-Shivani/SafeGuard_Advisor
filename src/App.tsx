@@ -49,7 +49,6 @@ import { EditPolicy } from './pages/super-admin/EditPolicy';
 
 import AdminOverview from './pages/admin/AdminOverview';
 import LeadManagement from './pages/admin/LeadManagement';
-import PolicyManagement from './pages/admin/PolicyManagement';
 import TeamPerformance from './pages/admin/TeamPerformance';
 import Customer360 from './pages/admin/Customer360';
 import Approvals from './pages/admin/Approvals';
@@ -131,11 +130,18 @@ const AppContent = () => {
                   <Routes>
                     <Route path="/" element={<AdminOverview />} />
                     <Route path="/leads" element={<LeadManagement />} />
-                    <Route path="/policies" element={<PolicyManagement />} />
+                    <Route path="/policies" element={<AdminPolicies />} />
+                    <Route path="/policies/issue" element={<IssuePolicy />} />
+                    <Route path="/policies/:id" element={<PolicyDetailView />} />
+                    <Route path="/policies/:id/edit" element={<EditPolicy />} />
                     <Route path="/team" element={<TeamPerformance />} />
+
                     <Route path="/customers" element={<Customer360 />} />
                     <Route path="/approvals" element={<Approvals />} />
                     <Route path="/commission" element={<CommissionView />} />
+                    <Route path="/renewals" element={<AdminRenewals />} />
+                    
+
                   </Routes>
                 </DashboardLayout>
               </PlatformProvider>

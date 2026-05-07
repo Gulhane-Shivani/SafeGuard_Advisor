@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   Shield, Clock, Activity, Check, LayoutGrid, Heart, User, 
   ArrowLeft, IndianRupee, Save, X
@@ -25,6 +25,8 @@ const getAutoStatus = (expiryDate: string) => {
 export const EditPolicy: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const basePath = location.pathname.startsWith('/super-admin') ? '/super-admin' : '/admin';
 
   const [policies, setPolicies] = useState<any[]>(() => {
     const saved = localStorage.getItem('safeguard_policies');
@@ -66,7 +68,7 @@ export const EditPolicy: React.FC = () => {
     );
     localStorage.setItem('safeguard_policies', JSON.stringify(updatedPolicies));
     setPolicies(updatedPolicies);
-    navigate(`/super-admin/policies/${id}`);
+    navigate(`${basePath}/policies/${id}`);
   };
 
   const toggleListItem = (item: string, field: 'customCoverage' | 'customBenefits') => {
