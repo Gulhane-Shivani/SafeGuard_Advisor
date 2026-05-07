@@ -105,11 +105,11 @@ export const CustomerDetailView: React.FC = () => {
         }
 
         if (policy) {
-          const pName = policy.customerName;
+          const pName = (policy as any).customerName || (policy as any).customer || 'Customer';
           setCustomer({
             id: policy.id,
             name: pName,
-            email: `${pName.toLowerCase().replace(' ', '.')}@email.com`,
+            email: `${pName.toLowerCase().replace(/\s+/g, '.')}@email.com`,
             phone: '+91 98765 43210',
             avatar: pName.charAt(0).toUpperCase(),
             status: 'Active'
