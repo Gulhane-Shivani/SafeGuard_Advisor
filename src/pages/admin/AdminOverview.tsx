@@ -257,43 +257,6 @@ const AdminOverview: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-slate-900 p-10 rounded-[3rem] text-white overflow-hidden relative">
-         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-            <div className="space-y-6">
-               <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/10 rounded-full border border-white/10">
-                  <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest">Urgent Alerts</span>
-               </div>
-               <h3 className="text-3xl font-black leading-tight">15 Policy Renewals <br /> Due This Week</h3>
-               <p className="text-slate-400 text-sm max-w-sm">There are 15 high-value policies due for renewal in the next 7 days. Assign them to agents immediately to prevent lapse.</p>
-               <button 
-                onClick={() => navigate('/admin/policies')}
-                className="px-8 py-3 bg-teal-500 text-white rounded-xl font-bold text-sm hover:bg-teal-600 transition-all shadow-xl shadow-teal-500/20"
-              >
-                  Manage Renewals
-               </button>
-            </div>
-            <div className="hidden md:block">
-               <div className="bg-white/5 border border-white/10 p-8 rounded-[2.5rem] backdrop-blur-xl space-y-6">
-                  {[1, 2, 3].map(i => (
-                     <div key={i} className="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/5">
-                        <div className="flex items-center gap-3">
-                           <div className="w-10 h-10 rounded-xl bg-orange-500/20 text-orange-400 flex items-center justify-center font-black">
-                              {i}
-                           </div>
-                           <div>
-                              <p className="text-sm font-bold">Policy Renewal #{1000 + i}</p>
-                              <p className="text-[10px] text-slate-500 font-bold uppercase">Customer: Alice Johnson</p>
-                           </div>
-                        </div>
-                        <span className="text-xs font-black text-orange-400">₹1,20,000</span>
-                     </div>
-                  ))}
-               </div>
-            </div>
-         </div>
-         <PieChart className="absolute -left-20 -bottom-20 w-80 h-80 text-white/5 pointer-events-none" />
-      </div>
     </div>
   );
 };
