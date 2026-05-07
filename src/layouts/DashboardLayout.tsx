@@ -74,8 +74,8 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
         return [
           { id: 'adm-overview', label: 'Overview', icon: LayoutDashboard, path: '/admin' },
           { id: 'adm-leads', label: 'Lead Management', icon: TrendingUp, path: '/admin/leads' },
-          { id: 'adm-renewals', label: 'Renewals', icon: Clock, path: '/admin/renewals' },
           { id: 'adm-policies', label: 'Policy Management', icon: Shield, path: '/admin/policies' },
+          { id: 'adm-renewals', label: 'Renewals', icon: Clock, path: '/admin/renewals' },
           { id: 'adm-team', label: 'Team Performance', icon: BarChart3, path: '/admin/team' },
           { id: 'adm-customers', label: 'Customer 360', icon: Users, path: '/admin/customers' },
           { id: 'adm-approvals', label: 'Approvals', icon: CheckSquare, path: '/admin/approvals' },
