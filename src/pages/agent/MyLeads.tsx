@@ -20,8 +20,8 @@ const MyLeads: React.FC = () => {
   const [note, setNote] = useState('');
 
   const handleViewProfile = (lead: any) => {
-    // Navigate to lead intelligence (using customer detail view for now)
-    navigate(`/agent/customers/${lead.id}`);
+    // Navigate to lead intelligence (using leads route to keep sidebar on "My Leads")
+    navigate(`/agent/leads/${encodeURIComponent(lead.name)}`);
   };
 
   const columns = [

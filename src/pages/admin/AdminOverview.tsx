@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Shield, TrendingUp, BarChart3, 
   CheckCircle2, Clock, 
-  IndianRupee, PieChart as LucidePieChart,
   Users, AlertCircle, FileCheck,
-  ArrowUpRight, Zap
+  ArrowUpRight
 } from 'lucide-react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
@@ -33,7 +31,6 @@ const RENEWAL_SUCCESS_DATA = [
 
 const AdminOverview: React.FC = () => {
   const { data } = usePlatform();
-  const navigate = useNavigate();
   const [timeFilter, setTimeFilter] = useState('Weekly');
 
   // Simulated dynamic data based on filter
@@ -218,7 +215,6 @@ const AdminOverview: React.FC = () => {
                  <h3 className="font-bold text-slate-900">Lead Conversion Pipeline</h3>
                  <p className="text-xs text-slate-400 font-bold uppercase mt-1">Lead Flow Status</p>
               </div>
-              <LucidePieChart className="w-5 h-5 text-slate-400" />
            </div>
            
            <div className="flex-grow space-y-6 flex flex-col justify-center">

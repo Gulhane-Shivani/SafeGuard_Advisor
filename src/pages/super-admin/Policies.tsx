@@ -88,7 +88,15 @@ const AdminPolicies: React.FC = () => {
         </div>
       )
     },
-    { header: 'CUSTOMER', accessor: 'customer' },
+    { 
+      header: 'CUSTOMER', 
+      accessor: 'customer',
+      render: (val: string, row: any) => (
+        <button onClick={() => handleViewCustomer(row)} className="text-left font-bold text-slate-900 hover:text-teal-600 transition-colors">
+          {val}
+        </button>
+      )
+    },
     { header: 'PREMIUM', accessor: 'premium' },
     {
       header: 'STATUS',

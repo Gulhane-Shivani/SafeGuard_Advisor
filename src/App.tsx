@@ -156,6 +156,7 @@ const AppContent = () => {
                   <Routes>
                     <Route path="/" element={<AgentOverview />} />
                     <Route path="/leads" element={<MyLeads />} />
+                    <Route path="/leads/:id" element={<CustomerDetailView />} />
                     <Route path="/customers" element={<MyCustomers />} />
                     <Route path="/customers/:id" element={<CustomerDetailView />} />
                     <Route path="/quote" element={<QuoteGenerator />} />

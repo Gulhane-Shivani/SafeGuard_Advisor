@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, Receipt,
   TrendingUp, Star, Users,
-  Zap, LayoutGrid, Shield, Eye
+  Zap, Eye
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
@@ -25,6 +25,7 @@ export const CustomerDetailView: React.FC = () => {
     if (location.pathname.includes('/super-admin/users/customers/')) return '/super-admin/users?tab=customers';
     if (location.pathname.includes('/admin/customers/')) return '/admin/customers';
     if (location.pathname.includes('/agent/customers/')) return '/agent/customers';
+    if (location.pathname.includes('/agent/leads/')) return '/agent/leads';
     return basePath;
   };
 
@@ -35,7 +36,7 @@ export const CustomerDetailView: React.FC = () => {
     const banks = ['HDFC Bank', 'ICICI Bank', 'SBI', 'Axis Bank', 'Kotak Mahindra'];
     
     // Check if we have real policies for this name in our context
-    const realPolicies = data.policies.filter(p => p.customerName === name || p.customer === name);
+    const realPolicies = data.policies.filter(p => p.customerName === name);
     
     const displayPolicies = realPolicies.length > 0 ? realPolicies.map(p => ({
       id: p.id,
@@ -85,9 +86,10 @@ export const CustomerDetailView: React.FC = () => {
     const fetchCustomer = async () => {
       setLoading(true);
       try {
+        const decodedId = decodeURIComponent(id || '');
         // 1. Try to find in local data first (policies/leads)
-        const lead = data.leads.find(l => String(l.id) === String(id));
-        const policy = data.policies.find(p => String(p.id) === String(id) || p.customerName === id);
+        const lead = data.leads.find(l => String(l.id) === decodedId || l.name === decodedId);
+        const policy = data.policies.find(p => String(p.id) === decodedId || p.customerName === decodedId);
         
         if (lead) {
           setCustomer({
@@ -103,12 +105,13 @@ export const CustomerDetailView: React.FC = () => {
         }
 
         if (policy) {
+          const pName = policy.customerName;
           setCustomer({
             id: policy.id,
-            name: policy.customerName || policy.customer,
-            email: policy.email || `${(policy.customerName || policy.customer).toLowerCase().replace(' ', '.')}@email.com`,
-            phone: policy.phone || '+91 98765 43210',
-            avatar: (policy.customerName || policy.customer).charAt(0).toUpperCase(),
+            name: pName,
+            email: `${pName.toLowerCase().replace(' ', '.')}@email.com`,
+            phone: '+91 98765 43210',
+            avatar: pName.charAt(0).toUpperCase(),
             status: 'Active'
           });
           setLoading(false);
@@ -117,7 +120,7 @@ export const CustomerDetailView: React.FC = () => {
 
         // 2. Fallback to API
         const response = await API.get(`/admin/users`);
-        const found = response.data.find((u: any) => String(u.id) === String(id));
+        const found = response.data.find((u: any) => String(u.id) === decodedId || u.full_name === decodedId);
         if (found) {
           const displayName = (found.full_name && found.full_name !== 'Anonymous') ? found.full_name : (found.email || found.mobile || 'Unknown User');
           setCustomer({
@@ -146,7 +149,7 @@ export const CustomerDetailView: React.FC = () => {
     );
   }
 
-  const displayName = customer?.name || (typeof id === 'string' ? id : 'Unknown Customer');
+  const displayName = customer?.name || (typeof id === 'string' ? decodeURIComponent(id) : 'Unknown Customer');
   const details = getMockDetails(id || '0', displayName);
 
   if (!customer && details.policies.length === 0) {
