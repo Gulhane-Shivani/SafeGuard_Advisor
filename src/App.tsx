@@ -137,6 +137,7 @@ const AppContent = () => {
                     <Route path="/team" element={<TeamPerformance />} />
 
                     <Route path="/customers" element={<Customer360 />} />
+                    <Route path="/customers/:id" element={<CustomerDetailView />} />
                     <Route path="/approvals" element={<Approvals />} />
                     <Route path="/commission" element={<CommissionView />} />
                     <Route path="/renewals" element={<AdminRenewals />} />
@@ -156,6 +157,7 @@ const AppContent = () => {
                     <Route path="/" element={<AgentOverview />} />
                     <Route path="/leads" element={<MyLeads />} />
                     <Route path="/customers" element={<MyCustomers />} />
+                    <Route path="/customers/:id" element={<CustomerDetailView />} />
                     <Route path="/quote" element={<QuoteGenerator />} />
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/commission" element={<AgentCommission />} />

@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { 
   Phone, Mail, FileText, 
   Calendar, MessageSquare,
   AlertCircle
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
@@ -13,10 +13,16 @@ import { cn } from '../../utils/helpers';
 
 const MyLeads: React.FC = () => {
   const { data, updateData } = usePlatform();
+  const navigate = useNavigate();
   const agentId = 2; // Assuming logged in as John Agent
   const myLeads = data.leads.filter(l => l.assignedTo === agentId);
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [note, setNote] = useState('');
+
+  const handleViewProfile = (lead: any) => {
+    // Navigate to lead intelligence (using customer detail view for now)
+    navigate(`/agent/customers/${lead.id}`);
+  };
 
   const columns = [
     { 
@@ -78,6 +84,7 @@ const MyLeads: React.FC = () => {
         title="Assigned Prospects"
         columns={columns}
         data={myLeads}
+        onView={handleViewProfile}
         onEdit={(lead) => setSelectedLead(lead)}
         filterKey="status"
         filterOptions={['Hot', 'Warm', 'Cold']}

@@ -18,6 +18,13 @@ const MyCustomers: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   
   const agentId = 2; // Assuming logged in as John Agent
+
+  const handleViewProfile = (customer: any) => {
+    // Navigate using the customer name as the identifier
+    // CustomerDetailView is equipped to find policies by name
+    navigate(`/agent/customers/${encodeURIComponent(customer.name)}`);
+  };
+
   const myPolicies = data.policies.filter(p => p.agentId === agentId);
 
   // Group policies by customer for this view
@@ -112,6 +119,7 @@ const MyCustomers: React.FC = () => {
         description="Showing all your active customers"
         columns={columns}
         data={myCustomers}
+        onView={handleViewProfile}
         onEdit={(customer) => {
             setSelectedCustomer(customer);
             setIsModalOpen(true);

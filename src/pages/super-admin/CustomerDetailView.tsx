@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, Receipt,
   TrendingUp, Star, Users,
-  Zap
+  Zap, LayoutGrid, Shield, Eye
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
@@ -14,26 +14,50 @@ import API from '../../api/baseurl';
 export const CustomerDetailView: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  usePlatform();
+  const location = useLocation();
+  const { data } = usePlatform();
+  const basePath = location.pathname.split('/').slice(0, 2).join('/');
+  
   const [customer, setCustomer] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const getMockDetails = (uid: string) => {
-    const num = parseInt(uid) || 0;
+  const getBackPath = () => {
+    if (location.pathname.includes('/super-admin/users/customers/')) return '/super-admin/users?tab=customers';
+    if (location.pathname.includes('/admin/customers/')) return '/admin/customers';
+    if (location.pathname.includes('/agent/customers/')) return '/agent/customers';
+    return basePath;
+  };
+
+  const getMockDetails = (uid: string, name: string = 'Customer') => {
+    const num = parseInt(uid) || (uid.length > 0 ? uid.charCodeAt(0) : 0);
     const nominees = ['Karan Mehta', 'Priya Sharma', 'Rahul Verma', 'Sonia Singh', 'Amit Kumar'];
     const relations = ['Son', 'Spouse', 'Brother', 'Daughter', 'Father'];
     const banks = ['HDFC Bank', 'ICICI Bank', 'SBI', 'Axis Bank', 'Kotak Mahindra'];
     
-    const isNewUser = num > 10;
-    const activePoliciesCount = isNewUser ? 0 : (num % 5) + 1;
-
-    const mockPolicies = isNewUser ? [] : Array.from({ length: activePoliciesCount }).map((_, i) => ({
-      id: 2000 + i + num,
-      policyNumber: `SG-${['LIFE', 'HLTH', 'MOTR', 'INVS'][i % 4]}-${7000 + i + num}`,
-      type: ['Life Insurance', 'Health Insurance', 'Motor Insurance', 'Investment'][i % 4],
-      premium: `₹${(10 + (i % 5)) * 1000}`,
-      status: i % 3 === 0 ? 'Renewal Due' : 'Active'
-    }));
+    // Check if we have real policies for this name in our context
+    const realPolicies = data.policies.filter(p => p.customerName === name || p.customer === name);
+    
+    const displayPolicies = realPolicies.length > 0 ? realPolicies.map(p => ({
+      id: p.id,
+      policyNumber: p.policyNumber,
+      type: p.type,
+      premium: p.premium,
+      status: p.status,
+      period: `${p.startDate || '2023-05-01'} to ${p.endDate || '2024-05-01'}`,
+      coverage: ['Accidental Cover', 'Death Benefit', 'Critical Illness'].slice(0, 2),
+      benefits: ['Tax Savings', 'Cashless', 'No Claim Bonus'].slice(0, 2)
+    })) : [
+      {
+        id: 2000 + num,
+        policyNumber: `SG-LIFE-${7000 + num}`,
+        type: 'Life Insurance',
+        premium: `₹25,000`,
+        status: 'Active',
+        period: `2023-05-10 to 2024-05-10`,
+        coverage: ['Death Benefit', 'Accidental Cover'],
+        benefits: ['Tax Savings', 'Cashless']
+      }
+    ];
 
     return {
       nominee: {
@@ -44,22 +68,54 @@ export const CustomerDetailView: React.FC = () => {
       bankDetails: {
         bankName: banks[num % banks.length],
         accountNumber: `XXXX XXXX ${8000 + num}`,
-        accountName: customer?.name || 'Customer Name',
+        accountName: name,
         ifsc: `${banks[num % banks.length].substring(0, 4).toUpperCase()}000${1234 + num}`
       },
       portfolio: {
-        activePolicies: activePoliciesCount,
-        sumInsured: activePoliciesCount > 0 ? `₹${(num % 10 + 5) * 5},00,000` : '₹0',
-        premium: activePoliciesCount > 0 ? `₹${(num % 10 + 1) * 15},000` : '₹0',
-        tenure: activePoliciesCount > 0 ? `${(num % 5) + 1}.5 Years` : 'New Member'
+        activePolicies: displayPolicies.length,
+        sumInsured: `₹${(num % 10 + 5) * 5},00,000`,
+        premium: `₹${(num % 10 + 1) * 15},000`,
+        tenure: `${(num % 5) + 1}.5 Years`
       },
-      policies: mockPolicies
+      policies: displayPolicies
     };
   };
 
   useEffect(() => {
     const fetchCustomer = async () => {
+      setLoading(true);
       try {
+        // 1. Try to find in local data first (policies/leads)
+        const lead = data.leads.find(l => String(l.id) === String(id));
+        const policy = data.policies.find(p => String(p.id) === String(id) || p.customerName === id);
+        
+        if (lead) {
+          setCustomer({
+            id: lead.id,
+            name: lead.name,
+            email: lead.email,
+            phone: lead.phone,
+            avatar: lead.name.charAt(0).toUpperCase(),
+            status: 'Prospect'
+          });
+          setLoading(false);
+          return;
+        }
+
+        if (policy) {
+          setCustomer({
+            id: policy.id,
+            name: policy.customerName || policy.customer,
+            email: policy.email || `${(policy.customerName || policy.customer).toLowerCase().replace(' ', '.')}@email.com`,
+            phone: policy.phone || '+91 98765 43210',
+            avatar: (policy.customerName || policy.customer).charAt(0).toUpperCase(),
+            status: 'Active'
+          });
+          setLoading(false);
+          return;
+        }
+
+        // 2. Fallback to API
         const response = await API.get(`/admin/users`);
         const found = response.data.find((u: any) => String(u.id) === String(id));
         if (found) {
@@ -79,71 +135,107 @@ export const CustomerDetailView: React.FC = () => {
       }
     };
     fetchCustomer();
-  }, [id]);
+  }, [id, data]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[60vh]">
+      <div className="flex flex-col items-center justify-center h-[60vh] gap-4">
         <div className="w-12 h-12 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
+        <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Loading Intelligence...</p>
       </div>
     );
   }
 
-  if (!customer) {
+  const displayName = customer?.name || (typeof id === 'string' ? id : 'Unknown Customer');
+  const details = getMockDetails(id || '0', displayName);
+
+  if (!customer && details.policies.length === 0) {
     return (
       <div className="p-20 text-center space-y-4">
         <Users className="w-16 h-16 text-slate-200 mx-auto" />
         <h2 className="text-xl font-black text-slate-900">Customer Not Found</h2>
-        <button onClick={() => navigate('/super-admin/users?tab=customers')} className="text-teal-600 font-bold hover:underline">Back to Database</button>
+        <button onClick={() => navigate(getBackPath())} className="text-teal-600 font-bold hover:underline">Back to Database</button>
       </div>
     );
   }
 
-  const details = getMockDetails(id || '0');
-
   const policyColumns = [
     {
-      header: 'Policy ID',
+      header: 'Policy Details',
       accessor: 'policyNumber',
-      render: (val: string) => <span className="font-black text-slate-900">{val}</span>
+      render: (val: string, row: any) => (
+        <div>
+          <p className="font-black text-slate-900 leading-none">{val}</p>
+          <p className="text-[9px] text-slate-400 font-bold uppercase mt-1 tracking-wider">{row.type}</p>
+        </div>
+      )
     },
     {
-      header: 'Type',
-      accessor: 'type',
-      render: (val: string) => (
-        <span className="px-2 py-0.5 rounded-md bg-slate-50 text-slate-500 text-[10px] font-black uppercase tracking-widest">
-          {val}
-        </span>
+      header: 'Policy Period',
+      accessor: 'period',
+      render: (val: string) => <span className="text-[11px] font-bold text-slate-600">{val}</span>
+    },
+    {
+      header: 'Coverage & Benefits',
+      accessor: 'coverage',
+      render: (val: string[], row: any) => (
+        <div className="space-y-1">
+          <div className="flex flex-wrap gap-1">
+            {val.map((c, i) => (
+              <span key={i} className="px-1.5 py-0.5 bg-teal-50 text-teal-600 rounded text-[8px] font-black uppercase tracking-tight border border-teal-100">{c}</span>
+            ))}
+          </div>
+          <div className="flex flex-wrap gap-1">
+            {row.benefits.map((b: string, i: number) => (
+              <span key={i} className="px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded text-[8px] font-black uppercase tracking-tight border border-blue-100">{b}</span>
+            ))}
+          </div>
+        </div>
       )
     },
     {
       header: 'Premium',
       accessor: 'premium',
-      render: (val: string) => <span className="font-black text-teal-600">{val}</span>
+      render: (val: string) => <span className="font-black text-slate-900">{val}</span>
     },
     {
       header: 'Status',
       accessor: 'status',
       render: (val: string) => (
-        <div className="flex items-center gap-1.5">
-          <div className={cn("w-1.5 h-1.5 rounded-full", val === 'Active' ? "bg-emerald-500" : val === 'Renewal Due' ? "bg-orange-500" : "bg-red-500")} />
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-600">{val}</span>
-        </div>
+        <span className={cn(
+          "px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+          val === 'Active' || val === 'ACTIVE' ? "bg-emerald-50 text-emerald-600 border-emerald-100" : "bg-orange-50 text-orange-600 border-orange-100"
+        )}>
+          {val}
+        </span>
+      )
+    },
+    {
+      header: 'Actions',
+      accessor: 'id',
+      render: (val: string) => (
+        <button 
+          onClick={() => navigate(`${basePath}/policies/${val}`)}
+          className="p-2 bg-slate-50 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all"
+          title="View issuance details"
+        >
+          <Eye className="w-4 h-4" />
+        </button>
       )
     }
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-20">
+    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto pb-20 p-6 md:p-10">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate('/super-admin/users?tab=customers')} className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 transition-all shadow-sm">
+          <button onClick={() => navigate(getBackPath())} className="p-1.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:text-teal-600 transition-all shadow-sm">
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <h1 className="text-xl font-black text-slate-900 tracking-tight">Customer Intelligence</h1>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Portfolio / UID-{customer.id}</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Global Portfolio / UID-{customer?.id || id}</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -153,17 +245,17 @@ export const CustomerDetailView: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Profile Section */}
-        <div className="col-span-8">
+        <div className="lg:col-span-8">
           <CustomerProfileDetail 
             user={{
-              name: customer.name,
-              email: customer.email,
-              phone: customer.phone,
-              avatar: customer.avatar,
-              address: customer.address,
-              status: customer.status
+              name: customer?.name || displayName,
+              email: customer?.email || `${displayName.toLowerCase().replace(' ', '.')}@email.com`,
+              phone: customer?.phone || '+91 98765 43210',
+              avatar: customer?.avatar || displayName.charAt(0).toUpperCase(),
+              address: customer?.address,
+              status: customer?.status
             }}
             nominee={details.nominee}
             bankDetails={details.bankDetails}
@@ -172,7 +264,7 @@ export const CustomerDetailView: React.FC = () => {
         </div>
 
         {/* Intelligence Sidebar */}
-        <div className="col-span-4">
+        <div className="lg:col-span-4">
           <section className="bg-white p-8 rounded-[2rem] border border-slate-200 shadow-sm space-y-8 h-full">
             <div className="space-y-6">
               <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
@@ -221,7 +313,7 @@ export const CustomerDetailView: React.FC = () => {
                <Receipt className="w-5 h-5 text-slate-400" />
             </div>
          </div>
-         <div className="p-0">
+         <div className="p-0 overflow-x-auto">
             <PlatformTable 
                title="Coverage Ledger"
                description="Personal insurance policies and active coverage details"
