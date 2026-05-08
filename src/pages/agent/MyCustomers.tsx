@@ -37,13 +37,19 @@ const MyCustomers: React.FC = () => {
     if (!hasLife) recommendation = 'Term Life Shield';
     else if (!hasHealth) recommendation = 'Family Health Plus';
 
+    // Determine aggregate status
+    let status = 'Active';
+    if (customerPolicies.some(p => p.status === 'Renewal Due')) status = 'Renewal Due';
+    else if (customerPolicies.some(p => p.status === 'Pending')) status = 'Pending';
+    else if (customerPolicies.every(p => p.status === 'Expired')) status = 'Expired';
+
     return {
       id: name, // Using name as ID for demo
       name,
       email: `${name.toLowerCase().replace(' ', '.')}@email.com`,
       phone: '+91 98765-43210',
       totalPolicies: customerPolicies.length,
-      status: customerPolicies.some(p => p.status === 'Renewal Due') ? 'Attention Needed' : 'Stable',
+      status,
       policies: customerPolicies,
       recommendation
     };
@@ -80,9 +86,13 @@ const MyCustomers: React.FC = () => {
       render: (val: string) => (
         <span className={cn(
           "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 w-max",
-          val === 'Attention Needed' ? "bg-orange-50 text-orange-600 border-orange-100" : "bg-emerald-50 text-emerald-600 border-emerald-100"
+          val === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+          val === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+          val === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+          val === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+          "bg-slate-50 text-slate-400 border-slate-100"
         )}>
-          {val === 'Attention Needed' && <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />}
+          {val === 'Renewal Due' && <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-pulse" />}
           {val}
         </span>
       )
@@ -100,7 +110,7 @@ const MyCustomers: React.FC = () => {
          {[
             { label: 'Total Clients', value: myCustomers.length, color: 'text-blue-600', bg: 'bg-blue-50' },
             { label: 'Policies Managed', value: myPolicies.length, color: 'text-teal-600', bg: 'bg-teal-50' },
-            { label: 'Action Required', value: myCustomers.filter(c => c.status === 'Attention Needed').length, color: 'text-orange-600', bg: 'bg-orange-50' },
+            { label: 'Renewal Due', value: myCustomers.filter(c => c.status === 'Renewal Due').length, color: 'text-orange-600', bg: 'bg-orange-50' },
          ].map((stat, i) => (
             <div key={i} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center gap-4">
                <div className={cn("w-12 h-12 rounded-2xl flex items-center justify-center font-black", stat.bg, stat.color)}>
@@ -125,7 +135,7 @@ const MyCustomers: React.FC = () => {
             setIsModalOpen(true);
         }}
         filterKey="status"
-        filterOptions={['Stable', 'Attention Needed']}
+        filterOptions={['Active', 'Pending', 'Renewal Due', 'Expired']}
       />
 
       {/* Cross-Sell Suggestions */}
@@ -194,7 +204,10 @@ const MyCustomers: React.FC = () => {
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Risk Status</p>
                     <p className={cn(
                         "text-sm font-black uppercase",
-                        selectedCustomer?.status === 'Stable' ? "text-emerald-600" : "text-orange-600"
+                        selectedCustomer?.status === 'Active' ? "text-emerald-600" :
+                        selectedCustomer?.status === 'Pending' ? "text-blue-600" :
+                        selectedCustomer?.status === 'Renewal Due' ? "text-orange-600" :
+                        "text-rose-600"
                     )}>{selectedCustomer?.status}</p>
                 </div>
             </div>

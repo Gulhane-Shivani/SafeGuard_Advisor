@@ -38,17 +38,17 @@ const AgentOverview: React.FC = () => {
                   <button onClick={() => navigate('/agent/leads')} className="text-teal-600 text-[10px] font-black uppercase tracking-widest hover:underline">View All Leads</button>
                </div>
                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-center">
-                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">New / Warm</p>
-                     <p className="text-3xl font-black text-slate-900">{myLeads.filter(l => l.status === 'Warm').length}</p>
+                  <div className="p-6 bg-emerald-50 rounded-3xl border border-emerald-100 text-center">
+                     <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Active Leads</p>
+                     <p className="text-3xl font-black text-emerald-900">{myLeads.filter(l => l.status === 'Active').length}</p>
+                  </div>
+                  <div className="p-6 bg-blue-50 rounded-3xl border border-blue-100 text-center">
+                     <p className="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-1">Pending Follow-up</p>
+                     <p className="text-3xl font-black text-blue-600">{myLeads.filter(l => l.status === 'Pending').length}</p>
                   </div>
                   <div className="p-6 bg-orange-50 rounded-3xl border border-orange-100 text-center">
-                     <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Hot / Urgent</p>
-                     <p className="text-3xl font-black text-orange-600">{myLeads.filter(l => l.status === 'Hot').length}</p>
-                  </div>
-                  <div className="p-6 bg-teal-50 rounded-3xl border border-teal-100 text-center">
-                     <p className="text-[10px] font-black text-teal-400 uppercase tracking-widest mb-1">Quotes Sent</p>
-                     <p className="text-3xl font-black text-teal-600">4</p>
+                     <p className="text-[10px] font-black text-orange-400 uppercase tracking-widest mb-1">Renewal Due</p>
+                     <p className="text-3xl font-black text-orange-600">{myLeads.filter(l => l.status === 'Renewal Due').length}</p>
                   </div>
                </div>
             </div>

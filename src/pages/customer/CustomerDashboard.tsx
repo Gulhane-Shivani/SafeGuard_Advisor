@@ -59,6 +59,16 @@ const Overview = ({ data, setTab }: any) => (
             <div key={policy.id} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-teal-200 transition-all">
               <div className="flex items-center gap-4">
                 <div className={cn(
+                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                "bg-slate-50 text-slate-400 border-slate-100"
+              )}>
+                {policy.status}
+              </div>
+              <div className={cn(
                   "w-12 h-12 rounded-xl flex items-center justify-center",
                   policy.type.includes('Health') ? "bg-red-50 text-red-600" :
                   policy.type.includes('Life') ? "bg-blue-50 text-blue-600" :
@@ -75,7 +85,17 @@ const Overview = ({ data, setTab }: any) => (
               </div>
               <div className="text-right">
                 <div className="text-sm font-bold text-slate-900">{policy.premium}</div>
-                <div className={cn("text-[10px] font-bold uppercase", policy.status === 'Renewal Due' ? "text-orange-600" : "text-teal-600")}>
+                <div className={cn(
+                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                "bg-slate-50 text-slate-400 border-slate-100"
+              )}>
+                {policy.status}
+              </div>
+              <div className={cn("text-[10px] font-bold uppercase", policy.status === 'Renewal Due' ? "text-orange-600" : "text-teal-600")}>
                   {policy.status}
                 </div>
               </div>
@@ -158,89 +178,107 @@ const Overview = ({ data, setTab }: any) => (
   </div>
 );
 
-const MyPolicies = ({ data, onSelectPolicy }: any) => (
-  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-      <h2 className="text-2xl font-bold text-slate-900">Your Insurance Portfolio</h2>
-      <div className="flex gap-2 w-full sm:w-auto">
-        <div className="relative flex-grow sm:flex-grow-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-          <input 
-            type="text" 
-            placeholder="Search policies..." 
-            className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 w-full"
-          />
-        </div>
-      </div>
-    </div>
+const MyPolicies = ({ data, onSelectPolicy }: any) => {
+  const [policyFilter, setPolicyFilter] = useState('All');
+  const statusFilters = ['All', 'Active', 'Pending', 'Renewal Due', 'Expired'];
+  
+  // Filtering logic will be added here later
+  const filteredPolicies = data.policies; // Placeholder for now
 
-    <div className="grid grid-cols-1 gap-4">
-      {data.policies.map((policy: any) => (
-        <div key={policy.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:border-teal-200 transition-all group">
-          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-            <div className="flex items-start gap-4">
-              <div className={cn(
-                "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0",
-                policy.type.includes('Health') ? "bg-red-50 text-red-600" :
-                policy.type.includes('Life') ? "bg-blue-50 text-blue-600" :
-                policy.type.includes('Motor') ? "bg-orange-50 text-orange-600" : "bg-slate-50 text-slate-600"
-              )}>
-                {policy.type.includes('Health') ? <HeartPulse className="w-8 h-8" /> :
-                 policy.type.includes('Life') ? <Shield className="w-8 h-8" /> :
-                 policy.type.includes('Motor') ? <Car className="w-8 h-8" /> : <Home className="w-8 h-8" />}
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="text-lg font-bold text-slate-900">{policy.title}</h3>
-                  <span className={cn(
-                    "text-[10px] px-2 py-0.5 rounded-full font-bold",
-                    policy.status === 'Active' ? "bg-teal-50 text-teal-600" :
-                    policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600" : "bg-slate-100 text-slate-500"
-                  )}>
-                    {policy.status}
-                  </span>
-                </div>
-                <p className="text-sm text-slate-500 font-medium">{policy.id} • {policy.provider}</p>
-                <div className="flex flex-wrap gap-4 mt-3">
-                  <div className="text-xs">
-                    <span className="text-slate-400 font-medium">Sum Assured:</span>
-                    <span className="text-slate-900 font-bold ml-1">{policy.sumAssured}</span>
-                  </div>
-                  <div className="text-xs">
-                    <span className="text-slate-400 font-medium">Premium:</span>
-                    <span className="text-slate-900 font-bold ml-1">{policy.premium}</span>
-                  </div>
-                  <div className="text-xs">
-                    <span className="text-slate-400 font-medium">Due:</span>
-                    <span className="text-slate-900 font-bold ml-1">{policy.dueDate}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-2 lg:flex-nowrap">
-              <button onClick={() => onSelectPolicy(policy)} className="flex-grow lg:flex-none px-4 py-2 bg-slate-50 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-100 transition-colors">
-                View Details
-              </button>
-              <button className="p-2 bg-slate-50 text-slate-700 rounded-xl hover:bg-slate-100 transition-colors">
-                <Download className="w-4 h-4" />
-              </button>
-              {policy.status === 'Renewal Due' && (
-                <button className="flex-grow lg:flex-none px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold hover:bg-orange-700 transition-colors">
-                  Renew Now
-                </button>
-              )}
-              {policy.status === 'Active' && (
-                <button className="flex-grow lg:flex-none px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors">
-                  Pay Now
-                </button>
-              )}
-            </div>
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <h2 className="text-2xl font-bold text-slate-900">Your Insurance Portfolio</h2>
+        <div className="flex gap-2 w-full sm:w-auto">
+          <div className="relative flex-grow sm:flex-grow-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input 
+              type="text" 
+              placeholder="Search policies..." 
+              className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 w-full"
+            />
           </div>
         </div>
-      ))}
+      </div>
+    
+      <div className="grid grid-cols-1 gap-4">
+        {filteredPolicies.map((policy: any) => (
+          <div key={policy.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:border-teal-200 transition-all group">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+              <div className="flex items-start gap-4">
+                <div className={cn(
+                  "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                  policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                  policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                  policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                  policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                  "bg-slate-50 text-slate-400 border-slate-100"
+                )}>
+                  {policy.status}
+                </div>
+                <div className={cn(
+                  "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0",
+                  policy.type.includes('Health') ? "bg-red-50 text-red-600" :
+                  policy.type.includes('Life') ? "bg-blue-50 text-blue-600" :
+                  policy.type.includes('Motor') ? "bg-orange-50 text-orange-600" : "bg-slate-50 text-slate-600"
+                )}>
+                  {policy.type.includes('Health') ? <HeartPulse className="w-8 h-8" /> :
+                   policy.type.includes('Life') ? <Shield className="w-8 h-8" /> :
+                   policy.type.includes('Motor') ? <Car className="w-8 h-8" /> : <Home className="w-8 h-8" />}
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-lg font-bold text-slate-900">{policy.title}</h3>
+                    <span className={cn(
+                      "text-[10px] px-2 py-0.5 rounded-full font-bold",
+                      policy.status === 'Active' ? "bg-teal-50 text-teal-600" :
+                      policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600" : "bg-slate-100 text-slate-500"
+                    )}>
+                      {policy.status}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-500 font-medium">{policy.id} • {policy.provider}</p>
+                  <div className="flex flex-wrap gap-4 mt-3">
+                    <div className="text-xs">
+                      <span className="text-slate-400 font-medium">Sum Assured:</span>
+                      <span className="text-slate-900 font-bold ml-1">{policy.sumAssured}</span>
+                    </div>
+                    <div className="text-xs">
+                      <span className="text-slate-400 font-medium">Premium:</span>
+                      <span className="text-slate-900 font-bold ml-1">{policy.premium}</span>
+                    </div>
+                    <div className="text-xs">
+                      <span className="text-slate-400 font-medium">Due:</span>
+                      <span className="text-slate-900 font-bold ml-1">{policy.dueDate}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2 lg:flex-nowrap">
+                <button onClick={() => onSelectPolicy(policy)} className="flex-grow lg:flex-none px-4 py-2 bg-slate-50 text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-100 transition-colors">
+                  View Details
+                </button>
+                <button className="p-2 bg-slate-50 text-slate-700 rounded-xl hover:bg-slate-100 transition-colors">
+                  <Download className="w-4 h-4" />
+                </button>
+                {policy.status === 'Renewal Due' && (
+                  <button className="flex-grow lg:flex-none px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold hover:bg-orange-700 transition-colors">
+                    Renew Now
+                  </button>
+                )}
+                {policy.status === 'Active' && (
+                  <button className="flex-grow lg:flex-none px-4 py-2 bg-teal-600 text-white rounded-xl text-xs font-bold hover:bg-teal-700 transition-colors">
+                    Pay Now
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const PolicyDetails = ({ policy, onBack }: any) => (
   <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -454,6 +492,16 @@ const Claims = ({ data }: any) => (
         <div key={claim.id} className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm">
           <div className="flex flex-col lg:flex-row justify-between gap-6">
             <div className="flex items-start gap-5">
+              <div className={cn(
+                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                "bg-slate-50 text-slate-400 border-slate-100"
+              )}>
+                {policy.status}
+              </div>
               <div className={cn(
                 "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0",
                 claim.status === 'Settled' ? "bg-teal-50 text-teal-600" : "bg-orange-50 text-orange-600"
@@ -854,7 +902,17 @@ export const CustomerDashboard: React.FC = () => {
                 Theme
               </div>
               <div className="w-10 h-6 bg-slate-200 rounded-full relative p-1">
-                <div className={cn("w-4 h-4 bg-white rounded-full transition-transform", isDarkMode && "translate-x-4")}></div>
+                <div className={cn(
+                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                "bg-slate-50 text-slate-400 border-slate-100"
+              )}>
+                {policy.status}
+              </div>
+              <div className={cn("w-4 h-4 bg-white rounded-full transition-transform", isDarkMode && "translate-x-4")}></div>
               </div>
             </button>
             <button 
@@ -922,7 +980,17 @@ export const CustomerDashboard: React.FC = () => {
                     {CUSTOMER_DATA.notifications.map((n: any) => (
                       <div key={n.id} className={cn("p-4 hover:bg-slate-50 transition-colors", n.unread && "bg-orange-50/50")}>
                         <div className="flex gap-3">
-                          <div className={cn("w-2 h-2 rounded-full mt-2 shrink-0", n.unread ? "bg-orange-500" : "bg-transparent")} />
+                          <div className={cn(
+                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
+                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                "bg-slate-50 text-slate-400 border-slate-100"
+              )}>
+                {policy.status}
+              </div>
+              <div className={cn("w-2 h-2 rounded-full mt-2 shrink-0", n.unread ? "bg-orange-500" : "bg-transparent")} />
                           <div>
                             <div className="text-sm font-bold text-slate-900">{n.title}</div>
                             <div className="text-xs text-slate-500 mt-0.5">{n.message}</div>

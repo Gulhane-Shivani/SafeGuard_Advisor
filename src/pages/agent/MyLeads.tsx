@@ -47,8 +47,11 @@ const MyLeads: React.FC = () => {
       render: (val: string) => (
         <span className={cn(
           "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
-          val === 'Hot' ? "bg-orange-50 text-orange-600 border-orange-100" :
-          val === 'Warm' ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-slate-50 text-slate-400 border-slate-100"
+          val === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+          val === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+          val === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+          val === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+          "bg-slate-50 text-slate-400 border-slate-100"
         )}>
           {val}
         </span>
@@ -87,7 +90,7 @@ const MyLeads: React.FC = () => {
         onView={handleViewProfile}
         onEdit={(lead) => setSelectedLead(lead)}
         filterKey="status"
-        filterOptions={['Hot', 'Warm', 'Cold']}
+        filterOptions={['Active', 'Pending', 'Renewal Due', 'Expired']}
       />
 
       <PlatformModal 
@@ -112,8 +115,11 @@ const MyLeads: React.FC = () => {
                             </div>
                             <span className={cn(
                                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
-                               selectedLead.status === 'Hot' ? "bg-orange-50 text-orange-600 border-orange-100" :
-                               selectedLead.status === 'Warm' ? "bg-blue-50 text-blue-600 border-blue-100" : "bg-slate-50 text-slate-400 border-slate-100"
+                               selectedLead.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                               selectedLead.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
+                               selectedLead.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
+                               selectedLead.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
+                               "bg-slate-50 text-slate-400 border-slate-100"
                             )}>
                                {selectedLead.status}
                             </span>
@@ -135,7 +141,7 @@ const MyLeads: React.FC = () => {
                    <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-4">
                       <h4 className="text-sm font-bold text-slate-900">Change Status</h4>
                       <div className="flex flex-wrap gap-3">
-                         {['Hot', 'Warm', 'Cold', 'Closed'].map(status => (
+                         {['Active', 'Pending', 'Renewal Due', 'Expired'].map(status => (
                             <button
                                key={status}
                                onClick={() => handleUpdateStatus(status)}
