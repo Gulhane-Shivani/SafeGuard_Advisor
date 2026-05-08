@@ -27,7 +27,9 @@ import './styles/globals.css';
 
 import { AppProvider } from './store';
 import ScrollToTop from './utils/ScrollToTop';
-import { Shield } from 'lucide-react';
+import { Shield, LayoutDashboard, Clock, Search as SearchIcon, Users, User, FileText } from 'lucide-react';
+// Import RenewalPage
+import RenewalPage from './pages/agent/Renewal';
 
 // Platform Imports
 import { PlatformProvider } from './store/PlatformContext';
@@ -96,7 +98,7 @@ const AppContent = () => {
           <Route path="/insurance/life" element={<LifeInsurance />} />
           <Route path="/insurance/motor" element={<MotorInsurance />} />
           <Route path="/insurance/investment" element={<InvestmentInsurance />} />
-          
+
           {/* Platform Routes */}
           <Route path="/super-admin/*" element={
             <ProtectedRoute allowedRoles={['SUPER_ADMIN']}>
@@ -141,8 +143,6 @@ const AppContent = () => {
                     <Route path="/approvals" element={<Approvals />} />
                     <Route path="/commission" element={<CommissionView />} />
                     <Route path="/renewals" element={<AdminRenewals />} />
-                    
-
                   </Routes>
                 </DashboardLayout>
               </PlatformProvider>
@@ -163,6 +163,8 @@ const AppContent = () => {
                     <Route path="/tasks" element={<Tasks />} />
                     <Route path="/commission" element={<AgentCommission />} />
                     <Route path="/profile" element={<AgentProfile />} />
+                    {/* New Route for Renewal Tab */}
+                    <Route path="/renewal" element={<RenewalPage />} />
                   </Routes>
                 </DashboardLayout>
               </PlatformProvider>
@@ -172,7 +174,7 @@ const AppContent = () => {
           <Route path="/csr/*" element={
             <ProtectedRoute allowedRoles={['CSR']}>
               <PlatformProvider>
-                <DashboardLayout>
+                <DashboardLayout menuItems={[/* CSR Menu Items */]} userRole="CSR"> {/* Placeholder menuItems */}
                   <Routes>
                     <Route path="/" element={<CSROverview />} />
                     <Route path="/search" element={<CustomerSearch />} />

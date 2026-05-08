@@ -3,7 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { 
   ArrowLeft, Receipt,
   TrendingUp, Star, Users,
-  Zap, Eye
+  Zap, Eye, Calendar, Shield
 } from 'lucide-react';
 import { cn } from '../../utils/helpers';
 import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
@@ -290,6 +290,27 @@ export const CustomerDetailView: React.FC = () => {
               </div>
             </div>
 
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-slate-50 pb-4">
+                <Calendar className="w-5 h-5 text-teal-600" />
+                <h4 className="text-sm font-black uppercase tracking-[0.2em]">Policy Period</h4>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { label: 'Issue Date', value: details.policies[0]?.period?.split(' to ')[0] || '01 Jan 2023' },
+                  { label: 'Expiry Date', value: details.policies[0]?.period?.split(' to ')[1] || '06 Jul 2030' },
+                  { label: 'Premium', value: details.policies[0]?.premium || details.portfolio.premium },
+                  { label: 'Due Date', value: details.policies[0]?.period?.split(' to ')[1] || '06 Jul 2030' },
+                ].map((row, i) => (
+                  <div key={i} className="flex justify-between items-center group">
+                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest group-hover:text-teal-600 transition-colors text-[9px]">{row.label}</span>
+                    <span className="text-xs font-black text-slate-900">{row.value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <div className="bg-emerald-50/50 p-6 rounded-[1.5rem] border border-emerald-100 space-y-4">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm font-black text-sm border border-emerald-50">
@@ -300,6 +321,29 @@ export const CustomerDetailView: React.FC = () => {
                   <p className="text-sm font-black text-slate-900">{details.portfolio.activePolicies > 2 ? 'Highly Engaged' : details.portfolio.activePolicies > 0 ? 'Active Client' : 'New Member'}</p>
                 </div>
               </div>
+            </div>
+
+            {/* Nominee Widget */}
+            <div className="bg-teal-50/30 p-6 rounded-[1.5rem] border border-teal-100/50 flex items-center gap-4">
+               <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-teal-600 shadow-sm font-black text-xs border border-teal-50">
+                  {details.nominee.name.split(' ').map(n => n[0]).join('')}
+               </div>
+               <div>
+                  <p className="text-[8px] font-black text-teal-600 uppercase tracking-widest leading-none mb-1">Policy Nominee</p>
+                  <p className="text-xs font-black text-slate-900">{details.nominee.name}</p>
+                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wider mt-0.5">{details.nominee.relation}</p>
+               </div>
+            </div>
+
+            {/* Protection Widget */}
+            <div className="p-6 bg-slate-50/50 rounded-[1.5rem] border border-slate-100">
+               <div className="flex items-center gap-2 mb-3">
+                  <Shield className="w-4 h-4 text-slate-400" />
+                  <p className="text-[9px] font-black text-slate-900 uppercase tracking-widest">Policy Protection</p>
+               </div>
+               <p className="text-[10px] font-medium text-slate-500 leading-relaxed">
+                  This policy is active and secured under the SafeGuard Advisor global portfolio. All terms and conditions apply.
+               </p>
             </div>
           </section>
         </div>

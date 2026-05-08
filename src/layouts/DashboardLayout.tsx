@@ -86,6 +86,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
           { id: 'agt-overview', label: 'My Dashboard', icon: LayoutDashboard, path: '/agent' },
           { id: 'agt-leads', label: 'My Leads', icon: TrendingUp, path: '/agent/leads' },
           { id: 'agt-customers', label: 'My Customers', icon: Users, path: '/agent/customers' },
+          { id: 'agt-renewal', label: 'Renewals', icon: Clock, path: '/agent/renewal' },
           { id: 'agt-quote', label: 'Quote Generator', icon: FileText, path: '/agent/quote' },
           { id: 'agt-tasks', label: 'Tasks & Calendar', icon: CheckSquare, path: '/agent/tasks' },
           { id: 'agt-commission', label: 'Commission', icon: IndianRupee, path: '/agent/commission' },
