@@ -179,9 +179,6 @@ const Overview = ({ data, setTab }: any) => (
 );
 
 const MyPolicies = ({ data, onSelectPolicy }: any) => {
-  const [policyFilter, setPolicyFilter] = useState('All');
-  const statusFilters = ['All', 'Active', 'Pending', 'Renewal Due', 'Expired'];
-  
   // Filtering logic will be added here later
   const filteredPolicies = data.policies; // Placeholder for now
 
@@ -494,13 +491,10 @@ const Claims = ({ data }: any) => (
             <div className="flex items-start gap-5">
               <div className={cn(
                 "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
-                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
-                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
-                "bg-slate-50 text-slate-400 border-slate-100"
+                claim.status === 'Settled' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
+                "bg-orange-50 text-orange-600 border-orange-100"
               )}>
-                {policy.status}
+                {claim.status}
               </div>
               <div className={cn(
                 "w-14 h-14 rounded-2xl flex items-center justify-center shrink-0",
@@ -903,16 +897,9 @@ export const CustomerDashboard: React.FC = () => {
               </div>
               <div className="w-10 h-6 bg-slate-200 rounded-full relative p-1">
                 <div className={cn(
-                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
-                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
-                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
-                "bg-slate-50 text-slate-400 border-slate-100"
-              )}>
-                {policy.status}
-              </div>
-              <div className={cn("w-4 h-4 bg-white rounded-full transition-transform", isDarkMode && "translate-x-4")}></div>
+                  "w-4 h-4 bg-white rounded-full transition-transform", 
+                  isDarkMode && "translate-x-4"
+                )}></div>
               </div>
             </button>
             <button 
@@ -980,17 +967,7 @@ export const CustomerDashboard: React.FC = () => {
                     {CUSTOMER_DATA.notifications.map((n: any) => (
                       <div key={n.id} className={cn("p-4 hover:bg-slate-50 transition-colors", n.unread && "bg-orange-50/50")}>
                         <div className="flex gap-3">
-                          <div className={cn(
-                "px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border",
-                policy.status === 'Active' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                policy.status === 'Pending' ? "bg-blue-50 text-blue-600 border-blue-100" :
-                policy.status === 'Renewal Due' ? "bg-orange-50 text-orange-600 border-orange-100" :
-                policy.status === 'Expired' ? "bg-rose-50 text-rose-600 border-rose-100" :
-                "bg-slate-50 text-slate-400 border-slate-100"
-              )}>
-                {policy.status}
-              </div>
-              <div className={cn("w-2 h-2 rounded-full mt-2 shrink-0", n.unread ? "bg-orange-500" : "bg-transparent")} />
+                          <div className={cn("w-2 h-2 rounded-full mt-2 shrink-0", n.unread ? "bg-orange-500" : "bg-transparent")} />
                           <div>
                             <div className="text-sm font-bold text-slate-900">{n.title}</div>
                             <div className="text-xs text-slate-500 mt-0.5">{n.message}</div>
