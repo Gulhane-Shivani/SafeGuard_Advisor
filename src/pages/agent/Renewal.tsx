@@ -1,36 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
-  Search, 
   Shield, 
   Clock, 
   HeartPulse, 
   Car, 
   Home, 
-  ChevronRight,
-  Download,
   AlertCircle,
-  CheckCircle2,
-  Plus,
-  MessageSquare,
-  PhoneCall,
-  FileText,
-  LayoutDashboard,
-  User,
-  Landmark,
-  Settings,
-  Bell,
-  LogOut,
-  Menu,
   Search as SearchIcon // Alias to avoid conflict if needed
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
 import { usePlatform } from '../../store/PlatformContext';
 import { cn } from '../../utils/helpers';
 
-import { CUSTOMER_DATA } from '../../data/mockCustomerData'; // Mock data for customer portal
+// import { CUSTOMER_DATA } from '../../data/mockCustomerData'; // Mock data for customer portal
 
 // Helper function to style status badges
 const getStatusBadgeClass = (status: string) => {
@@ -50,13 +35,13 @@ const getStatusBadgeClass = (status: string) => {
 
 const RenewalPage: React.FC = () => {
   const { data, updateData } = usePlatform();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [selectedPolicyForRenewal, setSelectedPolicyForRenewal] = useState<any>(null);
   const [isRenewalModalOpen, setIsRenewalModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Define status filters
-  const statusFilters = ['All', 'Active', 'Renewal Due', 'Expired'];
+  // const statusFilters = ['All', 'Active', 'Renewal Due', 'Expired'];
   const [policyFilter, setPolicyFilter] = useState('All');
 
   const agentId = 2; // Mocking logged in agent
@@ -233,7 +218,7 @@ const RenewalPage: React.FC = () => {
             {
               header: 'Action',
               accessor: 'id',
-              render: (val: string, row: any) => (
+              render: (_val: string, row: any) => (
                 <button 
                   onClick={() => handleRenewPolicy(row)}
                   className="px-4 py-2 bg-orange-600 text-white rounded-xl text-xs font-bold hover:bg-orange-700 transition-all shadow-lg shadow-orange-600/20"

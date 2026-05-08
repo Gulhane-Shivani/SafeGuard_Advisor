@@ -27,7 +27,7 @@ import './styles/globals.css';
 
 import { AppProvider } from './store';
 import ScrollToTop from './utils/ScrollToTop';
-import { Shield, LayoutDashboard, Clock, Search as SearchIcon, Users, User, FileText } from 'lucide-react';
+import { Shield } from 'lucide-react';
 // Import RenewalPage
 import RenewalPage from './pages/agent/Renewal';
 
@@ -174,7 +174,7 @@ const AppContent = () => {
           <Route path="/csr/*" element={
             <ProtectedRoute allowedRoles={['CSR']}>
               <PlatformProvider>
-                <DashboardLayout menuItems={[/* CSR Menu Items */]} userRole="CSR"> {/* Placeholder menuItems */}
+                <DashboardLayout>
                   <Routes>
                     <Route path="/" element={<CSROverview />} />
                     <Route path="/search" element={<CustomerSearch />} />
