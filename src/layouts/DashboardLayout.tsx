@@ -151,7 +151,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
             </button>
           </div>
 
-          <nav className="flex-grow px-4 pb-4 space-y-2 overflow-y-auto mt-6 custom-scrollbar">
+          <nav className="flex-grow px-4 pb-4 space-y-2 overflow-y-auto mt-6 scrollbar-hide">
             {navItems.map((item) => {
               const isBaseRoute = item.path.split('/').length === 2;
               const isActive = location.pathname === item.path || 
@@ -289,7 +289,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
         </header>
 
         {/* Content */}
-        <main className="flex-grow overflow-y-auto bg-slate-50/50 p-6 lg:p-10">
+        <main className="flex-grow overflow-y-auto bg-slate-50/50 p-6 lg:p-10 scrollbar-hide">
           <div className="max-w-7xl mx-auto space-y-10">
             {children}
           </div>

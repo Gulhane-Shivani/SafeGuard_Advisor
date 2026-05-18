@@ -271,7 +271,7 @@ const SuperAdminProfile: React.FC = () => {
                         value={editProfile.bio}
                         onChange={(e) => handleChange('bio', e.target.value)}
                         rows={4}
-                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-600/10 focus:border-teal-600 transition-all text-sm font-medium text-slate-900 resize-none"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-teal-600/10 focus:border-teal-600 transition-all text-sm font-medium text-slate-900 resize-none scrollbar-hide"
                       />
                     ) : (
                       <p className="text-sm font-medium text-slate-700 bg-slate-50 px-5 py-4 rounded-[1.5rem] border border-slate-100 leading-relaxed italic">
