@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import CustomerLayout from './CustomerLayout';
 import { useCustomer } from '../../store/CustomerContext';
+import { useSearch } from '../../store/SearchContext';
 import { cn } from '../../utils/helpers';
 import { PaymentGateway } from '../../components/PaymentGateway';
 
@@ -14,6 +15,7 @@ import API from '../../api/baseurl';
 
 const CustomerHome: React.FC = () => {
   const { data, loading, error, refresh } = useCustomer();
+  const { searchQuery } = useSearch();
   const [paymentModal, setPaymentModal] = useState({ isOpen: false, amount: '', policyName: '' });
 
   if (loading || !data) return <LoadingSpinner />;
@@ -96,7 +98,11 @@ const CustomerHome: React.FC = () => {
                 <Link to="/customer/policies" className="text-teal-600 text-sm font-bold hover:underline">View All →</Link>
               </div>
               <div className="space-y-3">
-                {data.policies.filter((p: any) => p.status === 'Active' || p.status === 'Renewal Due').slice(0, 3).map((policy: any) => (
+                {data.policies
+                  .filter((p: any) => p.status === 'Active' || p.status === 'Renewal Due')
+                  .filter((p: any) => !searchQuery || p.title.toLowerCase().includes(searchQuery.toLowerCase()) || p.provider.toLowerCase().includes(searchQuery.toLowerCase()) || p.type.toLowerCase().includes(searchQuery.toLowerCase()))
+                  .slice(0, 3)
+                  .map((policy: any) => (
                   <div key={policy.id} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:border-teal-200 transition-all">
                     <div className="flex items-center gap-4">
                       <div className={cn(
@@ -153,9 +159,15 @@ const CustomerHome: React.FC = () => {
               <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-orange-500" /> Upcoming Renewals
               </h3>
-              {data.policies.filter((p: any) => p.status === 'Renewal Due').length === 0 ? (
-                <p className="text-xs text-slate-500 text-center py-4">No renewals due soon.</p>
-              ) : data.policies.filter((p: any) => p.status === 'Renewal Due').map((policy: any) => (
+              {data.policies
+                .filter((p: any) => p.status === 'Renewal Due')
+                .filter((p: any) => !searchQuery || p.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                .length === 0 ? (
+                <p className="text-xs text-slate-500 text-center py-4">No renewals due soon or matching search.</p>
+              ) : data.policies
+                .filter((p: any) => p.status === 'Renewal Due')
+                .filter((p: any) => !searchQuery || p.title.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((policy: any) => (
                 <div key={policy.id} className="p-4 bg-orange-50 rounded-2xl border border-orange-100">
                   <div className="flex justify-between mb-3">
                     <div>
@@ -179,7 +191,15 @@ const CustomerHome: React.FC = () => {
               <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-blue-500" /> Pending Claims
               </h3>
-              {data.claims.filter((c: any) => c.status !== 'Settled').map((claim: any) => (
+              {data.claims
+                .filter((c: any) => c.status !== 'Settled')
+                .filter((c: any) => !searchQuery || c.policy_title.toLowerCase().includes(searchQuery.toLowerCase()) || c.claim_number.toLowerCase().includes(searchQuery.toLowerCase()))
+                .length === 0 ? (
+                  <p className="text-xs text-slate-500 text-center py-4">No pending claims matching search.</p>
+                ) : data.claims
+                .filter((c: any) => c.status !== 'Settled')
+                .filter((c: any) => !searchQuery || c.policy_title.toLowerCase().includes(searchQuery.toLowerCase()) || c.claim_number.toLowerCase().includes(searchQuery.toLowerCase()))
+                .map((claim: any) => (
                 <div key={claim.id} className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">{claim.claim_number}</span>

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Shield, CreditCard, FileText, Settings,
   HelpCircle, LogOut, Download, Bell, User, Landmark, Menu, X
 } from 'lucide-react';
 import { useCustomer } from '../../store/CustomerContext';
 import { useAppStore } from '../../store';
+import { useSearch } from '../../store/SearchContext';
 import { cn } from '../../utils/helpers';
 
 const menuItems = [
@@ -26,12 +27,32 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
   const location = useLocation();
   const { data, loading } = useCustomer();
   const { logout } = useAppStore();
+  const { searchQuery, setSearchQuery } = useSearch();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const navigate = useNavigate();
 
   if (loading || !data) return <LoadingSpinner />;
 
   const unreadCount = data.notifications.filter((n: any) => n.unread).length;
+
+  const q = searchQuery.toLowerCase();
+  const searchResults = !q ? [] : [
+    ...menuItems.filter(m => m.label.toLowerCase().includes(q)).map(m => ({
+      id: `nav-${m.id}`, type: 'Navigation', label: m.label, subtitle: 'Go to page', path: m.path, icon: m.icon
+    })),
+    ...(data?.policies || []).filter((p: any) => p.title.toLowerCase().includes(q) || (p.policy_number || '').toLowerCase().includes(q)).map((p: any) => ({
+      id: `pol-${p.id}`, type: 'Policy', label: p.title, subtitle: p.policy_number, path: `/customer/policies/${p.id}`, icon: Shield
+    })),
+    ...(data?.claims || []).filter((c: any) => (c.claim_number || '').toLowerCase().includes(q) || c.policy_title.toLowerCase().includes(q)).map((c: any) => ({
+      id: `claim-${c.id}`, type: 'Claim', label: c.claim_number, subtitle: c.policy_title, path: `/customer/claims`, icon: FileText
+    }))
+  ].slice(0, 8); // limit to 8 results
+
+  const handleSearchResultClick = (path: string) => {
+    setSearchQuery('');
+    navigate(path);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -112,11 +133,49 @@ const CustomerLayout: React.FC<{ children: React.ReactNode }> = ({ children }) =
             >
               <Menu className="w-6 h-6" />
             </button>
-            <div className="hidden md:flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
-              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input type="text" placeholder="Search..." className="bg-transparent border-none focus:outline-none text-sm w-48" />
+            <div className="relative">
+              <div className="hidden md:flex items-center gap-2 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+                <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input 
+                  type="text" 
+                  placeholder="Search..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="bg-transparent border-none focus:outline-none text-sm w-48" 
+                />
+              </div>
+
+              {searchQuery && (
+                <div className="absolute top-12 left-0 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden flex flex-col max-h-[80vh]">
+                  <div className="p-3 border-b border-slate-100 bg-slate-50 flex justify-between items-center shrink-0">
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Search Results</span>
+                    <button onClick={() => setSearchQuery('')} className="text-slate-400 hover:text-slate-600">
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                  <div className="overflow-y-auto p-2 space-y-1">
+                    {searchResults.length === 0 ? (
+                      <p className="p-4 text-sm text-slate-500 text-center">No results found for "{searchQuery}"</p>
+                    ) : searchResults.map((result) => (
+                      <button
+                        key={result.id}
+                        onClick={() => handleSearchResultClick(result.path)}
+                        className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 transition-colors text-left"
+                      >
+                        <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center shrink-0">
+                          <result.icon className="w-4 h-4" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-bold text-slate-900 truncate">{result.label}</p>
+                          <p className="text-[10px] text-slate-500 uppercase tracking-wider truncate">{result.type} • {result.subtitle}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

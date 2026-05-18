@@ -23,6 +23,7 @@ import LifeInsurance from './pages/insurance/LifeInsurance';
 import MotorInsurance from './pages/insurance/MotorInsurance';
 import InvestmentInsurance from './pages/insurance/InvestmentInsurance';
 import { CustomerProvider } from './store/CustomerContext';
+import { SearchProvider } from './store/SearchContext';
 import './styles/globals.css';
 
 import { AppProvider } from './store';
@@ -192,18 +193,20 @@ const AppContent = () => {
           <Route path="/customer/*" element={
             <ProtectedRoute allowedRoles={['CUSTOMER']}>
               <CustomerProvider>
-                <Routes>
-                  <Route path="/" element={<CustomerHome />} />
-                  <Route path="/policies" element={<CustomerPolicies />} />
-                  <Route path="/policies/:id" element={<CustomerPolicyDetail />} />
-                  <Route path="/payments" element={<CustomerPayments />} />
-                  <Route path="/claims" element={<CustomerClaims />} />
-                  <Route path="/requests" element={<CustomerServiceRequests />} />
-                  <Route path="/vault" element={<CustomerDocumentVault />} />
-                  <Route path="/profile" element={<CustomerProfile />} />
-                  <Route path="/loan" element={<CustomerPolicyLoan />} />
-                  <Route path="/support" element={<CustomerSupport />} />
-                </Routes>
+                <SearchProvider>
+                  <Routes>
+                    <Route path="/" element={<CustomerHome />} />
+                    <Route path="/policies" element={<CustomerPolicies />} />
+                    <Route path="/policies/:id" element={<CustomerPolicyDetail />} />
+                    <Route path="/payments" element={<CustomerPayments />} />
+                    <Route path="/claims" element={<CustomerClaims />} />
+                    <Route path="/requests" element={<CustomerServiceRequests />} />
+                    <Route path="/vault" element={<CustomerDocumentVault />} />
+                    <Route path="/profile" element={<CustomerProfile />} />
+                    <Route path="/loan" element={<CustomerPolicyLoan />} />
+                    <Route path="/support" element={<CustomerSupport />} />
+                  </Routes>
+                </SearchProvider>
               </CustomerProvider>
             </ProtectedRoute>
           } />
