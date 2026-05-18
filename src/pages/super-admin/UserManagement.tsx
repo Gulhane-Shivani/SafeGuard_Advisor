@@ -5,6 +5,7 @@ import { PlatformTable } from '../../components/platform/PlatformTable';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
 import { usePlatform } from '../../store/PlatformContext';
+import { useSearch } from '../../store/SearchContext';
 import { cn } from '../../utils/helpers';
 import API from '../../api/baseurl';
 
@@ -12,6 +13,7 @@ const UserManagement: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const { data: platformData } = usePlatform();
+  const { searchQuery } = useSearch();
   const currentTab = searchParams.get('tab') as 'staff' | 'customers' || 'staff';
   const [activeTab, setActiveTab] = useState<'staff' | 'customers'>(currentTab);
   const [users, setUsers] = useState<any[]>([]);
@@ -163,6 +165,13 @@ const UserManagement: React.FC = () => {
 
   const filteredUsers = users.filter(u => {
     const role = u.role?.toUpperCase();
+    const displayName = (u.full_name && u.full_name !== 'Anonymous') ? u.full_name : (u.email || u.mobile || 'Unknown User');
+    const matchesSearch = !searchQuery || 
+      displayName.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      (u.email && u.email.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    if (!matchesSearch) return false;
+
     if (activeTab === 'staff') {
       return ['SUPER_ADMIN', 'ADMIN', 'AGENT', 'CSR'].includes(role);
     }

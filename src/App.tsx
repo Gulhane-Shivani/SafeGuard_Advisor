@@ -240,10 +240,12 @@ const AppContent = () => {
 function App() {
   return (
     <AppProvider>
-      <Router>
-        <ScrollToTop />
-        <AppContent />
-      </Router>
+      <SearchProvider>
+        <Router>
+          <ScrollToTop />
+          <AppContent />
+        </Router>
+      </SearchProvider>
     </AppProvider>
   );
 }

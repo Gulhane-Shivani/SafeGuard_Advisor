@@ -5,6 +5,7 @@ import { SectionHeader } from '../../components/platform/SectionHeader';
 import { PlatformModal } from '../../components/platform/PlatformModal';
 import { CustomerProfileDetail } from '../../components/admin/CustomerProfileDetail';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useSearch } from '../../store/SearchContext';
 import { cn } from '../../utils/helpers';
 
 // Helper to determine status from expiry date
@@ -32,6 +33,7 @@ const DEFAULT_POLICIES = [
 const AdminPolicies: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { searchQuery } = useSearch();
   const basePath = location.pathname.startsWith('/super-admin') ? '/super-admin' : '/admin';
 
   const [policies, setPolicies] = useState(() => {
@@ -76,6 +78,15 @@ const AdminPolicies: React.FC = () => {
     });
     setPolicies(updatedPolicies);
   };
+
+  const filteredPolicies = policies.filter((p: any) => {
+    const query = searchQuery.toLowerCase();
+    return !searchQuery || 
+      p.id.toLowerCase().includes(query) || 
+      p.customer.toLowerCase().includes(query) ||
+      p.name.toLowerCase().includes(query) ||
+      p.type.toLowerCase().includes(query);
+  });
 
   const columns = [
     {
@@ -174,7 +185,7 @@ const AdminPolicies: React.FC = () => {
         title="Insurance Portfolio"
         description="Comprehensive list of all insurance plans currently managed on the platform."
         columns={columns}
-        data={policies}
+        data={filteredPolicies}
         filterKey="status"
         filterOptions={['ACTIVE', 'RENEWAL DUE', 'EXPIRED']}
       />

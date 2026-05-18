@@ -10,7 +10,8 @@ import {
 } from 'lucide-react';
 import { usePlatform } from '../store/PlatformContext';
 import { useAppStore } from '../store';
-import { PLATFORM_ROLES } from '../data/mockPlatformData';
+import { useSearch } from '../store/SearchContext';
+import { PLATFORM_ROLES, INITIAL_DATA } from '../data/mockPlatformData';
 import { cn } from '../utils/helpers';
 
 interface NavItem {
@@ -24,6 +25,7 @@ interface NavItem {
 const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { role, setRole } = usePlatform();
   const { state, logout } = useAppStore();
+  const { searchQuery, setSearchQuery } = useSearch();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
   const location = useLocation();
@@ -108,6 +110,33 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   };
 
   const navItems = React.useMemo(() => getNavItems(), [role]);
+
+  const searchResults = React.useMemo(() => {
+    if (!searchQuery.trim() || searchQuery.length < 2) return null;
+    const query = searchQuery.toLowerCase();
+    
+    const results = {
+      policies: INITIAL_DATA.policies.filter(p => 
+        p.policyNumber.toLowerCase().includes(query) || 
+        p.customerName.toLowerCase().includes(query)
+      ).slice(0, 3),
+      users: INITIAL_DATA.users.filter(u => 
+        u.name.toLowerCase().includes(query) || 
+        u.email.toLowerCase().includes(query)
+      ).slice(0, 3),
+      leads: INITIAL_DATA.leads.filter(l => 
+        l.name.toLowerCase().includes(query) || 
+        l.email.toLowerCase().includes(query)
+      ).slice(0, 3),
+      claims: INITIAL_DATA.claims.filter(c => 
+        c.claimNumber.toLowerCase().includes(query) || 
+        c.customerName.toLowerCase().includes(query)
+      ).slice(0, 3)
+    };
+
+    const hasResults = Object.values(results).some(arr => arr.length > 0);
+    return hasResults ? results : 'no-results';
+  }, [searchQuery]);
 
   React.useEffect(() => {
     navItems.forEach(item => {
@@ -258,9 +287,70 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
             >
               <Menu className="w-5 h-5" />
             </button>
-            <div className="hidden md:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+            <div className="hidden md:flex items-center gap-3 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200 relative group">
               <Search className="w-4 h-4 text-slate-400" />
-              <input type="text" placeholder="Global search..." className="bg-transparent border-none focus:outline-none text-xs w-48 font-medium" />
+              <input 
+                type="text" 
+                placeholder="Global search..." 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-transparent border-none focus:outline-none text-xs w-48 font-medium" 
+              />
+              
+              {/* Search Results Overlay */}
+              {searchResults && (
+                <div className="absolute top-full left-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  {searchResults === 'no-results' ? (
+                    <div className="py-4 text-center">
+                      <Search className="w-8 h-8 text-slate-200 mx-auto mb-2" />
+                      <p className="text-xs font-bold text-slate-400">No matches found for "{searchQuery}"</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4 max-h-96 overflow-y-auto scrollbar-hide">
+                      {searchResults.policies.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Policies</h5>
+                          {searchResults.policies.map((p: any) => (
+                            <Link key={p.id} to={`/super-admin/policies/${p.id}`} className="block p-2 hover:bg-slate-50 rounded-xl transition-all group" onClick={() => setSearchQuery('')}>
+                              <p className="text-xs font-black text-slate-900 group-hover:text-teal-600">{p.policyNumber}</p>
+                              <p className="text-[10px] text-slate-400 font-bold">{p.customerName} • {p.type}</p>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                      
+                      {searchResults.users.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Staff & Users</h5>
+                          {searchResults.users.map((u: any) => (
+                            <Link key={u.id} to={`/super-admin/users`} className="block p-2 hover:bg-slate-50 rounded-xl transition-all group" onClick={() => setSearchQuery('')}>
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-lg bg-slate-900 text-white flex items-center justify-center text-[8px] font-black">{u.avatar}</div>
+                                <div>
+                                  <p className="text-xs font-black text-slate-900 group-hover:text-teal-600">{u.name}</p>
+                                  <p className="text-[10px] text-slate-400 font-bold">{u.role} • {u.branch}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+
+                      {searchResults.leads.length > 0 && (
+                        <div className="space-y-2">
+                          <h5 className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-2">Leads</h5>
+                          {searchResults.leads.map((l: any) => (
+                            <div key={l.id} className="p-2 hover:bg-slate-50 rounded-xl transition-all group cursor-pointer">
+                              <p className="text-xs font-black text-slate-900 group-hover:text-teal-600">{l.name}</p>
+                              <p className="text-[10px] text-slate-400 font-bold">{l.type} • {l.status}</p>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
