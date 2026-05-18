@@ -3,8 +3,7 @@ import {
   Users, Shield, IndianRupee, 
   Clock, AlertCircle, 
   ArrowUpRight, Globe, Zap,
-  TrendingUp, FileText, CheckCircle2,
-  Mail, Phone, MapPin, User
+  TrendingUp, FileText, CheckCircle2
 } from 'lucide-react';
 import { KPICard } from '../../components/platform/KPICard';
 import { SectionHeader } from '../../components/platform/SectionHeader';

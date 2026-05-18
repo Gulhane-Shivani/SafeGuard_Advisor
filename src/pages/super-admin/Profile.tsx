@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  User, Mail, Phone, MapPin, Shield, TrendingUp,
-  Edit2, Save, X, Award, Calendar, IndianRupee, CheckCircle, Camera,
-  Settings, Lock, Bell
+  User, Mail, Phone, MapPin, Shield,
+  Edit2, Save, X, Award, CheckCircle, Camera,
+  Lock, Bell
 } from 'lucide-react';
 import { SectionHeader } from '../../components/platform/SectionHeader';
 import { usePlatform } from '../../store/PlatformContext';
