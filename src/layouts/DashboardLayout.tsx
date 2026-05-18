@@ -69,6 +69,7 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
           { id: 'sa-settings', label: 'Master Settings', icon: Settings, path: '/super-admin/settings' },
           { id: 'sa-config', label: 'System Config', icon: Layers, path: '/super-admin/config' },
+          { id: 'sa-profile', label: 'My Profile', icon: UserCircle2, path: '/super-admin/profile' },
         ];
       case PLATFORM_ROLES.ADMIN:
         return [

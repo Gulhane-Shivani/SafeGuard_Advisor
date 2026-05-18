@@ -3,7 +3,8 @@ import {
   Users, Shield, IndianRupee, 
   Clock, AlertCircle, 
   ArrowUpRight, Globe, Zap,
-  TrendingUp, FileText, CheckCircle2
+  TrendingUp, FileText, CheckCircle2,
+  Mail, Phone, MapPin, User
 } from 'lucide-react';
 import { KPICard } from '../../components/platform/KPICard';
 import { SectionHeader } from '../../components/platform/SectionHeader';
@@ -16,6 +17,7 @@ import {
 } from 'recharts';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Link } from 'react-router-dom';
 
 const REVENUE_DATA = [
   { name: 'Jan', value: 4000, growth: 3200 },
@@ -58,15 +60,31 @@ const SuperAdminOverview: React.FC = () => {
 
   return (
     <div className="space-y-10">
-      <SectionHeader 
-        title="Business Intelligence" 
-        description="Monitor system-wide performance, revenue trends, and agent productivity across all branches."
-        actions={
-          <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-2">
-            <Zap className="w-4 h-4 text-teal-400" /> System Audit
-          </button>
-        }
-      />
+      <div className="flex flex-col lg:flex-row gap-8 items-start">
+        <div className="flex-grow">
+          <SectionHeader 
+            title="Business Intelligence" 
+            description="Monitor system-wide performance, revenue trends, and agent productivity across all branches."
+            actions={
+              <button className="px-6 py-2.5 bg-slate-900 text-white rounded-xl font-bold text-xs hover:bg-slate-800 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-teal-400" /> System Audit
+              </button>
+            }
+          />
+        </div>
+
+        {/* Profile Quick Section */}
+        <div className="w-full lg:w-80 bg-white border border-slate-100 rounded-[2rem] p-6 shadow-sm flex items-center gap-4 group hover:border-teal-200 transition-all">
+          <div className="w-14 h-14 rounded-2xl bg-slate-900 text-white flex items-center justify-center font-black text-xl shrink-0 group-hover:scale-110 transition-transform">
+            AO
+          </div>
+          <div className="flex-grow min-w-0">
+            <h4 className="text-sm font-black text-slate-900 truncate">Admin One</h4>
+            <p className="text-[10px] font-bold text-teal-600 uppercase tracking-widest">Super Administrator</p>
+            <Link to="/super-admin/profile" className="text-[10px] font-black text-slate-400 hover:text-teal-600 transition-colors uppercase mt-1 inline-block">View Full Profile →</Link>
+          </div>
+        </div>
+      </div>
 
       {/* KPI Stats Grid - Updated to 6 Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

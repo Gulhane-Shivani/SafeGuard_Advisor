@@ -36,6 +36,7 @@ import RenewalPage from './pages/agent/Renewal';
 import { PlatformProvider } from './store/PlatformContext';
 import DashboardLayout from './layouts/DashboardLayout';
 import SuperAdminOverview from './pages/super-admin/Overview';
+import SuperAdminProfile from './pages/super-admin/Profile';
 import UserManagement from './pages/super-admin/UserManagement';
 import MasterSettings from './pages/super-admin/Settings';
 import Reports from './pages/super-admin/Reports';
@@ -108,6 +109,7 @@ const AppContent = () => {
                   <Routes>
                     <Route path="/" element={<SuperAdminOverview />} />
                     <Route path="/users" element={<UserManagement />} />
+                    <Route path="/profile" element={<SuperAdminProfile />} />
                     <Route path="/settings" element={<MasterSettings />} />
                     <Route path="/reports" element={<Reports />} />
                     <Route path="/config" element={<SystemConfig />} />
